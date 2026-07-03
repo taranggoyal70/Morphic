@@ -8,6 +8,10 @@ This context defines the language for an adaptive workspace that turns a builder
 A user-authored outcome that Morphic should organize work around, such as “Ship onboarding by Friday.” An **Objective** is narrower than a project and includes an observable completion condition.
 _Avoid_: Prompt, task list, project name
 
+**Outcome**:
+The workspace plan's interpretation of an **Objective**, including a reformulated statement, a definition of done, and a success signal. The user writes an **Objective**; Morphic generates an **Outcome**.
+_Avoid_: Objective (that is the user's input, not the plan's interpretation)
+
 **Adaptive Workspace**:
 The persistent, generated interface for one **Objective**. It arranges evidence, a critical path, repository impact, open decisions, risks, and agent proposals according to the current state of the work.
 _Avoid_: Dashboard, disposable generated page, chat transcript
