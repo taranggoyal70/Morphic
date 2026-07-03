@@ -92,7 +92,7 @@ export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;
 export const createWorkspaceSchema = z.object({
   repositoryId: z.string().uuid(),
   objective: z.string().trim().min(8).max(500),
-  targetDate: z.iso.datetime().nullable().optional(),
+  targetDate: z.string().datetime().nullable().optional(),
   constraints: z.array(z.string().trim().min(1).max(180)).max(12).default([]),
 });
 
