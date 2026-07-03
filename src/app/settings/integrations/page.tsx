@@ -73,7 +73,7 @@ export default async function IntegrationsPage() {
           </div>
           <div className="flex gap-2">
             <Link
-              href={"/user-profile" as Route}
+              href={"/settings/connect-github" as Route}
               className="inline-flex items-center rounded-lg border border-line-strong px-3.5 py-2 text-sm font-medium text-muted-light transition hover:bg-white/5 hover:text-paper"
             >
               Manage account

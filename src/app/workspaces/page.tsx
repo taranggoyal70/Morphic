@@ -42,7 +42,7 @@ export default async function WorkspacesPage() {
           <RepositorySyncButton />
         ) : (
           <Link
-            href={"/user-profile" as Route}
+            href={"/settings/connect-github" as Route}
             className="inline-flex h-10 items-center rounded-lg border border-violet/40 bg-violet/10 px-4 text-sm font-medium text-violet-light transition hover:bg-violet/20"
           >
             Connect GitHub
@@ -69,7 +69,7 @@ export default async function WorkspacesPage() {
               <RepositorySyncButton label="Sync GitHub repositories" />
             ) : (
               <Link
-                href={"/user-profile" as Route}
+                href={"/settings/connect-github" as Route}
                 className="inline-flex h-10 items-center rounded-lg bg-violet px-4 text-sm font-semibold text-white transition hover:bg-violet-light hover:text-ink"
               >
                 Open account connections
