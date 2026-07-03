@@ -75,28 +75,61 @@ function compactPlannerInput(input: PlannerInput) {
 
 export async function generateWorkspacePlan(input: PlannerInput) {
   const env = getServerEnv();
-  const response = await getOpenAI().responses.parse({
-    model: env.MORPHIC_PLANNER_MODEL,
-    reasoning: { effort: "medium" },
-    input: [
-      {
-        role: "system",
-        content: [{ type: "input_text", text: SYSTEM_PROMPT }],
+  let response;
+  try {
+    response = await getOpenAI().responses.parse({
+      model: env.MORPHIC_PLANNER_MODEL,
+      reasoning: { effort: "medium" },
+      input: [
+        {
+          role: "system",
+          content: [{ type: "input_text", text: SYSTEM_PROMPT }],
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "input_text",
+              text: JSON.stringify(compactPlannerInput(input)),
+            },
+          ],
+        },
+      ],
+      text: {
+        format: zodTextFormat(workspacePlanSchema, "morphic_workspace_plan"),
       },
-      {
-        role: "user",
-        content: [
-          {
-            type: "input_text",
-            text: JSON.stringify(compactPlannerInput(input)),
-          },
-        ],
-      },
-    ],
-    text: {
-      format: zodTextFormat(workspacePlanSchema, "morphic_workspace_plan"),
-    },
-  });
+    });
+  } catch (error: unknown) {
+    if (error instanceof OpenAI.APIError) {
+      if (error.status === 429) {
+        throw new AppError(
+          "OpenAI rate limit reached. Please try again in a few minutes.",
+          429,
+          "openai_rate_limited",
+        );
+      }
+      if (error.status === 401) {
+        throw new AppError(
+          "OpenAI authentication failed. Check your API key configuration.",
+          502,
+          "openai_auth_failed",
+        );
+      }
+      throw new AppError(
+        `OpenAI returned an error: ${error.message}`,
+        502,
+        "openai_api_error",
+      );
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new AppError(
+        "Workspace generation timed out. Try a smaller repository or simpler objective.",
+        504,
+        "openai_timeout",
+      );
+    }
+    throw error;
+  }
 
   const plan = response.output_parsed;
   if (!plan) {

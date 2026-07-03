@@ -1,6 +1,11 @@
 import { SignIn } from "@clerk/nextjs";
+import type { Metadata } from "next";
 
 import { Brand } from "@/components/brand";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+};
 
 export default function SignInPage() {
   return (

@@ -1,6 +1,7 @@
 import { start } from "workflow/api";
 import { z } from "zod";
 
+import { recordAuditEvent } from "@/lib/audit";
 import { requireMorphicUser } from "@/lib/auth";
 import { toErrorResponse, AppError } from "@/lib/errors";
 import { enforceRateLimit } from "@/lib/rate-limit";
@@ -57,6 +58,13 @@ export async function POST(
       userId: user.id,
       workspaceId,
       command: `Resolve decision "${decision.question}" with option "${option.label}". Preserve this as a user-owned decision and adapt the critical path, risks, and repository impact accordingly.`,
+    });
+    await recordAuditEvent({
+      userId: user.id,
+      action: "workspace.decision_resolved",
+      resourceType: "workspace",
+      resourceId: workspaceId,
+      metadata: { decisionId: input.decisionId, optionId: input.optionId },
     });
     const run = await start(generateWorkspaceWorkflow, [
       {

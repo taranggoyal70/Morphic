@@ -1,6 +1,11 @@
 import { UserProfile } from "@clerk/nextjs";
+import type { Metadata } from "next";
 
 import { GITHUB_OAUTH_SCOPES } from "@/lib/github-oauth";
+
+export const metadata: Metadata = {
+  title: "Profile",
+};
 
 export default function UserProfilePage() {
   return (

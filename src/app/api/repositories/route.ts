@@ -1,3 +1,4 @@
+import { recordAuditEvent } from "@/lib/audit";
 import { requireMorphicUser } from "@/lib/auth";
 import { toErrorResponse } from "@/lib/errors";
 import { listRepositories, syncRepositories } from "@/lib/github";
@@ -23,9 +24,14 @@ export async function POST() {
       limit: 10,
       window: "1 m",
     });
-    return Response.json({
-      repositories: await syncRepositories(user.id),
+    const repositories = await syncRepositories(user.id);
+    await recordAuditEvent({
+      userId: user.id,
+      action: "repositories.synced",
+      resourceType: "repository",
+      metadata: { count: repositories.length },
     });
+    return Response.json({ repositories });
   } catch (error) {
     return toErrorResponse(error);
   }

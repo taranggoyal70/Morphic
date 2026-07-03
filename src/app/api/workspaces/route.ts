@@ -1,5 +1,6 @@
 import { start } from "workflow/api";
 
+import { recordAuditEvent } from "@/lib/audit";
 import { requireMorphicUser } from "@/lib/auth";
 import { createWorkspaceSchema } from "@/lib/domain/workspace";
 import { toErrorResponse } from "@/lib/errors";
@@ -35,6 +36,13 @@ export async function POST(request: Request) {
     const workspace = await createWorkspaceRecord({
       userId: user.id,
       ...input,
+    });
+    await recordAuditEvent({
+      userId: user.id,
+      action: "workspace.created",
+      resourceType: "workspace",
+      resourceId: workspace.id,
+      metadata: { objective: input.objective, repositoryId: input.repositoryId },
     });
     const run = await start(generateWorkspaceWorkflow, [
       {

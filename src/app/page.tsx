@@ -5,11 +5,17 @@ import {
   ShieldCheckIcon,
   SparkleIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import type { Route } from "next";
+import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Brand } from "@/components/brand";
+
+export const metadata: Metadata = {
+  title: "Morphic — Adaptive workspaces for software builders",
+  description:
+    "Turn a software objective into a living interface grounded in GitHub, then supervise approved Codex work from plan to pull request.",
+};
 
 export default async function HomePage() {
   const { userId } = await auth();

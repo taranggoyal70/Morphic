@@ -315,6 +315,37 @@ export async function setWorkspaceGenerationRun(
     .where(and(eq(workspaces.id, workspaceId), eq(workspaces.userId, userId)));
 }
 
+export async function archiveWorkspace(userId: string, workspaceId: string) {
+  const { workspace } = await getWorkspaceForUser(userId, workspaceId);
+  if (workspace.status === "generating") {
+    throw new AppError(
+      "Cannot archive a workspace that is currently generating.",
+      409,
+      "workspace_busy",
+    );
+  }
+
+  await getDb()
+    .update(workspaces)
+    .set({ status: "archived", updatedAt: new Date() })
+    .where(and(eq(workspaces.id, workspaceId), eq(workspaces.userId, userId)));
+}
+
+export async function deleteWorkspace(userId: string, workspaceId: string) {
+  const { workspace } = await getWorkspaceForUser(userId, workspaceId);
+  if (workspace.status === "generating") {
+    throw new AppError(
+      "Cannot delete a workspace that is currently generating.",
+      409,
+      "workspace_busy",
+    );
+  }
+
+  await getDb()
+    .delete(workspaces)
+    .where(and(eq(workspaces.id, workspaceId), eq(workspaces.userId, userId)));
+}
+
 export async function markWorkspaceGenerationFailed(input: {
   userId: string;
   workspaceId: string;

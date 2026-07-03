@@ -1,6 +1,7 @@
 import { start } from "workflow/api";
 import { z } from "zod";
 
+import { recordAuditEvent } from "@/lib/audit";
 import { requireMorphicUser } from "@/lib/auth";
 import {
   approveCodexRun,
@@ -36,10 +37,23 @@ export async function POST(
     const input = approvalInput.parse(await request.json());
     if (input.decision === "reject") {
       await rejectCodexRun(user.id, runId, input.note);
+      await recordAuditEvent({
+        userId: user.id,
+        action: "codex_run.rejected",
+        resourceType: "codex_run",
+        resourceId: runId,
+        metadata: { note: input.note },
+      });
       return Response.json({ status: "rejected" });
     }
 
     await approveCodexRun(user.id, runId);
+    await recordAuditEvent({
+      userId: user.id,
+      action: "codex_run.approved",
+      resourceType: "codex_run",
+      resourceId: runId,
+    });
     try {
       const workflowRun = await start(codexRunWorkflow, [
         { userId: user.id, runId },

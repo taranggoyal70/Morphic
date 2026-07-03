@@ -1,3 +1,4 @@
+import { recordAuditEvent } from "@/lib/audit";
 import { requireMorphicUser } from "@/lib/auth";
 import { createCodexRun } from "@/lib/codex-runs";
 import { createCodexRunSchema } from "@/lib/domain/workspace";
@@ -18,6 +19,13 @@ export async function POST(request: Request) {
       userId: user.id,
       workspaceId: input.workspaceId,
       instruction: input.instruction,
+    });
+    await recordAuditEvent({
+      userId: user.id,
+      action: "codex_run.created",
+      resourceType: "codex_run",
+      resourceId: run.id,
+      metadata: { workspaceId: input.workspaceId },
     });
     return Response.json({ run }, { status: 201 });
   } catch (error) {
