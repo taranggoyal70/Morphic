@@ -42,7 +42,10 @@ export async function POST(request: Request) {
       action: "workspace.created",
       resourceType: "workspace",
       resourceId: workspace.id,
-      metadata: { objective: input.objective, repositoryId: input.repositoryId },
+      metadata: {
+        objective: input.objective,
+        repositoryId: input.repositoryId,
+      },
     });
     const run = await start(generateWorkspaceWorkflow, [
       {

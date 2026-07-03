@@ -19,9 +19,7 @@ export default function RootError({
               weight="duotone"
               className="mx-auto text-red-400"
             />
-            <h1 className="mt-5 text-xl font-semibold">
-              Something went wrong
-            </h1>
+            <h1 className="mt-5 text-xl font-semibold">Something went wrong</h1>
             <p className="mt-2 text-sm leading-6 text-gray-400">
               {error.message || "Morphic encountered an unexpected error."}
             </p>
