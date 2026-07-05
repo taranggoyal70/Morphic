@@ -8,6 +8,7 @@ import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { GitHubConnectButton } from "@/components/github-connect-button";
 import { RepositorySyncButton } from "@/components/repository-sync-button";
 import { getGitHubAccessToken, requireMorphicUser } from "@/lib/auth";
 import { listRepositories } from "@/lib/github";
@@ -16,8 +17,13 @@ export const metadata: Metadata = {
   title: "Connect GitHub",
 };
 
-export default async function ConnectGitHubPage() {
+export default async function ConnectGitHubPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ github?: string }>;
+}) {
   const user = await requireMorphicUser();
+  const query = await searchParams;
   let githubConnected = false;
   try {
     await getGitHubAccessToken(user.id);
@@ -78,15 +84,14 @@ export default async function ConnectGitHubPage() {
               <p className="mt-1 text-xs leading-5 text-muted">
                 {githubConnected
                   ? "Your GitHub account is linked with the required scopes."
-                  : "Click your avatar in the bottom-left corner, then add GitHub under Connected Accounts. Morphic requires repo and read:org scopes."}
+                  : "Approve repository and organization access. Morphic keeps the provider token server-side and never stores it in your browser."}
               </p>
               {!githubConnected && (
-                <Link
-                  href={"/user-profile" as Route}
-                  className="mt-3 inline-flex h-9 items-center rounded-lg bg-violet px-4 text-sm font-medium text-white transition hover:bg-violet-light hover:text-ink"
-                >
-                  Open account settings
-                </Link>
+                <GitHubConnectButton
+                  returnUrl="/settings/connect-github?github=connected"
+                  label="Authorize GitHub"
+                  className="mt-3 h-9 font-medium"
+                />
               )}
             </div>
           </div>
@@ -116,7 +121,10 @@ export default async function ConnectGitHubPage() {
               </p>
               {githubConnected && repositories.length === 0 && (
                 <div className="mt-3">
-                  <RepositorySyncButton label="Sync repositories" />
+                  <RepositorySyncButton
+                    label="Sync repositories"
+                    autoSync={query.github === "connected"}
+                  />
                 </div>
               )}
             </div>

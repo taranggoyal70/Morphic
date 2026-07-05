@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import type { Route } from "next";
 import Link from "next/link";
 
+import { GitHubConnectButton } from "@/components/github-connect-button";
 import { RepositorySyncButton } from "@/components/repository-sync-button";
 import { requireMorphicUser, getGitHubAccessToken } from "@/lib/auth";
 import { listRepositories } from "@/lib/github";
@@ -16,8 +17,13 @@ export const metadata: Metadata = {
   title: "Integrations",
 };
 
-export default async function IntegrationsPage() {
+export default async function IntegrationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ github?: string }>;
+}) {
   const user = await requireMorphicUser();
+  const query = await searchParams;
   let githubConnected = false;
   try {
     await getGitHubAccessToken(user.id);
@@ -67,18 +73,24 @@ export default async function IntegrationsPage() {
               <p className="mt-1 text-xs leading-5 text-muted">
                 {githubConnected
                   ? `${repositories.length} repositories currently synchronized.`
-                  : "Connect GitHub in your account profile to provide repository evidence."}
+                  : "Authorize Morphic to read your repositories and organization membership."}
               </p>
             </div>
           </div>
           <div className="flex gap-2">
-            <Link
-              href={"/settings/connect-github" as Route}
-              className="inline-flex items-center rounded-lg border border-line-strong px-3.5 py-2 text-sm font-medium text-muted-light transition hover:bg-white/5 hover:text-paper"
-            >
-              Manage account
-            </Link>
-            {githubConnected && <RepositorySyncButton />}
+            {githubConnected ? (
+              <>
+                <Link
+                  href={"/user-profile" as Route}
+                  className="inline-flex items-center rounded-lg border border-line-strong px-3.5 py-2 text-sm font-medium text-muted-light transition hover:bg-white/5 hover:text-paper"
+                >
+                  Manage account
+                </Link>
+                <RepositorySyncButton autoSync={query.github === "connected"} />
+              </>
+            ) : (
+              <GitHubConnectButton label="Authorize GitHub" />
+            )}
           </div>
         </div>
       </section>
