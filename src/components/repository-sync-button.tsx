@@ -2,18 +2,21 @@
 
 import { ArrowsClockwiseIcon, GithubLogoIcon } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export function RepositorySyncButton({
   label = "Sync GitHub",
+  autoSync = false,
 }: {
   label?: string;
+  autoSync?: boolean;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
+  const autoSyncStarted = useRef(false);
 
-  async function sync() {
+  const sync = useCallback(async () => {
     setPending(true);
     try {
       const response = await fetch("/api/repositories", { method: "POST" });
@@ -35,7 +38,13 @@ export function RepositorySyncButton({
     } finally {
       setPending(false);
     }
-  }
+  }, [router]);
+
+  useEffect(() => {
+    if (!autoSync || autoSyncStarted.current) return;
+    autoSyncStarted.current = true;
+    void sync();
+  }, [autoSync, sync]);
 
   return (
     <button
