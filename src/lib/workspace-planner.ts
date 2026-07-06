@@ -1,19 +1,15 @@
 import "server-only";
 
 import OpenAI from "openai";
-import { zodTextFormat } from "openai/helpers/zod";
+import { zodResponseFormat } from "openai/helpers/zod";
 
-import type {
-  GitHubIssueEvidence,
-  GitHubPullEvidence,
-  RepositoryTreeEntry,
-} from "@/db/schema";
-import {
-  type WorkspacePlan,
-  workspacePlanSchema,
-} from "@/lib/domain/workspace";
+import { getGitHubAccessToken } from "@/lib/auth";
+import { workspacePlanSchema } from "@/lib/domain/workspace";
 import { AppError } from "@/lib/errors";
 import { getServerEnv } from "@/lib/env";
+import { compactPlannerInput, type PlannerInput } from "@/lib/planner-input";
+
+const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
 
 const SYSTEM_PROMPT = `You are Morphic's workspace compiler.
 
@@ -31,107 +27,66 @@ Rules:
 - IDs must be stable lowercase slugs using letters, numbers, and hyphens.
 - Never include secrets, access tokens, or personal data in the output.`;
 
-type PlannerInput = {
-  objective: string;
-  targetDate: Date | null;
-  constraints: string[];
-  repository: {
-    fullName: string;
-    defaultBranch: string;
-  };
-  snapshot: {
-    headSha: string;
-    issues: GitHubIssueEvidence[];
-    pullRequests: GitHubPullEvidence[];
-    tree: RepositoryTreeEntry[];
-  };
-  previousPlan?: WorkspacePlan;
-  adaptationCommand?: string;
-};
-
-let client: OpenAI | undefined;
-
-function getOpenAI() {
-  client ??= new OpenAI({ apiKey: getServerEnv().OPENAI_API_KEY });
-  return client;
-}
-
-function compactPlannerInput(input: PlannerInput) {
-  return {
-    objective: input.objective,
-    targetDate: input.targetDate?.toISOString() ?? null,
-    constraints: input.constraints,
-    repository: input.repository,
-    snapshot: {
-      headSha: input.snapshot.headSha,
-      issues: input.snapshot.issues.slice(0, 150),
-      pullRequests: input.snapshot.pullRequests.slice(0, 80),
-      tree: input.snapshot.tree.slice(0, 6_000),
-    },
-    previousPlan: input.previousPlan,
-    adaptationCommand: input.adaptationCommand,
-  };
-}
-
 export async function generateWorkspacePlan(input: PlannerInput) {
   const env = getServerEnv();
+  const accessToken = await getGitHubAccessToken(input.userId);
+  const client = new OpenAI({
+    apiKey: accessToken,
+    baseURL: GITHUB_MODELS_BASE_URL,
+  });
   let response;
   try {
-    response = await getOpenAI().responses.parse({
+    response = await client.chat.completions.parse({
       model: env.MORPHIC_PLANNER_MODEL,
-      reasoning: { effort: "medium" },
-      input: [
+      messages: [
         {
           role: "system",
-          content: [{ type: "input_text", text: SYSTEM_PROMPT }],
+          content: SYSTEM_PROMPT,
         },
         {
           role: "user",
-          content: [
-            {
-              type: "input_text",
-              text: JSON.stringify(compactPlannerInput(input)),
-            },
-          ],
+          content: JSON.stringify(compactPlannerInput(input)),
         },
       ],
-      text: {
-        format: zodTextFormat(workspacePlanSchema, "morphic_workspace_plan"),
-      },
+      max_tokens: 4_096,
+      response_format: zodResponseFormat(
+        workspacePlanSchema,
+        "morphic_workspace_plan",
+      ),
     });
   } catch (error: unknown) {
     if (error instanceof OpenAI.APIError) {
       if (error.status === 429) {
         throw new AppError(
-          "OpenAI rate limit reached. Please try again in a few minutes.",
+          "GitHub Models free usage limit reached. Try again after the limit resets.",
           429,
-          "openai_rate_limited",
+          "github_models_rate_limited",
         );
       }
-      if (error.status === 401) {
+      if (error.status === 401 || error.status === 403) {
         throw new AppError(
-          "OpenAI authentication failed. Check your API key configuration.",
-          502,
-          "openai_auth_failed",
+          "GitHub Models could not use your GitHub authorization. Reconnect GitHub and try again.",
+          409,
+          "github_models_auth_failed",
         );
       }
       throw new AppError(
-        `OpenAI returned an error: ${error.message}`,
+        `GitHub Models returned an error: ${error.message}`,
         502,
-        "openai_api_error",
+        "github_models_api_error",
       );
     }
     if (error instanceof Error && error.name === "AbortError") {
       throw new AppError(
         "Workspace generation timed out. Try a smaller repository or simpler objective.",
         504,
-        "openai_timeout",
+        "workspace_generation_timeout",
       );
     }
     throw error;
   }
 
-  const plan = response.output_parsed;
+  const plan = response.choices[0]?.message.parsed;
   if (!plan) {
     throw new AppError(
       "Morphic could not generate a valid workspace.",

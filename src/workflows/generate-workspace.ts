@@ -1,5 +1,6 @@
 import { captureRepositorySnapshot } from "@/lib/github";
-import { generateWorkspacePlan } from "@/lib/openai";
+import { errorMessage } from "@/lib/error-message";
+import { generateWorkspacePlan } from "@/lib/workspace-planner";
 import {
   getWorkspaceForUser,
   getWorkspaceGenerationContext,
@@ -30,6 +31,7 @@ async function compileWorkspaceStep(input: {
   console.info("Compiling adaptive workspace", input);
   const context = await getWorkspaceGenerationContext(input);
   const generated = await generateWorkspacePlan({
+    userId: input.userId,
     objective: context.workspace.objective,
     targetDate: context.workspace.targetDate,
     constraints: context.workspace.constraints,
@@ -95,8 +97,7 @@ export async function generateWorkspaceWorkflow(input: {
     });
     return { workspaceId: input.workspaceId, versionId };
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown generation error";
+    const message = errorMessage(error, "Unknown generation error");
     await markFailedStep({ ...input, message });
     throw error;
   }

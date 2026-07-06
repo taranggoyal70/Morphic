@@ -10,7 +10,7 @@ const serverSchema = z.object({
   KV_REST_API_URL: z.string().url().optional(),
   KV_REST_API_TOKEN: z.string().min(1).optional(),
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
-  MORPHIC_PLANNER_MODEL: z.string().min(1).default("gpt-5.4"),
+  MORPHIC_PLANNER_MODEL: z.string().min(1).default("openai/gpt-4.1-mini"),
   MORPHIC_CODEX_MODEL: z.string().min(1).default("gpt-5.4"),
   MORPHIC_PROMPT_VERSION: z.string().min(1).default("workspace-v1"),
   VERCEL_TOKEN: z.string().min(1).optional(),
