@@ -1,4 +1,5 @@
 import { captureRepositorySnapshot } from "@/lib/github";
+import { errorMessage } from "@/lib/error-message";
 import { generateWorkspacePlan } from "@/lib/workspace-planner";
 import {
   getWorkspaceForUser,
@@ -96,8 +97,7 @@ export async function generateWorkspaceWorkflow(input: {
     });
     return { workspaceId: input.workspaceId, versionId };
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown generation error";
+    const message = errorMessage(error, "Unknown generation error");
     await markFailedStep({ ...input, message });
     throw error;
   }
