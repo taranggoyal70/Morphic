@@ -1,5 +1,5 @@
 import { captureRepositorySnapshot } from "@/lib/github";
-import { generateWorkspacePlan } from "@/lib/openai";
+import { generateWorkspacePlan } from "@/lib/workspace-planner";
 import {
   getWorkspaceForUser,
   getWorkspaceGenerationContext,
@@ -30,6 +30,7 @@ async function compileWorkspaceStep(input: {
   console.info("Compiling adaptive workspace", input);
   const context = await getWorkspaceGenerationContext(input);
   const generated = await generateWorkspacePlan({
+    userId: input.userId,
     objective: context.workspace.objective,
     targetDate: context.workspace.targetDate,
     constraints: context.workspace.constraints,
