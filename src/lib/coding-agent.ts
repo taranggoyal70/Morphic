@@ -165,33 +165,45 @@ export async function executeToolCall(
 
   if (name === "read_file") {
     const path = safePath(String(args.path ?? ""));
-    try {
-      const buffer = await sandbox.readFileToBuffer({
-        path: `${SANDBOX_CWD}/${path}`,
-      });
-      if (!buffer) {
-        return { output: `File ${path} does not exist.`, finished: false };
-      }
+    const result = await sandbox.runCommand("bash", [
+      "-lc",
+      `cd ${SANDBOX_CWD} && cat ${JSON.stringify(path)}`,
+    ]);
+    if (result.exitCode !== 0) {
       return {
-        output: clamp(buffer.toString("utf8"), MAX_FILE_CHARS),
-        finished: false,
-      };
-    } catch {
-      return {
-        output: `Could not read ${path}.`,
+        output: `File ${path} does not exist or is unreadable.`,
         finished: false,
       };
     }
+    return {
+      output: clamp((await result.stdout()) || "(empty file)", MAX_FILE_CHARS),
+      finished: false,
+    };
   }
 
   if (name === "write_file") {
     const path = safePath(String(args.path ?? ""));
     const content = typeof args.content === "string" ? args.content : "";
+    // Write through the same shell/cwd that git uses so the change is part of
+    // the repository working tree (the writeFiles API and git observed
+    // different filesystem state across workflow steps). base64 keeps
+    // arbitrary content safe through the shell.
+    const b64 = Buffer.from(content, "utf8").toString("base64");
     const dir = path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "";
-    if (dir) await sandbox.mkDir(`${SANDBOX_CWD}/${dir}`);
-    await sandbox.writeFiles([
-      { path: `${SANDBOX_CWD}/${path}`, content: Buffer.from(content) },
-    ]);
+    const script = [
+      `cd ${SANDBOX_CWD}`,
+      dir && `mkdir -p ${JSON.stringify(dir)}`,
+      `printf '%s' ${JSON.stringify(b64)} | base64 -d > ${JSON.stringify(path)}`,
+    ]
+      .filter(Boolean)
+      .join(" && ");
+    const result = await sandbox.runCommand("bash", ["-lc", script]);
+    if (result.exitCode !== 0) {
+      return {
+        output: `Failed to write ${path}: ${(await result.stderr()).slice(0, 400)}`,
+        finished: false,
+      };
+    }
     return {
       output: `Wrote ${path} (${content.length} chars).`,
       finished: false,
