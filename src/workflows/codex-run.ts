@@ -1,16 +1,22 @@
 import { Sandbox } from "@vercel/sandbox";
-import { sleep } from "workflow";
+import OpenAI from "openai";
 
 import {
   appendCodexEvents,
   getCodexRunForUser,
   updateCodexRun,
 } from "@/lib/codex-runs";
+import {
+  AGENT_TOOLS,
+  executeToolCall,
+  SYSTEM_PROMPT,
+} from "@/lib/coding-agent";
 import { getGitHubAccessToken } from "@/lib/auth";
 import { getServerEnv } from "@/lib/env";
 
-const CODEX_CLI_VERSION = "0.142.5";
 const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
+const MAX_AGENT_TURNS = 14;
+type ChatMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
 
 function sandboxCredentials() {
   const env = getServerEnv();
@@ -70,20 +76,12 @@ async function provisionSandboxStep(userId: string, runId: string) {
   const base = await sandbox.runCommand("git", ["rev-parse", "HEAD"]);
   const baseSha = (await base.stdout()).trim();
   await sandbox.runCommand("git", ["checkout", "-b", branchName]);
-  await sandbox.runCommand("git", ["config", "user.name", "Morphic Codex"]);
+  await sandbox.runCommand("git", ["config", "user.name", "Morphic Agent"]);
   await sandbox.runCommand("git", [
     "config",
     "user.email",
-    "codex@morphic.dev",
+    "agent@morphic.dev",
   ]);
-  const install = await sandbox.runCommand(
-    "npm",
-    ["install", "-g", `@openai/codex@${CODEX_CLI_VERSION}`],
-    { timeoutMs: 180_000 },
-  );
-  if (install.exitCode !== 0) {
-    throw new Error(`Codex installation failed: ${await install.stderr()}`);
-  }
 
   await updateCodexRun(runId, {
     status: "running",
@@ -107,126 +105,145 @@ async function provisionSandboxStep(userId: string, runId: string) {
   return { sandboxName, branchName };
 }
 
-async function startCodexCommandStep(input: {
+async function agentTurnStep(input: {
   userId: string;
   runId: string;
   sandboxName: string;
-}) {
+  turn: number;
+  messages: ChatMessage[];
+}): Promise<{
+  messages: ChatMessage[];
+  done: boolean;
+  summary: string | null;
+}> {
   "use step";
 
-  console.info("Starting Codex command", input);
-  const { run, workspace, repository } = await getCodexRunForUser(
-    input.userId,
-    input.runId,
-  );
+  const env = getServerEnv();
+  const accessToken = await getGitHubAccessToken(input.userId);
   const sandbox = await Sandbox.get({
     ...sandboxCredentials(),
     name: input.sandboxName,
   });
-  const prompt = `You are executing an approved Morphic coding task.
-
-Repository: ${repository.fullName}
-Objective: ${workspace.objective}
-Approved instruction: ${run.instruction}
-
-Implement the instruction in this repository. Inspect existing conventions first. Keep the change scoped, run relevant tests, and leave the working tree with the complete implementation. Do not push, merge, expose secrets, modify authentication credentials, or weaken security controls.`;
-  const command = await sandbox.runCommand({
-    cmd: "codex",
-    args: [
-      "exec",
-      "--json",
-      "--ephemeral",
-      "--ignore-user-config",
-      "--dangerously-bypass-approvals-and-sandbox",
-      "--color",
-      "never",
-      // Register GitHub Models as an OpenAI-compatible provider that speaks
-      // the chat-completions wire API (the Codex default Responses API is not
-      // available on GitHub Models).
-      "-c",
-      'model_provider="github-models"',
-      "-c",
-      'model_providers.github-models.name="GitHub Models"',
-      "-c",
-      `model_providers.github-models.base_url="${GITHUB_MODELS_BASE_URL}"`,
-      "-c",
-      'model_providers.github-models.wire_api="chat"',
-      "-c",
-      'model_providers.github-models.env_key="OPENAI_API_KEY"',
-      "--model",
-      getServerEnv().MORPHIC_CODEX_MODEL,
-      prompt,
-    ],
-    cwd: "/vercel/sandbox",
-    detached: true,
-    timeoutMs: 900_000,
+  const client = new OpenAI({
+    apiKey: accessToken,
+    baseURL: GITHUB_MODELS_BASE_URL,
   });
-  return command.cmdId;
-}
 
-async function pollCodexCommandStep(input: {
-  sandboxName: string;
-  commandId: string;
-}) {
-  "use step";
-
-  const sandbox = await Sandbox.get({
-    ...sandboxCredentials(),
-    name: input.sandboxName,
+  const completion = await client.chat.completions.create({
+    model: env.MORPHIC_CODEX_MODEL,
+    messages: input.messages,
+    tools: AGENT_TOOLS,
+    tool_choice: "auto",
+    max_tokens: 4_096,
   });
-  const command = await sandbox.getCommand(input.commandId);
-  return {
-    done: command.exitCode !== null,
-    exitCode: command.exitCode,
-  };
-}
 
-async function finalizeCodexStep(input: {
-  userId: string;
-  runId: string;
-  sandboxName: string;
-  commandId: string;
-  branchName: string;
-}) {
-  "use step";
-
-  console.info("Finalizing Codex run", input);
-  const sandbox = await Sandbox.get({
-    ...sandboxCredentials(),
-    name: input.sandboxName,
-  });
-  const command = await sandbox.getCommand(input.commandId);
-  const result = await command.wait();
-  const stdout = await result.stdout();
-  const stderr = await result.stderr();
-  const parsedEvents = stdout
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line, index) => {
-      try {
-        const payload = JSON.parse(line) as Record<string, unknown>;
-        return {
-          sequence: index + 1,
-          eventType:
-            typeof payload.type === "string" ? payload.type : "codex.event",
-          payload,
-        };
-      } catch {
-        return {
-          sequence: index + 1,
-          eventType: "codex.output",
-          payload: { text: line.slice(0, 4_000) },
-        };
-      }
-    });
-  await appendCodexEvents(input.runId, parsedEvents);
-
-  if (result.exitCode !== 0) {
-    throw new Error(
-      `Codex exited with ${result.exitCode}: ${stderr.slice(-2_000)}`,
-    );
+  const choice = completion.choices[0]?.message;
+  if (!choice) {
+    throw new Error("The model returned an empty response.");
   }
+
+  const messages: ChatMessage[] = [...input.messages, choice];
+  const events: Array<{
+    sequence: number;
+    eventType: string;
+    payload: Record<string, unknown>;
+  }> = [];
+  let sequence = input.turn * 100;
+  let done = false;
+  let summary: string | null = null;
+
+  if (choice.content && typeof choice.content === "string") {
+    events.push({
+      sequence: (sequence += 1),
+      eventType: "item.completed",
+      payload: { item: { type: "agent_message", text: choice.content } },
+    });
+  }
+
+  const toolCalls = choice.tool_calls ?? [];
+  for (const toolCall of toolCalls) {
+    if (toolCall.type !== "function") continue;
+    let args: Record<string, unknown> = {};
+    try {
+      args = JSON.parse(toolCall.function.arguments || "{}");
+    } catch {
+      args = {};
+    }
+
+    events.push({
+      sequence: (sequence += 1),
+      eventType: "item.started",
+      payload: {
+        item: {
+          type:
+            toolCall.function.name === "run_command"
+              ? "command_execution"
+              : toolCall.function.name,
+          command: args.command,
+          path: args.path,
+        },
+      },
+    });
+
+    const result = await executeToolCall(sandbox, toolCall.function.name, args);
+
+    messages.push({
+      role: "tool",
+      tool_call_id: toolCall.id,
+      content: result.output,
+    });
+
+    events.push({
+      sequence: (sequence += 1),
+      eventType: "item.completed",
+      payload: {
+        item: {
+          type:
+            toolCall.function.name === "run_command"
+              ? "command_execution"
+              : toolCall.function.name,
+          command: args.command,
+          path: args.path,
+          text: result.output.slice(0, 600),
+        },
+      },
+    });
+
+    if (result.finished) {
+      done = true;
+      summary = result.summary ?? "Task completed.";
+    }
+  }
+
+  // A turn with neither tool calls nor a finish nudges the model to act.
+  if (toolCalls.length === 0 && !done) {
+    messages.push({
+      role: "user",
+      content:
+        "Continue using the tools to complete the task, or call finish if the working tree already holds the finished change.",
+    });
+  }
+
+  if (events.length > 0) {
+    await appendCodexEvents(input.runId, events);
+  }
+
+  return { messages, done, summary };
+}
+
+async function openPullRequestStep(input: {
+  userId: string;
+  runId: string;
+  sandboxName: string;
+  branchName: string;
+  summary: string | null;
+}) {
+  "use step";
+
+  const sandbox = await Sandbox.get({
+    ...sandboxCredentials(),
+    name: input.sandboxName,
+  });
 
   const status = await sandbox.runCommand("git", ["status", "--porcelain"], {
     timeoutMs: 30_000,
@@ -235,7 +252,8 @@ async function finalizeCodexStep(input: {
   if (!changedFiles) {
     await updateCodexRun(input.runId, {
       status: "completed",
-      resultSummary: "Codex completed without repository changes.",
+      resultSummary:
+        input.summary ?? "The agent finished without changing any files.",
       completedAt: new Date(),
     });
     return { changed: false };
@@ -245,7 +263,7 @@ async function finalizeCodexStep(input: {
   const commit = await sandbox.runCommand("git", [
     "commit",
     "-m",
-    "morphic: approved Codex run",
+    "morphic: approved agent run",
   ]);
   if (commit.exitCode !== 0) {
     throw new Error(`Git commit failed: ${await commit.stderr()}`);
@@ -275,14 +293,18 @@ async function finalizeCodexStep(input: {
     base: repository.defaultBranch,
     title: `Morphic: ${workspace.objective.slice(0, 180)}`,
     body: [
-      "## Morphic Codex run",
+      "## Morphic agent run",
       "",
-      run.instruction,
+      `**Approved instruction:** ${run.instruction}`,
+      "",
+      input.summary ? `**Summary:** ${input.summary}` : "",
       "",
       `Run ID: \`${run.id}\``,
       "",
-      "This pull request was created from an explicitly approved, isolated Codex run.",
-    ].join("\n"),
+      "This pull request was created from an explicitly approved, isolated agent run.",
+    ]
+      .filter(Boolean)
+      .join("\n"),
   });
 
   await updateCodexRun(input.runId, {
@@ -290,12 +312,13 @@ async function finalizeCodexStep(input: {
     commitSha,
     pullRequestNumber: pull.data.number,
     pullRequestUrl: pull.data.html_url,
-    resultSummary: "Codex pushed a branch and opened a pull request.",
+    resultSummary:
+      input.summary ?? "The agent pushed a branch and opened a pull request.",
     completedAt: new Date(),
   });
   await appendCodexEvents(input.runId, [
     {
-      sequence: parsedEvents.length + 1,
+      sequence: 100_000,
       eventType: "pull_request.created",
       payload: {
         number: pull.data.number,
@@ -308,6 +331,24 @@ async function finalizeCodexStep(input: {
     changed: true,
     pullRequestUrl: pull.data.html_url,
   };
+}
+
+function initialMessages(input: {
+  repositoryFullName: string;
+  objective: string;
+  instruction: string;
+}): ChatMessage[] {
+  return [
+    { role: "system", content: SYSTEM_PROMPT },
+    {
+      role: "user",
+      content: `Repository: ${input.repositoryFullName}
+Objective: ${input.objective}
+Approved instruction: ${input.instruction}
+
+The repository is checked out on a fresh branch in the sandbox. Implement the approved instruction, then call finish.`,
+    },
+  ];
 }
 
 async function failCodexRunStep(runId: string, message: string) {
@@ -357,54 +398,74 @@ export async function codexRunWorkflow(input: {
 }) {
   "use workflow";
 
-  console.info("Starting Codex run workflow", input);
+  console.info("Starting agent run workflow", input);
   let sandboxName: string | undefined;
   try {
     await updateRunProvisioningStep(input.runId);
+    const { run, workspace, repository } = await loadRunContextStep(input);
     const provisioned = await provisionSandboxStep(input.userId, input.runId);
     sandboxName = provisioned.sandboxName;
-    const commandId = await startCodexCommandStep({
-      ...input,
-      sandboxName,
+
+    let messages = initialMessages({
+      repositoryFullName: repository.fullName,
+      objective: workspace.objective,
+      instruction: run.instruction,
     });
 
-    // Poll for at most ~16 minutes (just past the 15-minute command timeout)
-    // so a hung Codex process surfaces as a clear timeout instead of an
-    // indefinitely "running" workspace.
-    const maxPolls = 192;
-    let finished = false;
-    for (let poll = 0; poll < maxPolls; poll += 1) {
-      await sleep("5s");
-      const status = await pollCodexCommandStep({
+    let summary: string | null = null;
+    let done = false;
+    for (let turn = 0; turn < MAX_AGENT_TURNS; turn += 1) {
+      const result = await agentTurnStep({
+        userId: input.userId,
+        runId: input.runId,
         sandboxName,
-        commandId,
+        turn,
+        messages,
       });
-      if (status.done) {
-        finished = true;
+      messages = result.messages;
+      if (result.done) {
+        summary = result.summary;
+        done = true;
         break;
       }
     }
 
-    if (!finished) {
-      throw new Error(
-        "Codex did not finish within the time limit. The sandbox was stopped without creating a pull request.",
-      );
+    if (!done) {
+      // The agent used its full turn budget. Whatever it produced is still
+      // committed below, but we note that it did not signal completion.
+      summary =
+        "The agent reached its step limit. Review the pull request carefully — the change may be incomplete.";
     }
 
-    return await finalizeCodexStep({
-      ...input,
+    return await openPullRequestStep({
+      userId: input.userId,
+      runId: input.runId,
       sandboxName,
       branchName: provisioned.branchName,
-      commandId,
+      summary,
     });
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Unknown Codex run error";
+      error instanceof Error ? error.message : "Unknown agent run error";
     await failCodexRunStep(input.runId, message);
     throw error;
   } finally {
     if (sandboxName) await stopSandboxStep(sandboxName);
   }
+}
+
+async function loadRunContextStep(input: { userId: string; runId: string }) {
+  "use step";
+
+  const { run, workspace, repository } = await getCodexRunForUser(
+    input.userId,
+    input.runId,
+  );
+  return {
+    run: { instruction: run.instruction },
+    workspace: { objective: workspace.objective },
+    repository: { fullName: repository.fullName },
+  };
 }
 
 async function updateRunProvisioningStep(runId: string) {
