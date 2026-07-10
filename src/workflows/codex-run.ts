@@ -266,10 +266,14 @@ async function openPullRequestStep(input: {
   const status = await git(sandbox, ["status", "--porcelain"]);
   const changedFiles = (await status.stdout()).trim();
   if (!changedFiles) {
+    const diag = await sandbox.runCommand("bash", [
+      "-lc",
+      `cd ${REPO_CWD} 2>&1; echo "PWD=$(pwd)"; echo "TOPLEVEL=$(git rev-parse --show-toplevel 2>&1)"; echo "BRANCH=$(git branch --show-current 2>&1)"; echo "LS:"; ls -la | head -20; echo "STATUS:"; git status --porcelain 2>&1 | head`,
+    ]);
+    const diagText = (await diag.stdout()).slice(0, 1_500);
     await updateCodexRun(input.runId, {
       status: "completed",
-      resultSummary:
-        input.summary ?? "The agent finished without changing any files.",
+      resultSummary: `${input.summary ?? "The agent finished."} [diag] ${diagText}`,
       completedAt: new Date(),
     });
     return { changed: false };
