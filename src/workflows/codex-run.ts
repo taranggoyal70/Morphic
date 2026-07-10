@@ -10,6 +10,7 @@ import { getGitHubAccessToken } from "@/lib/auth";
 import { getServerEnv } from "@/lib/env";
 
 const CODEX_CLI_VERSION = "0.142.5";
+const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
 
 function sandboxCredentials() {
   const env = getServerEnv();
@@ -29,7 +30,6 @@ async function provisionSandboxStep(userId: string, runId: string) {
   console.info("Provisioning Codex sandbox", { userId, runId });
   const { run, repository } = await getCodexRunForUser(userId, runId);
   const githubToken = await getGitHubAccessToken(userId);
-  const env = getServerEnv();
   const sandboxName = `morphic-${run.id}`;
   const branchName = `morphic/${run.id.slice(0, 8)}`;
 
@@ -49,10 +49,14 @@ async function provisionSandboxStep(userId: string, runId: string) {
     timeout: 1_200_000,
     persistent: false,
     env: {
-      OPENAI_API_KEY: env.OPENAI_API_KEY,
+      // Drive the Codex CLI through GitHub Models using the same OAuth token
+      // that powers workspace planning — no separate OpenAI credential needed.
+      OPENAI_API_KEY: githubToken,
+      OPENAI_BASE_URL: GITHUB_MODELS_BASE_URL,
     },
     networkPolicy: {
       allow: [
+        "models.github.ai",
         "api.openai.com",
         "github.com",
         "api.github.com",
@@ -136,6 +140,19 @@ Implement the instruction in this repository. Inspect existing conventions first
       "--dangerously-bypass-approvals-and-sandbox",
       "--color",
       "never",
+      // Register GitHub Models as an OpenAI-compatible provider that speaks
+      // the chat-completions wire API (the Codex default Responses API is not
+      // available on GitHub Models).
+      "-c",
+      'model_provider="github-models"',
+      "-c",
+      'model_providers.github-models.name="GitHub Models"',
+      "-c",
+      `model_providers.github-models.base_url="${GITHUB_MODELS_BASE_URL}"`,
+      "-c",
+      'model_providers.github-models.wire_api="chat"',
+      "-c",
+      'model_providers.github-models.env_key="OPENAI_API_KEY"',
       "--model",
       getServerEnv().MORPHIC_CODEX_MODEL,
       prompt,
@@ -351,13 +368,27 @@ export async function codexRunWorkflow(input: {
       sandboxName,
     });
 
-    for (;;) {
+    // Poll for at most ~16 minutes (just past the 15-minute command timeout)
+    // so a hung Codex process surfaces as a clear timeout instead of an
+    // indefinitely "running" workspace.
+    const maxPolls = 192;
+    let finished = false;
+    for (let poll = 0; poll < maxPolls; poll += 1) {
       await sleep("5s");
       const status = await pollCodexCommandStep({
         sandboxName,
         commandId,
       });
-      if (status.done) break;
+      if (status.done) {
+        finished = true;
+        break;
+      }
+    }
+
+    if (!finished) {
+      throw new Error(
+        "Codex did not finish within the time limit. The sandbox was stopped without creating a pull request.",
+      );
     }
 
     return await finalizeCodexStep({
