@@ -294,6 +294,21 @@ async function openPullRequestStep(input: {
     return { changed: false };
   }
 
+  const { run, workspace, repository } = await getCodexRunForUser(
+    input.userId,
+    input.runId,
+  );
+  const githubToken = await getGitHubAccessToken(input.userId);
+
+  // The clone embedded the token in its source config, but the `origin`
+  // remote URL does not carry credentials, so push would be anonymous.
+  // Point origin at an authenticated URL before pushing.
+  await git(sandbox, [
+    "remote",
+    "set-url",
+    "origin",
+    `https://x-access-token:${githubToken}@github.com/${repository.fullName}.git`,
+  ]);
   const push = await git(
     sandbox,
     ["push", "--set-upstream", "origin", input.branchName],
@@ -303,11 +318,6 @@ async function openPullRequestStep(input: {
     throw new Error(`Git push failed: ${await push.stderr()}`);
   }
 
-  const { run, workspace, repository } = await getCodexRunForUser(
-    input.userId,
-    input.runId,
-  );
-  const githubToken = await getGitHubAccessToken(input.userId);
   const { Octokit } = await import("@octokit/rest");
   const github = new Octokit({ auth: githubToken, userAgent: "morphic/0.1.0" });
   const pull = await github.rest.pulls.create({
