@@ -16,6 +16,10 @@ import { format, formatDistanceToNowStrict } from "date-fns";
 import { AdaptWorkspaceForm } from "@/components/adapt-workspace-form";
 import { CodexPanel } from "@/components/codex-panel";
 import { DecisionOptions } from "@/components/decision-options";
+import {
+  RetryGenerationButton,
+  WorkspaceActions,
+} from "@/components/workspace-actions";
 import { WorkspaceRefresh } from "@/components/workspace-refresh";
 import type { WorkspacePlan } from "@/lib/domain/workspace";
 import { cn } from "@/lib/utils";
@@ -169,6 +173,10 @@ export function WorkspaceCanvas({
                   <LockSimpleIcon size={13} />
                 </span>
               )}
+              <WorkspaceActions
+                workspaceId={workspace.id}
+                status={workspace.status}
+              />
             </div>
           </div>
 
@@ -215,7 +223,8 @@ export function WorkspaceCanvas({
                 : "Morphic is capturing live GitHub evidence and shaping the interface around your objective."}
             </p>
             {workspace.status === "failed" && (
-              <div className="mt-6">
+              <div className="mt-6 space-y-4">
+                <RetryGenerationButton workspaceId={workspace.id} />
                 <AdaptWorkspaceForm
                   workspaceId={workspace.id}
                   disabled={false}

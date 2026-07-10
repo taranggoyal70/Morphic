@@ -27,6 +27,10 @@ export function AppSidebar({
   workspaces: SidebarWorkspace[];
   activeWorkspaceId?: string;
 }) {
+  const ordered = [...workspaces].sort(
+    (a, b) => Number(a.status === "archived") - Number(b.status === "archived"),
+  );
+
   return (
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-[238px] flex-col border-r border-line bg-[#090b10] lg:flex">
       <div className="flex h-16 items-center px-5">
@@ -47,7 +51,7 @@ export function AppSidebar({
           </Link>
         </div>
         <nav className="space-y-1">
-          {workspaces.map((workspace) => (
+          {ordered.map((workspace) => (
             <Link
               key={workspace.id}
               href={`/workspaces/${workspace.id}`}

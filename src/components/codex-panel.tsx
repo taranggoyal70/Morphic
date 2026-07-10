@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { RunTimeline } from "@/components/run-timeline";
+
 type CodexRun = {
   id: string;
   instruction: string;
@@ -81,6 +83,37 @@ export function CodexPanel({
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Run could not be created.",
+      );
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function cancelRun(runId: string) {
+    const confirmed = window.confirm(
+      "Cancel this run? The sandbox will be stopped and no pull request will be created.",
+    );
+    if (!confirmed) return;
+    setPending(true);
+    try {
+      const response = await fetch(`/api/codex-runs/${runId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok && response.status !== 204) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: { message?: string };
+        } | null;
+        throw new Error(
+          payload?.error?.message ?? "The run could not be cancelled.",
+        );
+      }
+      toast.success("Run cancelled.");
+      router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "The run could not be cancelled.",
       );
     } finally {
       setPending(false);
@@ -217,6 +250,17 @@ export function CodexPanel({
                     </div>
                   )}
 
+                  {activeStatuses.has(run.status) && (
+                    <button
+                      type="button"
+                      disabled={pending}
+                      onClick={() => cancelRun(run.id)}
+                      className="shrink-0 rounded-lg border border-danger/25 px-3 py-1.5 text-xs font-medium text-danger transition hover:bg-danger/10 disabled:opacity-50"
+                    >
+                      Cancel run
+                    </button>
+                  )}
+
                   {run.pullRequestUrl && (
                     <a
                       href={run.pullRequestUrl}
@@ -229,6 +273,9 @@ export function CodexPanel({
                     </a>
                   )}
                 </div>
+                {run.status !== "awaiting_approval" && (
+                  <RunTimeline runId={run.id} runStatus={run.status} />
+                )}
               </article>
             ))}
           </div>
