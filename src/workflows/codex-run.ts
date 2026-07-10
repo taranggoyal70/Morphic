@@ -16,7 +16,24 @@ import { getServerEnv } from "@/lib/env";
 
 const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
 const MAX_AGENT_TURNS = 14;
+const REPO_CWD = "/vercel/sandbox";
 type ChatMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
+
+// The sandbox's default working directory is not the cloned repository, so
+// every git command must run explicitly from the repo root — otherwise git
+// operates outside the working tree and silently sees no changes.
+function git(
+  sandbox: Awaited<ReturnType<typeof Sandbox.getOrCreate>>,
+  args: string[],
+  timeoutMs = 30_000,
+) {
+  return sandbox.runCommand({
+    cmd: "git",
+    args,
+    cwd: REPO_CWD,
+    timeoutMs,
+  });
+}
 
 function sandboxCredentials() {
   const env = getServerEnv();
@@ -73,15 +90,16 @@ async function provisionSandboxStep(userId: string, runId: string) {
     },
   });
 
-  const base = await sandbox.runCommand("git", ["rev-parse", "HEAD"]);
+  const base = await git(sandbox, ["rev-parse", "HEAD"]);
   const baseSha = (await base.stdout()).trim();
-  await sandbox.runCommand("git", ["checkout", "-b", branchName]);
-  await sandbox.runCommand("git", ["config", "user.name", "Morphic Agent"]);
-  await sandbox.runCommand("git", [
-    "config",
-    "user.email",
-    "agent@morphic.dev",
-  ]);
+  const checkout = await git(sandbox, ["checkout", "-b", branchName]);
+  if (checkout.exitCode !== 0) {
+    throw new Error(
+      `Could not create work branch: ${(await checkout.stderr()).slice(-500)}`,
+    );
+  }
+  await git(sandbox, ["config", "user.name", "Morphic Agent"]);
+  await git(sandbox, ["config", "user.email", "agent@morphic.dev"]);
 
   await updateCodexRun(runId, {
     status: "running",
@@ -245,9 +263,7 @@ async function openPullRequestStep(input: {
     name: input.sandboxName,
   });
 
-  const status = await sandbox.runCommand("git", ["status", "--porcelain"], {
-    timeoutMs: 30_000,
-  });
+  const status = await git(sandbox, ["status", "--porcelain"]);
   const changedFiles = (await status.stdout()).trim();
   if (!changedFiles) {
     await updateCodexRun(input.runId, {
@@ -259,8 +275,8 @@ async function openPullRequestStep(input: {
     return { changed: false };
   }
 
-  await sandbox.runCommand("git", ["add", "--all"]);
-  const commit = await sandbox.runCommand("git", [
+  await git(sandbox, ["add", "--all"]);
+  const commit = await git(sandbox, [
     "commit",
     "-m",
     "morphic: approved agent run",
@@ -268,12 +284,12 @@ async function openPullRequestStep(input: {
   if (commit.exitCode !== 0) {
     throw new Error(`Git commit failed: ${await commit.stderr()}`);
   }
-  const shaResult = await sandbox.runCommand("git", ["rev-parse", "HEAD"]);
+  const shaResult = await git(sandbox, ["rev-parse", "HEAD"]);
   const commitSha = (await shaResult.stdout()).trim();
-  const push = await sandbox.runCommand(
-    "git",
+  const push = await git(
+    sandbox,
     ["push", "--set-upstream", "origin", input.branchName],
-    { timeoutMs: 120_000 },
+    120_000,
   );
   if (push.exitCode !== 0) {
     throw new Error(`Git push failed: ${await push.stderr()}`);
