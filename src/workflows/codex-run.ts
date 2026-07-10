@@ -120,7 +120,7 @@ async function provisionSandboxStep(userId: string, runId: string) {
     },
   ]);
 
-  return { sandboxName, branchName };
+  return { sandboxName, branchName, baseSha };
 }
 
 async function agentTurnStep(input: {
@@ -254,6 +254,7 @@ async function openPullRequestStep(input: {
   runId: string;
   sandboxName: string;
   branchName: string;
+  baseSha: string;
   summary: string | null;
 }) {
   "use step";
@@ -263,33 +264,36 @@ async function openPullRequestStep(input: {
     name: input.sandboxName,
   });
 
+  // Commit any changes the agent left uncommitted. (The agent may also have
+  // committed its own work — that is fine; we detect it by comparing HEAD to
+  // the base commit below, so a clean working tree does not mean "no work".)
   const status = await git(sandbox, ["status", "--porcelain"]);
-  const changedFiles = (await status.stdout()).trim();
-  if (!changedFiles) {
-    const diag = await sandbox.runCommand("bash", [
-      "-lc",
-      `cd ${REPO_CWD} 2>&1; echo "PWD=$(pwd)"; echo "TOPLEVEL=$(git rev-parse --show-toplevel 2>&1)"; echo "BRANCH=$(git branch --show-current 2>&1)"; echo "LS:"; ls -la | head -20; echo "STATUS:"; git status --porcelain 2>&1 | head`,
+  const pendingChanges = Boolean((await status.stdout()).trim());
+  if (pendingChanges) {
+    await git(sandbox, ["add", "--all"]);
+    const commit = await git(sandbox, [
+      "commit",
+      "-m",
+      "morphic: approved agent run",
     ]);
-    const diagText = (await diag.stdout()).slice(0, 1_500);
+    if (commit.exitCode !== 0) {
+      throw new Error(`Git commit failed: ${await commit.stderr()}`);
+    }
+  }
+
+  const shaResult = await git(sandbox, ["rev-parse", "HEAD"]);
+  const commitSha = (await shaResult.stdout()).trim();
+
+  if (commitSha === input.baseSha) {
     await updateCodexRun(input.runId, {
       status: "completed",
-      resultSummary: `${input.summary ?? "The agent finished."} [diag] ${diagText}`,
+      resultSummary:
+        input.summary ?? "The agent finished without changing any files.",
       completedAt: new Date(),
     });
     return { changed: false };
   }
 
-  await git(sandbox, ["add", "--all"]);
-  const commit = await git(sandbox, [
-    "commit",
-    "-m",
-    "morphic: approved agent run",
-  ]);
-  if (commit.exitCode !== 0) {
-    throw new Error(`Git commit failed: ${await commit.stderr()}`);
-  }
-  const shaResult = await git(sandbox, ["rev-parse", "HEAD"]);
-  const commitSha = (await shaResult.stdout()).trim();
   const push = await git(
     sandbox,
     ["push", "--set-upstream", "origin", input.branchName],
@@ -462,6 +466,7 @@ export async function codexRunWorkflow(input: {
       runId: input.runId,
       sandboxName,
       branchName: provisioned.branchName,
+      baseSha: provisioned.baseSha,
       summary,
     });
   } catch (error) {
