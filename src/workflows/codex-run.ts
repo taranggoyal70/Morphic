@@ -123,16 +123,25 @@ async function provisionSandboxStep(userId: string, runId: string) {
   return { sandboxName, branchName, baseSha };
 }
 
+type Usage = {
+  inputTokens: number;
+  cachedInputTokens: number;
+  outputTokens: number;
+  reasoningOutputTokens: number;
+};
+
 async function agentTurnStep(input: {
   userId: string;
   runId: string;
   sandboxName: string;
   turn: number;
   messages: ChatMessage[];
+  usage: Usage;
 }): Promise<{
   messages: ChatMessage[];
   done: boolean;
   summary: string | null;
+  usage: Usage;
 }> {
   "use step";
 
@@ -154,6 +163,22 @@ async function agentTurnStep(input: {
     tool_choice: "auto",
     max_tokens: 4_096,
   });
+
+  // Accumulate token usage across turns and persist it so the run timeline
+  // shows a live, growing cost as the agent works.
+  const turnUsage = completion.usage;
+  const usage: Usage = {
+    inputTokens: input.usage.inputTokens + (turnUsage?.prompt_tokens ?? 0),
+    cachedInputTokens:
+      input.usage.cachedInputTokens +
+      (turnUsage?.prompt_tokens_details?.cached_tokens ?? 0),
+    outputTokens:
+      input.usage.outputTokens + (turnUsage?.completion_tokens ?? 0),
+    reasoningOutputTokens:
+      input.usage.reasoningOutputTokens +
+      (turnUsage?.completion_tokens_details?.reasoning_tokens ?? 0),
+  };
+  await updateCodexRun(input.runId, { usage });
 
   const choice = completion.choices[0]?.message;
   if (!choice) {
@@ -246,7 +271,7 @@ async function agentTurnStep(input: {
     await appendCodexEvents(input.runId, events);
   }
 
-  return { messages, done, summary };
+  return { messages, done, summary, usage };
 }
 
 async function openPullRequestStep(input: {
@@ -448,6 +473,12 @@ export async function codexRunWorkflow(input: {
 
     let summary: string | null = null;
     let done = false;
+    let usage: Usage = {
+      inputTokens: 0,
+      cachedInputTokens: 0,
+      outputTokens: 0,
+      reasoningOutputTokens: 0,
+    };
     for (let turn = 0; turn < MAX_AGENT_TURNS; turn += 1) {
       const result = await agentTurnStep({
         userId: input.userId,
@@ -455,8 +486,10 @@ export async function codexRunWorkflow(input: {
         sandboxName,
         turn,
         messages,
+        usage,
       });
       messages = result.messages;
+      usage = result.usage;
       if (result.done) {
         summary = result.summary;
         done = true;
