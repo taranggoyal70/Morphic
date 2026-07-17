@@ -1,5 +1,6 @@
 import { Sandbox } from "@vercel/sandbox";
 import OpenAI from "openai";
+import { FatalError } from "workflow";
 
 import {
   appendCodexEvents,
@@ -22,39 +23,99 @@ const REPO_CWD = "/vercel/sandbox";
 // tokens for gpt-4.1-class models, so both the conversation and max_tokens
 // must stay under those ceilings or every request past a few file reads 413s.
 const MAX_COMPLETION_TOKENS = 3_000;
-const MAX_PROMPT_CHARS = 24_000;
+const MAX_PROMPT_CHARS = 18_000;
 const STALE_TOOL_OUTPUT_CHARS = 400;
+const RECENT_TOOL_OUTPUT_CHARS = 2_000;
 type ChatMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
 
-// Older tool outputs are the bulk of the prompt but rarely needed verbatim —
-// shrink them (newest last, preserved) until the conversation fits the
-// free-tier request budget. Never drop messages: tool_call ids must keep
-// their matching tool replies or the API rejects the request.
-function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
-  const size = (list: ChatMessage[]) =>
-    list.reduce(
-      (total, message) =>
-        total + (typeof message.content === "string" ? message.content.length : 0),
-      0,
-    );
-  if (size(messages) <= MAX_PROMPT_CHARS) return messages;
-
-  const pruned = [...messages];
-  for (let i = 0; i < pruned.length && size(pruned) > MAX_PROMPT_CHARS; i += 1) {
-    const message = pruned[i];
-    if (
-      message.role === "tool" &&
-      typeof message.content === "string" &&
-      message.content.length > STALE_TOOL_OUTPUT_CHARS &&
-      i < pruned.length - 4
-    ) {
-      pruned[i] = {
-        ...message,
-        content: `${message.content.slice(0, STALE_TOOL_OUTPUT_CHARS)}\n…[older output trimmed — re-read the file if needed]`,
-      };
+// Tool-call arguments are re-sent every turn too — a write_file call carries
+// the entire file body in its arguments, so ignoring them undercounts badly.
+function messageSize(message: ChatMessage): number {
+  let total =
+    typeof message.content === "string" ? message.content.length : 0;
+  if (message.role === "assistant" && message.tool_calls) {
+    for (const call of message.tool_calls) {
+      if (call.type === "function") total += call.function.arguments.length;
     }
   }
-  return pruned;
+  return total;
+}
+
+function trimToolContent(message: ChatMessage, max: number): ChatMessage {
+  if (
+    message.role !== "tool" ||
+    typeof message.content !== "string" ||
+    message.content.length <= max
+  ) {
+    return message;
+  }
+  return {
+    ...message,
+    content: `${message.content.slice(0, max)}\n…[trimmed — re-read the file if needed]`,
+  };
+}
+
+// Shrink the conversation until it fits the free-tier request budget, in
+// escalating passes so recent context survives longest. Never drop messages:
+// tool_call ids must keep their matching tool replies or the API rejects
+// the request. Each pass must be able to reach the budget on its own worst
+// case — an "exempt recent messages" carve-out is how the 413s slipped through.
+function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
+  const size = (list: ChatMessage[]) =>
+    list.reduce((total, message) => total + messageSize(message), 0);
+  if (size(messages) <= MAX_PROMPT_CHARS) return messages;
+
+  // Pass 1: stale tool outputs to a stub; the last few keep more detail.
+  let pruned = messages.map((message, i) =>
+    trimToolContent(
+      message,
+      i < messages.length - 4
+        ? STALE_TOOL_OUTPUT_CHARS
+        : RECENT_TOOL_OUTPUT_CHARS,
+    ),
+  );
+  if (size(pruned) <= MAX_PROMPT_CHARS) return pruned;
+
+  // Pass 2: everything except the newest tool output down to the stub size.
+  pruned = pruned.map((message, i) =>
+    i < pruned.length - 1
+      ? trimToolContent(message, STALE_TOOL_OUTPUT_CHARS)
+      : message,
+  );
+  if (size(pruned) <= MAX_PROMPT_CHARS) return pruned;
+
+  // Pass 3: elide bulky arguments on already-executed tool calls.
+  pruned = pruned.map((message, i) => {
+    if (
+      message.role !== "assistant" ||
+      !message.tool_calls ||
+      i >= pruned.length - 2
+    ) {
+      return message;
+    }
+    return {
+      ...message,
+      tool_calls: message.tool_calls.map((call) =>
+        call.type === "function" && call.function.arguments.length > 600
+          ? {
+              ...call,
+              function: {
+                ...call.function,
+                arguments: JSON.stringify({
+                  note: "arguments elided after execution",
+                }),
+              },
+            }
+          : call,
+      ),
+    };
+  });
+  if (size(pruned) <= MAX_PROMPT_CHARS) return pruned;
+
+  // Pass 4: last resort — every tool output down to the stub size.
+  return pruned.map((message) =>
+    trimToolContent(message, STALE_TOOL_OUTPUT_CHARS),
+  );
 }
 
 // The sandbox's default working directory is not the cloned repository, so
@@ -195,13 +256,31 @@ async function agentTurnStep(input: {
   });
 
   const prunedMessages = pruneMessages(input.messages);
-  const completion = await client.chat.completions.create({
-    model: env.MORPHIC_CODEX_MODEL,
-    messages: prunedMessages,
-    tools: AGENT_TOOLS,
-    tool_choice: "auto",
-    max_tokens: MAX_COMPLETION_TOKENS,
-  });
+  let completion: OpenAI.Chat.Completions.ChatCompletion;
+  try {
+    completion = await client.chat.completions.create({
+      model: env.MORPHIC_CODEX_MODEL,
+      messages: prunedMessages,
+      tools: AGENT_TOOLS,
+      tool_choice: "auto",
+      max_tokens: MAX_COMPLETION_TOKENS,
+    });
+  } catch (error) {
+    // 4xx responses (except 429) are deterministic — the workflow's automatic
+    // step retries would repeat the identical rejected request at full cost.
+    if (
+      error instanceof OpenAI.APIError &&
+      typeof error.status === "number" &&
+      error.status >= 400 &&
+      error.status < 500 &&
+      error.status !== 429
+    ) {
+      throw new FatalError(
+        `GitHub Models rejected the request (${error.status}): ${error.message}`,
+      );
+    }
+    throw error;
+  }
 
   // Accumulate token usage across turns and persist it so the run timeline
   // shows a live, growing cost as the agent works.
