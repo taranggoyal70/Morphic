@@ -3,8 +3,11 @@ import "server-only";
 import type { Sandbox } from "@vercel/sandbox";
 
 const SANDBOX_CWD = "/vercel/sandbox";
-const MAX_OUTPUT_CHARS = 12_000;
-const MAX_FILE_CHARS = 60_000;
+// GitHub Models' free tier allows ~8K input tokens per request; a single
+// oversized tool output can consume the whole budget, so file reads must
+// stay a fraction of it (~3K tokens) for the conversation to keep fitting.
+const MAX_OUTPUT_CHARS = 8_000;
+const MAX_FILE_CHARS = 12_000;
 
 export const SYSTEM_PROMPT = `You are Morphic's coding agent, executing an approved task inside an isolated sandbox that already has the repository checked out on a fresh branch.
 

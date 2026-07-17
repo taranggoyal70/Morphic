@@ -13,11 +13,49 @@ import {
 } from "@/lib/coding-agent";
 import { getGitHubAccessToken } from "@/lib/auth";
 import { getServerEnv } from "@/lib/env";
+import { errorMessage } from "@/lib/error-message";
 
 const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
 const MAX_AGENT_TURNS = 14;
 const REPO_CWD = "/vercel/sandbox";
+// GitHub Models' free tier caps requests at roughly 8K input / 4K output
+// tokens for gpt-4.1-class models, so both the conversation and max_tokens
+// must stay under those ceilings or every request past a few file reads 413s.
+const MAX_COMPLETION_TOKENS = 3_000;
+const MAX_PROMPT_CHARS = 24_000;
+const STALE_TOOL_OUTPUT_CHARS = 400;
 type ChatMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
+
+// Older tool outputs are the bulk of the prompt but rarely needed verbatim —
+// shrink them (newest last, preserved) until the conversation fits the
+// free-tier request budget. Never drop messages: tool_call ids must keep
+// their matching tool replies or the API rejects the request.
+function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
+  const size = (list: ChatMessage[]) =>
+    list.reduce(
+      (total, message) =>
+        total + (typeof message.content === "string" ? message.content.length : 0),
+      0,
+    );
+  if (size(messages) <= MAX_PROMPT_CHARS) return messages;
+
+  const pruned = [...messages];
+  for (let i = 0; i < pruned.length && size(pruned) > MAX_PROMPT_CHARS; i += 1) {
+    const message = pruned[i];
+    if (
+      message.role === "tool" &&
+      typeof message.content === "string" &&
+      message.content.length > STALE_TOOL_OUTPUT_CHARS &&
+      i < pruned.length - 4
+    ) {
+      pruned[i] = {
+        ...message,
+        content: `${message.content.slice(0, STALE_TOOL_OUTPUT_CHARS)}\n…[older output trimmed — re-read the file if needed]`,
+      };
+    }
+  }
+  return pruned;
+}
 
 // The sandbox's default working directory is not the cloned repository, so
 // every git command must run explicitly from the repo root — otherwise git
@@ -156,12 +194,13 @@ async function agentTurnStep(input: {
     baseURL: GITHUB_MODELS_BASE_URL,
   });
 
+  const prunedMessages = pruneMessages(input.messages);
   const completion = await client.chat.completions.create({
     model: env.MORPHIC_CODEX_MODEL,
-    messages: input.messages,
+    messages: prunedMessages,
     tools: AGENT_TOOLS,
     tool_choice: "auto",
-    max_tokens: 4_096,
+    max_tokens: MAX_COMPLETION_TOKENS,
   });
 
   // Accumulate token usage across turns and persist it so the run timeline
@@ -185,7 +224,7 @@ async function agentTurnStep(input: {
     throw new Error("The model returned an empty response.");
   }
 
-  const messages: ChatMessage[] = [...input.messages, choice];
+  const messages: ChatMessage[] = [...prunedMessages, choice];
   const events: Array<{
     sequence: number;
     eventType: string;
@@ -513,9 +552,10 @@ export async function codexRunWorkflow(input: {
       summary,
     });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown agent run error";
-    await failCodexRunStep(input.runId, message);
+    await failCodexRunStep(
+      input.runId,
+      errorMessage(error, "Unknown agent run error"),
+    );
     throw error;
   } finally {
     if (sandboxName) await stopSandboxStep(sandboxName);
