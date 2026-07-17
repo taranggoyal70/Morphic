@@ -23,7 +23,7 @@ const REPO_CWD = "/vercel/sandbox";
 // tokens for gpt-4.1-class models, so both the conversation and max_tokens
 // must stay under those ceilings or every request past a few file reads 413s.
 const MAX_COMPLETION_TOKENS = 3_000;
-const MAX_PROMPT_CHARS = 18_000;
+const MAX_PROMPT_CHARS = 24_000;
 const STALE_TOOL_OUTPUT_CHARS = 400;
 const RECENT_TOOL_OUTPUT_CHARS = 2_000;
 type ChatMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
@@ -65,22 +65,24 @@ function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
     list.reduce((total, message) => total + messageSize(message), 0);
   if (size(messages) <= MAX_PROMPT_CHARS) return messages;
 
-  // Pass 1: stale tool outputs to a stub; the last few keep more detail.
-  let pruned = messages.map((message, i) =>
-    trimToolContent(
-      message,
-      i < messages.length - 4
-        ? STALE_TOOL_OUTPUT_CHARS
-        : RECENT_TOOL_OUTPUT_CHARS,
-    ),
-  );
+  // Pass 1: newest two messages stay intact (the file the model just read
+  // must arrive unclipped or exact-text edits become impossible), the next
+  // few keep reduced detail, and everything older becomes a stub. Trimming
+  // down to a single full-size survivor starves the model into a re-read
+  // loop that burns the whole turn budget.
+  let pruned = messages.map((message, i) => {
+    const fromEnd = messages.length - 1 - i;
+    if (fromEnd < 2) return message;
+    if (fromEnd < 6) return trimToolContent(message, RECENT_TOOL_OUTPUT_CHARS);
+    return trimToolContent(message, STALE_TOOL_OUTPUT_CHARS);
+  });
   if (size(pruned) <= MAX_PROMPT_CHARS) return pruned;
 
-  // Pass 2: everything except the newest tool output down to the stub size.
+  // Pass 2: everything except the newest two messages down to the stub size.
   pruned = pruned.map((message, i) =>
-    i < pruned.length - 1
-      ? trimToolContent(message, STALE_TOOL_OUTPUT_CHARS)
-      : message,
+    pruned.length - 1 - i < 2
+      ? message
+      : trimToolContent(message, STALE_TOOL_OUTPUT_CHARS),
   );
   if (size(pruned) <= MAX_PROMPT_CHARS) return pruned;
 
