@@ -24,24 +24,34 @@ export type PlannerInput = {
   adaptationCommand?: string;
 };
 
+// Array lengths are capped below; these bound individual string lengths too, so
+// a single pathological title or objective can't blow up the planner's token
+// budget.
+const MAX_TITLE = 200;
+const MAX_TEXT = 1_000;
+
+function truncate(value: string, max: number): string {
+  return value.length > max ? `${value.slice(0, max - 1)}…` : value;
+}
+
 export function compactPlannerInput(input: PlannerInput) {
   return {
-    objective: input.objective,
+    objective: truncate(input.objective, MAX_TEXT),
     targetDate: input.targetDate?.toISOString() ?? null,
-    constraints: input.constraints,
+    constraints: input.constraints.map((constraint) => truncate(constraint, MAX_TITLE)),
     repository: input.repository,
     snapshot: {
       headSha: input.snapshot.headSha,
       issues: input.snapshot.issues.slice(0, 100).map((issue) => ({
         number: issue.number,
-        title: issue.title,
+        title: truncate(issue.title, MAX_TITLE),
         state: issue.state,
         labels: issue.labels,
         assignees: issue.assignees,
       })),
       pullRequests: input.snapshot.pullRequests.slice(0, 50).map((pull) => ({
         number: pull.number,
-        title: pull.title,
+        title: truncate(pull.title, MAX_TITLE),
         state: pull.state,
         draft: pull.draft,
         head: pull.head,
