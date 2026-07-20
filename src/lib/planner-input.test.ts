@@ -68,4 +68,14 @@ describe("compactPlannerInput", () => {
       "2026-07-20T00:00:00.000Z",
     );
   });
+
+  it("bounds pathologically long strings to protect the token budget", () => {
+    const input = plannerInput();
+    input.objective = "x".repeat(5_000);
+    input.snapshot.issues[0].title = "y".repeat(500);
+    const compact = compactPlannerInput(input);
+    expect(compact.objective.length).toBe(1_000);
+    expect(compact.objective.endsWith("…")).toBe(true);
+    expect(compact.snapshot.issues[0].title.length).toBe(200);
+  });
 });
