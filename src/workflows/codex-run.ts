@@ -15,6 +15,7 @@ import {
 import { getGitHubAccessToken } from "@/lib/auth";
 import { getServerEnv } from "@/lib/env";
 import { errorMessage } from "@/lib/error-message";
+import { fetchLocusSlice, type LocusSlice } from "@/lib/locus";
 
 const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
 const MAX_AGENT_TURNS = 14;
@@ -516,7 +517,15 @@ function initialMessages(input: {
   repositoryFullName: string;
   objective: string;
   instruction: string;
+  locusSlice: LocusSlice | null;
 }): ChatMessage[] {
+  const scopeHint = input.locusSlice
+    ? `\n\nLikely-relevant files (scoped by Locus, ${input.locusSlice.savedPct}% smaller than the full tree; ${input.locusSlice.reason}):
+${input.locusSlice.files.map((f) => `- ${f}`).join("\n")}
+
+Start by reading these files. They are a starting hint, not the full picture — read more of the tree if the task needs it.`
+    : "";
+
   return [
     { role: "system", content: SYSTEM_PROMPT },
     {
@@ -524,6 +533,7 @@ function initialMessages(input: {
       content: `Repository: ${input.repositoryFullName}
 Objective: ${input.objective}
 Approved instruction: ${input.instruction}
+${scopeHint}
 
 The repository is checked out on a fresh branch in the sandbox. Implement the approved instruction, then call finish.`,
     },
@@ -585,10 +595,16 @@ export async function codexRunWorkflow(input: {
     const provisioned = await provisionSandboxStep(input.userId, input.runId);
     sandboxName = provisioned.sandboxName;
 
+    const locusSlice = await fetchLocusSliceStep({
+      repositoryFullName: repository.fullName,
+      instruction: run.instruction,
+    });
+
     let messages = initialMessages({
       repositoryFullName: repository.fullName,
       objective: workspace.objective,
       instruction: run.instruction,
+      locusSlice,
     });
 
     let summary: string | null = null;
@@ -641,6 +657,15 @@ export async function codexRunWorkflow(input: {
   } finally {
     if (sandboxName) await stopSandboxStep(sandboxName);
   }
+}
+
+async function fetchLocusSliceStep(input: {
+  repositoryFullName: string;
+  instruction: string;
+}): Promise<LocusSlice | null> {
+  "use step";
+
+  return fetchLocusSlice(input.repositoryFullName, input.instruction);
 }
 
 async function loadRunContextStep(input: { userId: string; runId: string }) {

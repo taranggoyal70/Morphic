@@ -16,6 +16,7 @@ const serverSchema = z.object({
   VERCEL_TOKEN: z.string().min(1).optional(),
   VERCEL_TEAM_ID: z.string().min(1).optional(),
   VERCEL_PROJECT_ID: z.string().min(1).optional(),
+  LOCUS_API_KEY: z.string().min(1).optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverSchema>;
@@ -40,6 +41,7 @@ export function getServerEnv(): ServerEnv {
     VERCEL_TOKEN: process.env.VERCEL_TOKEN,
     VERCEL_TEAM_ID: process.env.VERCEL_TEAM_ID,
     VERCEL_PROJECT_ID: process.env.VERCEL_PROJECT_ID,
+    LOCUS_API_KEY: process.env.LOCUS_API_KEY,
   });
 
   if (!result.success) {
