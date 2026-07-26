@@ -9,6 +9,7 @@ import {
   codexRuns,
   repositories,
   workspaces,
+  workspaceVersions,
 } from "@/db/schema";
 import { AppError } from "@/lib/errors";
 
@@ -58,12 +59,20 @@ export async function getCodexRunForUser(userId: string, runId: string) {
     .select({
       run: codexRuns,
       workspace: workspaces,
+      workspaceVersion: workspaceVersions,
       repository: repositories,
       approval: approvals,
     })
     .from(codexRuns)
     .innerJoin(workspaces, eq(codexRuns.workspaceId, workspaces.id))
     .innerJoin(repositories, eq(workspaces.repositoryId, repositories.id))
+    .leftJoin(
+      workspaceVersions,
+      and(
+        eq(workspaceVersions.workspaceId, workspaces.id),
+        eq(workspaceVersions.version, workspaces.currentVersion),
+      ),
+    )
     .leftJoin(approvals, eq(codexRuns.id, approvals.runId))
     .where(and(eq(codexRuns.id, runId), eq(codexRuns.userId, userId)))
     .limit(1);
