@@ -3,6 +3,7 @@ import "server-only";
 import type { Sandbox } from "@vercel/sandbox";
 
 import { evaluateSandboxCommand } from "@/lib/sandbox-command-policy";
+import { didWorkingTreeChange } from "@/lib/working-tree";
 
 const SANDBOX_CWD = "/vercel/sandbox";
 // GitHub Models' free tier allows ~8K input tokens per request; a single
@@ -325,6 +326,10 @@ export async function executeToolCall(
         commandResult: { status: "blocked", exitCode: null },
       };
     }
+    const beforeStatusResult = await sandbox.runCommand(
+      "bash",
+      ["-lc", `cd ${SANDBOX_CWD} && git status --porcelain`],
+    );
     const result = await sandbox.runCommand(
       "bash",
       ["-lc", `cd ${SANDBOX_CWD} && ${command}`],
@@ -332,8 +337,19 @@ export async function executeToolCall(
         timeoutMs: 120_000,
       },
     );
+    const afterStatusResult = await sandbox.runCommand(
+      "bash",
+      ["-lc", `cd ${SANDBOX_CWD} && git status --porcelain`],
+    );
     const stdout = (await result.stdout()).trim();
     const stderr = (await result.stderr()).trim();
+    const changedTree =
+      beforeStatusResult.exitCode === 0 && afterStatusResult.exitCode === 0
+        ? didWorkingTreeChange(
+            await beforeStatusResult.stdout(),
+            await afterStatusResult.stdout(),
+          )
+        : undefined;
     const body = [
       `exit code: ${result.exitCode}`,
       stdout && `stdout:\n${stdout}`,
@@ -344,7 +360,7 @@ export async function executeToolCall(
     return {
       output: clamp(body, MAX_OUTPUT_CHARS),
       finished: false,
-      changedTree: true,
+      changedTree,
       commandResult: {
         status: result.exitCode === 0 ? "succeeded" : "failed",
         exitCode: result.exitCode,
