@@ -73,4 +73,51 @@ describe("buildExecutionContextPrompt", () => {
     expect(prompt).toContain("src/app/onboarding/page.tsx");
     expect(prompt).not.toContain("[object Object]");
   });
+
+  it("renders unresolved decisions and risks as explicit execution context", () => {
+    const context = executionContext();
+    context.plan.decisions = [
+      {
+        id: "auth-provider",
+        question: "Which authentication provider remains supported?",
+        context: "Existing users depend on Clerk.",
+        options: [
+          { id: "clerk", label: "Keep Clerk", tradeoff: "Existing dependency" },
+          { id: "custom", label: "Build auth", tradeoff: "More control" },
+        ],
+        recommendedOptionId: "clerk",
+      },
+    ];
+    context.plan.risks = [
+      {
+        id: "session-regression",
+        title: "Session regression",
+        detail: "Changing auth may invalidate active sessions.",
+        severity: "high",
+        mitigation: "Preserve the existing Clerk integration.",
+      },
+    ];
+
+    const prompt = buildExecutionContextPrompt(context);
+
+    expect(prompt).toContain(
+      "Which authentication provider remains supported?",
+    );
+    expect(prompt).toContain("Recommended option: clerk");
+    expect(prompt).toContain("HIGH Session regression");
+  });
+
+  it("never exceeds the execution prompt budget", () => {
+    const context = executionContext();
+    context.instruction = "instruction ".repeat(2_000);
+    context.objective = "objective ".repeat(2_000);
+    context.repositoryPaths = Array.from(
+      { length: 200 },
+      (_, index) => `src/generated/${index}/${"deep/".repeat(80)}file.ts`,
+    );
+
+    expect(buildExecutionContextPrompt(context).length).toBeLessThanOrEqual(
+      18_000,
+    );
+  });
 });
