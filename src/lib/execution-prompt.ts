@@ -73,7 +73,10 @@ export function buildExecutionContextPrompt(context: ExecutionContext) {
     bullets(
       plan.decisions.map(
         (decision) =>
-          `${decision.id}: ${decision.question} Recommended option: ${decision.recommendedOptionId}.`,
+          `${decision.id}: ${decision.question} Context: ${decision.context} ` +
+          `Options: ${decision.options
+            .map((option) => `${option.label}: ${option.tradeoff}`)
+            .join("; ")}. Recommended option: ${decision.recommendedOptionId}.`,
       ),
     ),
     "",

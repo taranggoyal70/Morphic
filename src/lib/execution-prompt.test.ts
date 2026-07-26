@@ -109,8 +109,13 @@ describe("buildExecutionContextPrompt", () => {
     expect(prompt).toContain(
       "Which authentication provider remains supported?",
     );
+    expect(prompt).toContain("Context: Existing users depend on Clerk.");
+    expect(prompt).toContain("Keep Clerk: Existing dependency");
+    expect(prompt).toContain("Build auth: More control");
     expect(prompt).toContain("Recommended option: clerk");
     expect(prompt).toContain("HIGH Session regression");
+    expect(prompt).toContain("Changing auth may invalidate active sessions.");
+    expect(prompt).toContain("Preserve the existing Clerk integration.");
   });
 
   it("preserves Critical Path dependencies and estimates", () => {
