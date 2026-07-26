@@ -66,4 +66,32 @@ describe("createVerificationPlan", () => {
     ]);
     expect(JSON.stringify(plan)).not.toContain("deploy");
   });
+
+  it("uses Yarn's script syntax", () => {
+    const plan = createVerificationPlan(
+      ["package.json", "yarn.lock"],
+      JSON.stringify({ scripts: { test: "jest" } }),
+    );
+
+    expect(plan.commands[0]?.command).toBe("yarn test");
+  });
+
+  it.each(["not-json", JSON.stringify({}), JSON.stringify({ scripts: null })])(
+    "fails closed for missing or malformed package scripts",
+    (packageJson) => {
+      expect(
+        createVerificationPlan(["package.json", "pnpm-lock.yaml"], packageJson)
+          .commands,
+      ).toEqual([]);
+    },
+  );
+
+  it("does not guess commands without a supported lockfile", () => {
+    expect(
+      createVerificationPlan(
+        ["package.json"],
+        JSON.stringify({ scripts: { test: "vitest" } }),
+      ),
+    ).toMatchObject({ packageManager: "unknown", commands: [] });
+  });
 });
