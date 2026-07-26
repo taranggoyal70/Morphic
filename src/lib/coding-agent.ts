@@ -175,6 +175,10 @@ export type ToolCallResult = {
   finished: boolean;
   summary?: string;
   changedTree?: boolean;
+  commandResult?: {
+    status: "succeeded" | "failed" | "blocked";
+    exitCode: number | null;
+  };
 };
 
 export async function executeToolCall(
@@ -318,6 +322,7 @@ export async function executeToolCall(
       return {
         output: `Blocked ${decision.category} command: ${decision.reason}`,
         finished: false,
+        commandResult: { status: "blocked", exitCode: null },
       };
     }
     const result = await sandbox.runCommand(
@@ -340,6 +345,10 @@ export async function executeToolCall(
       output: clamp(body, MAX_OUTPUT_CHARS),
       finished: false,
       changedTree: true,
+      commandResult: {
+        status: result.exitCode === 0 ? "succeeded" : "failed",
+        exitCode: result.exitCode,
+      },
     };
   }
 

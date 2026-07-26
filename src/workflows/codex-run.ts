@@ -392,6 +392,8 @@ async function agentTurnStep(input: {
           command: args.command,
           path: args.path,
           text: result.output.slice(0, 600),
+          status: result.commandResult?.status,
+          exitCode: result.commandResult?.exitCode,
         },
       },
     });
