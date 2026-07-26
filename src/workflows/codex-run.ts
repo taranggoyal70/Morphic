@@ -472,15 +472,27 @@ async function openPullRequestStep(input: {
 
   const shaResult = await git(sandbox, ["rev-parse", "HEAD"]);
   const commitSha = (await shaResult.stdout()).trim();
+  const diffResult = await git(sandbox, [
+    "diff",
+    "--name-only",
+    `${input.baseSha}...${commitSha}`,
+  ]);
+  if (diffResult.exitCode !== 0) {
+    throw new Error(`Could not inspect the final diff: ${await diffResult.stderr()}`);
+  }
+  const changedPaths = (await diffResult.stdout())
+    .split("\n")
+    .map((path) => path.trim())
+    .filter(Boolean);
 
-  if (commitSha === input.baseSha) {
+  if (changedPaths.length === 0) {
     await updateCodexRun(input.runId, {
       status: "completed",
       resultSummary:
         input.summary ?? "The agent finished without changing any files.",
       completedAt: new Date(),
     });
-    return { changed: false };
+    return { changed: false, changedPaths: [] };
   }
 
   const { run, workspace, repository } = await getCodexRunForUser(
@@ -552,6 +564,7 @@ async function openPullRequestStep(input: {
   ]);
   return {
     changed: true,
+    changedPaths,
     pullRequestUrl: pull.data.html_url,
   };
 }
