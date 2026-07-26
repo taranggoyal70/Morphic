@@ -14,6 +14,7 @@ import {
   SYSTEM_PROMPT,
 } from "@/lib/coding-agent";
 import { getGitHubAccessToken } from "@/lib/auth";
+import { assertReviewedCommit } from "@/lib/domain/execution-context";
 import { getServerEnv } from "@/lib/env";
 import { errorMessage } from "@/lib/error-message";
 import { fetchLocusSlice, type LocusSlice } from "@/lib/locus";
@@ -194,7 +195,13 @@ async function provisionSandboxStep(userId: string, runId: string) {
   });
 
   const base = await git(sandbox, ["rev-parse", "HEAD"]);
-  const baseSha = (await base.stdout()).trim();
+  if (base.exitCode !== 0) {
+    throw new Error(`Could not resolve sandbox HEAD: ${await base.stderr()}`);
+  }
+  const baseSha = assertReviewedCommit(
+    (await base.stdout()).trim(),
+    context.repositoryHeadSha,
+  );
   const checkout = await git(sandbox, ["checkout", "-b", branchName]);
   if (checkout.exitCode !== 0) {
     throw new Error(

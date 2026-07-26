@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { repositoryCommitShaSchema } from "./execution-context";
+import {
+  assertReviewedCommit,
+  repositoryCommitShaSchema,
+} from "./execution-context";
 
 describe("repositoryCommitShaSchema", () => {
   it("accepts a full lowercase Git commit SHA", () => {
@@ -16,5 +19,19 @@ describe("repositoryCommitShaSchema", () => {
     ["ref name", "refs/heads/main"],
   ])("rejects a %s", (_label, value) => {
     expect(() => repositoryCommitShaSchema.parse(value)).toThrow();
+  });
+});
+
+describe("assertReviewedCommit", () => {
+  it("returns the commit when sandbox HEAD matches reviewed evidence", () => {
+    const sha = "b".repeat(40);
+
+    expect(assertReviewedCommit(sha, sha)).toBe(sha);
+  });
+
+  it("rejects execution when sandbox HEAD drifted", () => {
+    expect(() =>
+      assertReviewedCommit("b".repeat(40), "c".repeat(40)),
+    ).toThrow("Sandbox HEAD does not match");
   });
 });

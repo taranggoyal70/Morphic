@@ -9,6 +9,20 @@ export const repositoryCommitShaSchema = z
     "Repository Snapshot must use a full lowercase Git commit SHA.",
   );
 
+export function assertReviewedCommit(
+  sandboxHead: string,
+  reviewedHead: string,
+) {
+  const parsedSandboxHead = repositoryCommitShaSchema.parse(sandboxHead);
+  const parsedReviewedHead = repositoryCommitShaSchema.parse(reviewedHead);
+  if (parsedSandboxHead !== parsedReviewedHead) {
+    throw new Error(
+      `Sandbox HEAD does not match the reviewed Repository Snapshot (${parsedSandboxHead} != ${parsedReviewedHead}).`,
+    );
+  }
+  return parsedSandboxHead;
+}
+
 /**
  * Immutable evidence authorized by a user when they approve a Codex Run.
  *
