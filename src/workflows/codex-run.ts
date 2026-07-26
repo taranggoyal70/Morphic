@@ -21,6 +21,7 @@ import {
 import { getServerEnv } from "@/lib/env";
 import { errorMessage } from "@/lib/error-message";
 import { buildExecutionContextPrompt } from "@/lib/execution-prompt";
+import { assertPublishablePaths } from "@/lib/publication-policy";
 import {
   assertVerificationPassed,
   createVerificationPlan,
@@ -480,10 +481,12 @@ async function openPullRequestStep(input: {
   if (diffResult.exitCode !== 0) {
     throw new Error(`Could not inspect the final diff: ${await diffResult.stderr()}`);
   }
-  const changedPaths = (await diffResult.stdout())
-    .split("\n")
-    .map((path) => path.trim())
-    .filter(Boolean);
+  const changedPaths = assertPublishablePaths(
+    (await diffResult.stdout())
+      .split("\n")
+      .map((path) => path.trim())
+      .filter(Boolean),
+  );
 
   if (changedPaths.length === 0) {
     await updateCodexRun(input.runId, {
