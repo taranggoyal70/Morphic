@@ -111,6 +111,26 @@ describe("buildExecutionContextPrompt", () => {
     expect(prompt).toContain("HIGH Session regression");
   });
 
+  it("preserves Critical Path dependencies and estimates", () => {
+    const context = executionContext();
+    context.plan.criticalPath.push({
+      id: "integration-test",
+      title: "Verify onboarding",
+      detail: "Exercise the completed route.",
+      status: "blocked",
+      sourceType: "repository",
+      sourceNumber: null,
+      dependencyIds: ["route"],
+      estimatedMinutes: 30,
+    });
+
+    const prompt = buildExecutionContextPrompt(context);
+
+    expect(prompt).toContain("integration-test [blocked] Verify onboarding");
+    expect(prompt).toContain("Depends on: route");
+    expect(prompt).toContain("Estimate: 30 minutes");
+  });
+
   it("never exceeds the execution prompt budget", () => {
     const context = executionContext();
     context.instruction = "instruction ".repeat(2_000);

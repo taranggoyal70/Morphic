@@ -51,7 +51,13 @@ export function buildExecutionContextPrompt(context: ExecutionContext) {
       plan.criticalPath.map(
         (item) =>
           `${item.id} [${item.status}] ${item.title}: ${item.detail}` +
-          (item.sourceNumber ? ` (source #${item.sourceNumber})` : ""),
+          (item.sourceNumber ? ` Source: #${item.sourceNumber}.` : "") +
+          (item.dependencyIds.length > 0
+            ? ` Depends on: ${item.dependencyIds.join(", ")}.`
+            : "") +
+          (item.estimatedMinutes
+            ? ` Estimate: ${item.estimatedMinutes} minutes.`
+            : ""),
       ),
     ),
     "",
