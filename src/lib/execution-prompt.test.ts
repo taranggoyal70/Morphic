@@ -74,7 +74,9 @@ describe("buildExecutionContextPrompt", () => {
     expect(prompt).toContain("The onboarding route is verified.");
     expect(prompt).toContain("The onboarding integration test passes.");
     expect(prompt).toContain("Create onboarding route");
-    expect(prompt).toContain("src/app/onboarding/page.tsx");
+    expect(prompt).toContain(
+      "create src/app/onboarding/page.tsx. Confidence: 90%. Evidence: Owns onboarding.",
+    );
     expect(prompt).not.toContain("[object Object]");
   });
 

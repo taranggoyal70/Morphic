@@ -65,7 +65,7 @@ export function buildExecutionContextPrompt(context: ExecutionContext) {
     bullets(
       plan.repositoryImpact.map(
         (item) =>
-          `${item.changeKind} ${item.path} (${Math.round(item.confidence * 100)}%): ${item.reason}`,
+          `${item.changeKind} ${item.path}. Confidence: ${Math.round(item.confidence * 100)}%. Evidence: ${item.reason}`,
       ),
     ),
     "",
