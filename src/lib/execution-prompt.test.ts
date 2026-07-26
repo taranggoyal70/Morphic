@@ -57,7 +57,13 @@ function executionContext(): ExecutionContext {
         density: "comfortable",
       },
     },
-    repositoryPaths: ["src/app/onboarding/page.tsx"],
+    repositoryScope: {
+      paths: ["src/app/onboarding/page.tsx"],
+      totalPathCount: 10,
+      selectedPathCount: 1,
+      savedPercent: 90,
+      reason: "Selected from accepted impact paths.",
+    },
   };
 }
 
@@ -77,6 +83,10 @@ describe("buildExecutionContextPrompt", () => {
     expect(prompt).toContain(
       "create src/app/onboarding/page.tsx. Confidence: 90%. Evidence: Owns onboarding.",
     );
+    expect(prompt).toContain(
+      "Stored Repository Snapshot scope (1/10 paths; 90% reduced)",
+    );
+    expect(prompt).toContain("Reason: Selected from accepted impact paths.");
     expect(prompt).not.toContain("[object Object]");
   });
 
@@ -142,10 +152,13 @@ describe("buildExecutionContextPrompt", () => {
     const context = executionContext();
     context.instruction = "instruction ".repeat(2_000);
     context.objective = "objective ".repeat(2_000);
-    context.repositoryPaths = Array.from(
+    context.repositoryScope.paths = Array.from(
       { length: 200 },
       (_, index) => `src/generated/${index}/${"deep/".repeat(80)}file.ts`,
     );
+    context.repositoryScope.selectedPathCount = 200;
+    context.repositoryScope.totalPathCount = 2_000;
+    context.repositoryScope.savedPercent = 90;
 
     expect(buildExecutionContextPrompt(context).length).toBeLessThanOrEqual(
       18_000,

@@ -17,6 +17,7 @@ import {
   type ExecutionContext,
 } from "@/lib/domain/execution-context";
 import { AppError } from "@/lib/errors";
+import { selectRepositoryScope } from "@/lib/repository-scope";
 
 export async function createCodexRun(input: {
   userId: string;
@@ -133,6 +134,17 @@ export async function getCodexExecutionContextForUser(
       "invalid_repository_snapshot",
     );
   }
+  const repositoryPaths = result.repositorySnapshot.tree
+    .filter((entry) => entry.type === "blob")
+    .map((entry) => entry.path);
+  const repositoryScope = selectRepositoryScope({
+    instruction: result.run.instruction,
+    objective: result.workspace.objective,
+    repositoryImpactPaths: result.workspaceVersion.plan.repositoryImpact.map(
+      (item) => item.path,
+    ),
+    snapshotPaths: repositoryPaths,
+  });
 
   return {
     runId: result.run.id,
@@ -148,9 +160,7 @@ export async function getCodexExecutionContextForUser(
     constraints: result.workspace.constraints,
     instruction: result.run.instruction,
     plan: result.workspaceVersion.plan,
-    repositoryPaths: result.repositorySnapshot.tree
-      .filter((entry) => entry.type === "blob")
-      .map((entry) => entry.path),
+    repositoryScope,
   };
 }
 

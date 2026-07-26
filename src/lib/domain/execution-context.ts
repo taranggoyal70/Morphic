@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import type { RepositoryScope } from "@/lib/domain/repository-scope";
 import type { WorkspacePlan } from "@/lib/domain/workspace";
 
 export const repositoryCommitShaSchema = z
@@ -44,5 +45,5 @@ export type ExecutionContext = {
   constraints: string[];
   instruction: string;
   plan: WorkspacePlan;
-  repositoryPaths: string[];
+  repositoryScope: RepositoryScope;
 };

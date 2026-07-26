@@ -88,8 +88,9 @@ export function buildExecutionContextPrompt(context: ExecutionContext) {
       ),
     ),
     "",
-    "Stored Repository Snapshot paths",
-    bullets(context.repositoryPaths.slice(0, 80)),
+    `Stored Repository Snapshot scope (${context.repositoryScope.selectedPathCount}/${context.repositoryScope.totalPathCount} paths; ${context.repositoryScope.savedPercent}% reduced)`,
+    `Reason: ${bounded(context.repositoryScope.reason)}`,
+    bullets(context.repositoryScope.paths),
     "",
     "Work only against the reviewed commit above. Treat this accepted Workspace Version as the authorization boundary. Implement the approved instruction, inspect the final diff, run relevant verification, and call finish only when the change is complete.",
   ];
