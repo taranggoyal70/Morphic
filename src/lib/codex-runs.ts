@@ -67,6 +67,7 @@ export async function createCodexRun(input: {
     .values({
       workspaceId: workspace.id,
       workspaceVersionId: workspaceVersion.id,
+      repositorySnapshotId: workspaceVersion.snapshotId,
       userId: input.userId,
       instruction: input.instruction,
     })
@@ -97,7 +98,7 @@ export async function getCodexRunForUser(userId: string, runId: string) {
     )
     .leftJoin(
       githubSnapshots,
-      eq(githubSnapshots.id, workspaceVersions.snapshotId),
+      eq(githubSnapshots.id, codexRuns.repositorySnapshotId),
     )
     .leftJoin(approvals, eq(codexRuns.id, approvals.runId))
     .where(and(eq(codexRuns.id, runId), eq(codexRuns.userId, userId)))

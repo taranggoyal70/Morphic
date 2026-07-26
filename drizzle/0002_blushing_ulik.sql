@@ -1,0 +1,3 @@
+ALTER TABLE "codex_runs" ADD COLUMN "repository_snapshot_id" uuid;--> statement-breakpoint
+ALTER TABLE "codex_runs" ADD CONSTRAINT "codex_runs_repository_snapshot_id_github_snapshots_id_fk" FOREIGN KEY ("repository_snapshot_id") REFERENCES "public"."github_snapshots"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "codex_runs_repository_snapshot_idx" ON "codex_runs" USING btree ("repository_snapshot_id");

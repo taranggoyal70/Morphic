@@ -241,6 +241,10 @@ export const codexRuns = pgTable(
       () => workspaceVersions.id,
       { onDelete: "restrict" },
     ),
+    repositorySnapshotId: uuid("repository_snapshot_id").references(
+      () => githubSnapshots.id,
+      { onDelete: "restrict" },
+    ),
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
@@ -271,6 +275,9 @@ export const codexRuns = pgTable(
   (table) => [
     index("codex_runs_workspace_idx").on(table.workspaceId),
     index("codex_runs_workspace_version_idx").on(table.workspaceVersionId),
+    index("codex_runs_repository_snapshot_idx").on(
+      table.repositorySnapshotId,
+    ),
     index("codex_runs_user_idx").on(table.userId),
   ],
 );
