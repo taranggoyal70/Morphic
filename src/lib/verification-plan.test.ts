@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { detectPackageManager } from "@/lib/verification-plan";
+import {
+  createVerificationPlan,
+  detectPackageManager,
+} from "@/lib/verification-plan";
 
 describe("detectPackageManager", () => {
   it.each([
@@ -16,5 +19,51 @@ describe("detectPackageManager", () => {
     expect(detectPackageManager(["package.json", "src/index.ts"])).toBe(
       "unknown",
     );
+  });
+});
+
+describe("createVerificationPlan", () => {
+  it("prefers a repository-owned check script", () => {
+    expect(
+      createVerificationPlan(
+        ["package.json", "pnpm-lock.yaml"],
+        JSON.stringify({
+          scripts: {
+            check: "pnpm lint && pnpm test",
+            test: "vitest run",
+          },
+        }),
+      ),
+    ).toMatchObject({
+      packageManager: "pnpm",
+      commands: [
+        {
+          id: "check",
+          command: "pnpm run check",
+        },
+      ],
+    });
+  });
+
+  it("selects bounded standard scripts when check is absent", () => {
+    const plan = createVerificationPlan(
+      ["package.json", "package-lock.json"],
+      JSON.stringify({
+        scripts: {
+          test: "vitest run",
+          typecheck: "tsc --noEmit",
+          lint: "eslint .",
+          build: "next build",
+          deploy: "vercel --prod",
+        },
+      }),
+    );
+
+    expect(plan.commands.map(({ command }) => command)).toEqual([
+      "npm run test",
+      "npm run typecheck",
+      "npm run lint",
+    ]);
+    expect(JSON.stringify(plan)).not.toContain("deploy");
   });
 });
