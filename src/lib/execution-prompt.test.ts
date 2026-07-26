@@ -69,6 +69,10 @@ describe("buildExecutionContextPrompt", () => {
     expect(prompt).toContain(`Reviewed commit: ${"a".repeat(40)}`);
     expect(prompt).toContain("Workspace Version: 3");
     expect(prompt).toContain("Preserve the existing sign-in route");
+    expect(prompt).toContain("Prioritize the onboarding path.");
+    expect(prompt).toContain("New users finish onboarding.");
+    expect(prompt).toContain("The onboarding route is verified.");
+    expect(prompt).toContain("The onboarding integration test passes.");
     expect(prompt).toContain("Create onboarding route");
     expect(prompt).toContain("src/app/onboarding/page.tsx");
     expect(prompt).not.toContain("[object Object]");
