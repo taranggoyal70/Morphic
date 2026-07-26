@@ -21,6 +21,8 @@ import {
 import { getServerEnv } from "@/lib/env";
 import { errorMessage } from "@/lib/error-message";
 import { buildExecutionContextPrompt } from "@/lib/execution-prompt";
+import { createVerificationPlan } from "@/lib/verification-plan";
+import type { VerificationResult } from "@/lib/domain/verification";
 
 const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
 const MAX_AGENT_TURNS = 14;
@@ -589,6 +591,62 @@ async function stopSandboxStep(sandboxName: string) {
   }
 }
 
+async function verifyAgentChangeStep(input: {
+  sandboxName: string;
+  runId: string;
+}): Promise<VerificationResult> {
+  "use step";
+
+  const sandbox = await Sandbox.get({
+    ...sandboxCredentials(),
+    name: input.sandboxName,
+  });
+  const trackedFiles = await git(sandbox, ["ls-files"]);
+  if (trackedFiles.exitCode !== 0) {
+    throw new Error(
+      `Could not inspect repository files for verification: ${await trackedFiles.stderr()}`,
+    );
+  }
+  const packageJson = await sandbox.runCommand("bash", [
+    "-lc",
+    `cd ${REPO_CWD} && test -f package.json && cat package.json`,
+  ]);
+  const plan = createVerificationPlan(
+    (await trackedFiles.stdout()).split("\n").filter(Boolean),
+    packageJson.exitCode === 0 ? await packageJson.stdout() : null,
+  );
+  if (plan.commands.length === 0) {
+    throw new Error(
+      `Independent verification could not start: ${plan.reason}`,
+    );
+  }
+
+  const commands: VerificationResult["commands"] = [];
+  for (const command of plan.commands) {
+    const result = await sandbox.runCommand(
+      "bash",
+      ["-lc", `cd ${REPO_CWD} && ${command.command}`],
+      { timeoutMs: command.timeoutMs },
+    );
+    const output = [
+      (await result.stdout()).trim(),
+      (await result.stderr()).trim(),
+    ]
+      .filter(Boolean)
+      .join("\n")
+      .slice(-4_000);
+    commands.push({ ...command, exitCode: result.exitCode, output });
+    if (result.exitCode !== 0) break;
+  }
+
+  return {
+    status: commands.every(({ exitCode }) => exitCode === 0)
+      ? "passed"
+      : "failed",
+    commands,
+  };
+}
+
 export async function codexRunWorkflow(input: {
   userId: string;
   runId: string;
@@ -637,6 +695,8 @@ export async function codexRunWorkflow(input: {
       summary =
         "The agent reached its step limit. Review the pull request carefully — the change may be incomplete.";
     }
+
+    await verifyAgentChangeStep({ sandboxName, runId: input.runId });
 
     return await openPullRequestStep({
       userId: input.userId,
