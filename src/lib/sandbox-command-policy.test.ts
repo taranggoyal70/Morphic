@@ -26,4 +26,20 @@ describe("evaluateSandboxCommand", () => {
   ])("allows verification command: %s", (command) => {
     expect(evaluateSandboxCommand(command)).toEqual({ allowed: true });
   });
+
+  it.each([
+    "env",
+    "printenv OPENAI_API_KEY",
+    "cat .env.local",
+    "cat ~/.ssh/id_rsa",
+    "cat /proc/self/environ",
+    "echo $GITHUB_TOKEN",
+    'node -e "console.log(process.env)"',
+    "git remote -v",
+  ])("blocks common secret-exposure command: %s", (command) => {
+    expect(evaluateSandboxCommand(command)).toMatchObject({
+      allowed: false,
+      category: "secret_access",
+    });
+  });
 });
