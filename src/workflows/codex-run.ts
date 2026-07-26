@@ -36,6 +36,19 @@ const STALE_TOOL_OUTPUT_CHARS = 400;
 const RECENT_TOOL_OUTPUT_CHARS = 2_000;
 type ChatMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
 
+function redactSensitiveText(value: string) {
+  return value
+    .replace(
+      /https:\/\/x-access-token:[^@\s]+@/gi,
+      "https://x-access-token:[REDACTED]@",
+    )
+    .replace(/\bsk-[A-Za-z0-9_-]{16,}\b/g, "[REDACTED_API_KEY]")
+    .replace(
+      /\b(?:github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)\b/g,
+      "[REDACTED_GITHUB_TOKEN]",
+    );
+}
+
 // Tool-call arguments are re-sent every turn too — a write_file call carries
 // the entire file body in its arguments, so ignoring them undercounts badly.
 function messageSize(message: ChatMessage): number {
@@ -553,16 +566,7 @@ function initialMessages(context: ExecutionContext): ChatMessage[] {
 async function failCodexRunStep(runId: string, message: string) {
   "use step";
 
-  const safeMessage = message
-    .replace(
-      /https:\/\/x-access-token:[^@\s]+@/gi,
-      "https://x-access-token:[REDACTED]@",
-    )
-    .replace(/\bsk-[A-Za-z0-9_-]{16,}\b/g, "[REDACTED_API_KEY]")
-    .replace(
-      /\b(?:github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)\b/g,
-      "[REDACTED_GITHUB_TOKEN]",
-    );
+  const safeMessage = redactSensitiveText(message);
 
   console.error("Codex run failed", { runId, message: safeMessage });
   await updateCodexRun(runId, {
@@ -628,23 +632,30 @@ async function verifyAgentChangeStep(input: {
       ["-lc", `cd ${REPO_CWD} && ${command.command}`],
       { timeoutMs: command.timeoutMs },
     );
-    const output = [
-      (await result.stdout()).trim(),
-      (await result.stderr()).trim(),
-    ]
-      .filter(Boolean)
-      .join("\n")
-      .slice(-4_000);
+    const output = redactSensitiveText(
+      [(await result.stdout()).trim(), (await result.stderr()).trim()]
+        .filter(Boolean)
+        .join("\n")
+        .slice(-4_000),
+    );
     commands.push({ ...command, exitCode: result.exitCode, output });
     if (result.exitCode !== 0) break;
   }
 
-  return {
+  const verification: VerificationResult = {
     status: commands.every(({ exitCode }) => exitCode === 0)
       ? "passed"
       : "failed",
     commands,
   };
+  await appendCodexEvents(input.runId, [
+    {
+      sequence: 90_000,
+      eventType: "verification.completed",
+      payload: verification,
+    },
+  ]);
+  return verification;
 }
 
 export async function codexRunWorkflow(input: {
