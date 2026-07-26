@@ -23,9 +23,19 @@ export async function createCodexRun(input: {
   workspaceId: string;
   instruction: string;
 }) {
-  const [workspace] = await getDb()
-    .select()
+  const [result] = await getDb()
+    .select({
+      workspace: workspaces,
+      workspaceVersion: workspaceVersions,
+    })
     .from(workspaces)
+    .leftJoin(
+      workspaceVersions,
+      and(
+        eq(workspaceVersions.workspaceId, workspaces.id),
+        eq(workspaceVersions.version, workspaces.currentVersion),
+      ),
+    )
     .where(
       and(
         eq(workspaces.id, input.workspaceId),
@@ -33,9 +43,10 @@ export async function createCodexRun(input: {
       ),
     )
     .limit(1);
-  if (!workspace) {
+  if (!result) {
     throw new AppError("Workspace not found.", 404, "workspace_not_found");
   }
+  const { workspace, workspaceVersion } = result;
   if (workspace.status !== "active") {
     throw new AppError(
       "The workspace must finish generating before Codex can run.",
@@ -43,11 +54,19 @@ export async function createCodexRun(input: {
       "workspace_not_ready",
     );
   }
+  if (!workspaceVersion) {
+    throw new AppError(
+      "The workspace has no accepted version to execute.",
+      409,
+      "workspace_version_missing",
+    );
+  }
 
   const [run] = await getDb()
     .insert(codexRuns)
     .values({
       workspaceId: workspace.id,
+      workspaceVersionId: workspaceVersion.id,
       userId: input.userId,
       instruction: input.instruction,
     })
@@ -74,10 +93,7 @@ export async function getCodexRunForUser(userId: string, runId: string) {
     .innerJoin(repositories, eq(workspaces.repositoryId, repositories.id))
     .leftJoin(
       workspaceVersions,
-      and(
-        eq(workspaceVersions.workspaceId, workspaces.id),
-        eq(workspaceVersions.version, workspaces.currentVersion),
-      ),
+      eq(workspaceVersions.id, codexRuns.workspaceVersionId),
     )
     .leftJoin(
       githubSnapshots,

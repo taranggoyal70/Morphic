@@ -1,0 +1,3 @@
+ALTER TABLE "codex_runs" ADD COLUMN "workspace_version_id" uuid;--> statement-breakpoint
+ALTER TABLE "codex_runs" ADD CONSTRAINT "codex_runs_workspace_version_id_workspace_versions_id_fk" FOREIGN KEY ("workspace_version_id") REFERENCES "public"."workspace_versions"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "codex_runs_workspace_version_idx" ON "codex_runs" USING btree ("workspace_version_id");

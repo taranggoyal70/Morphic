@@ -237,6 +237,10 @@ export const codexRuns = pgTable(
     workspaceId: uuid("workspace_id")
       .notNull()
       .references(() => workspaces.id, { onDelete: "cascade" }),
+    workspaceVersionId: uuid("workspace_version_id").references(
+      () => workspaceVersions.id,
+      { onDelete: "restrict" },
+    ),
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
@@ -266,6 +270,7 @@ export const codexRuns = pgTable(
   },
   (table) => [
     index("codex_runs_workspace_idx").on(table.workspaceId),
+    index("codex_runs_workspace_version_idx").on(table.workspaceVersionId),
     index("codex_runs_user_idx").on(table.userId),
   ],
 );
