@@ -1,6 +1,7 @@
 import type {
   PackageManager,
   VerificationPlan,
+  VerificationResult,
 } from "@/lib/domain/verification";
 
 const LOCKFILES: Array<[string, PackageManager]> = [
@@ -71,4 +72,12 @@ export function createVerificationPlan(
         ? "Selected bounded repository-owned verification scripts."
         : "No supported lockfile and verification script combination was found.",
   };
+}
+
+export function assertVerificationPassed(result: VerificationResult) {
+  if (result.status === "passed") return;
+  const failed = result.commands.find(({ exitCode }) => exitCode !== 0);
+  throw new Error(
+    `Independent verification failed${failed ? `: ${failed.command} exited ${failed.exitCode}` : ""}. Publication was blocked.`,
+  );
 }

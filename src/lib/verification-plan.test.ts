@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  assertVerificationPassed,
   createVerificationPlan,
   detectPackageManager,
 } from "@/lib/verification-plan";
@@ -19,6 +20,32 @@ describe("detectPackageManager", () => {
     expect(detectPackageManager(["package.json", "src/index.ts"])).toBe(
       "unknown",
     );
+  });
+});
+
+describe("assertVerificationPassed", () => {
+  it("accepts a fully passing verification result", () => {
+    expect(() =>
+      assertVerificationPassed({ status: "passed", commands: [] }),
+    ).not.toThrow();
+  });
+
+  it("rejects publication with the failing command", () => {
+    expect(() =>
+      assertVerificationPassed({
+        status: "failed",
+        commands: [
+          {
+            id: "test",
+            label: "Run test",
+            command: "pnpm run test",
+            timeoutMs: 300_000,
+            exitCode: 1,
+            output: "one test failed",
+          },
+        ],
+      }),
+    ).toThrow("pnpm run test");
   });
 });
 

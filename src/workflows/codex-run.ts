@@ -21,7 +21,10 @@ import {
 import { getServerEnv } from "@/lib/env";
 import { errorMessage } from "@/lib/error-message";
 import { buildExecutionContextPrompt } from "@/lib/execution-prompt";
-import { createVerificationPlan } from "@/lib/verification-plan";
+import {
+  assertVerificationPassed,
+  createVerificationPlan,
+} from "@/lib/verification-plan";
 import type { VerificationResult } from "@/lib/domain/verification";
 
 const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
@@ -707,7 +710,11 @@ export async function codexRunWorkflow(input: {
         "The agent reached its step limit. Review the pull request carefully — the change may be incomplete.";
     }
 
-    await verifyAgentChangeStep({ sandboxName, runId: input.runId });
+    const verification = await verifyAgentChangeStep({
+      sandboxName,
+      runId: input.runId,
+    });
+    assertVerificationPassed(verification);
 
     return await openPullRequestStep({
       userId: input.userId,
