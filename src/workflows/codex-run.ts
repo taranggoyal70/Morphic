@@ -221,6 +221,18 @@ async function provisionSandboxStep(userId: string, runId: string) {
   await appendCodexEvents(runId, [
     {
       sequence: 0,
+      eventType: "execution.context.bound",
+      payload: {
+        workspaceId: context.workspaceId,
+        workspaceVersionId: context.workspaceVersionId,
+        workspaceVersion: context.workspaceVersion,
+        repositorySnapshotId: context.repositorySnapshotId,
+        repositoryBranch: context.repositoryBranch,
+        repositoryHeadSha: context.repositoryHeadSha,
+      },
+    },
+    {
+      sequence: 1,
       eventType: "run.started",
       payload: {
         branchName,
@@ -320,7 +332,7 @@ async function agentTurnStep(input: {
     eventType: string;
     payload: Record<string, unknown>;
   }> = [];
-  let sequence = input.turn * 100;
+  let sequence = (input.turn + 1) * 100;
   let done = false;
   let summary: string | null = null;
 
