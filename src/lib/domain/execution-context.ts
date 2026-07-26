@@ -1,4 +1,13 @@
+import { z } from "zod";
+
 import type { WorkspacePlan } from "@/lib/domain/workspace";
+
+export const repositoryCommitShaSchema = z
+  .string()
+  .regex(
+    /^[0-9a-f]{40}$/,
+    "Repository Snapshot must use a full lowercase Git commit SHA.",
+  );
 
 /**
  * Immutable evidence authorized by a user when they approve a Codex Run.
