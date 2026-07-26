@@ -4,6 +4,7 @@ import { FatalError } from "workflow";
 
 import {
   appendCodexEvents,
+  getCodexExecutionContextForUser,
   getCodexRunForUser,
   updateCodexRun,
 } from "@/lib/codex-runs";
@@ -153,20 +154,20 @@ async function provisionSandboxStep(userId: string, runId: string) {
   "use step";
 
   console.info("Provisioning Codex sandbox", { userId, runId });
-  const { run, repository } = await getCodexRunForUser(userId, runId);
+  const context = await getCodexExecutionContextForUser(userId, runId);
   const githubToken = await getGitHubAccessToken(userId);
-  const sandboxName = `morphic-${run.id}`;
-  const branchName = `morphic/${run.id.slice(0, 8)}`;
+  const sandboxName = `morphic-${context.runId}`;
+  const branchName = `morphic/${context.runId.slice(0, 8)}`;
 
   const sandbox = await Sandbox.getOrCreate({
     ...sandboxCredentials(),
     name: sandboxName,
     source: {
       type: "git",
-      url: `https://github.com/${repository.fullName}.git`,
+      url: `https://github.com/${context.repositoryFullName}.git`,
       username: "x-access-token",
       password: githubToken,
-      revision: repository.defaultBranch,
+      revision: context.repositoryHeadSha,
       depth: 20,
     },
     runtime: "node24",
@@ -217,7 +218,7 @@ async function provisionSandboxStep(userId: string, runId: string) {
       payload: {
         branchName,
         baseSha,
-        repository: repository.fullName,
+        repository: context.repositoryFullName,
       },
     },
   ]);
