@@ -1,6 +1,6 @@
 # Morphic
 
-Morphic turns a software objective into a persistent adaptive workspace grounded in live GitHub evidence. Users can refine that workspace, resolve decisions, and approve isolated Codex runs that end in reviewable pull requests.
+Morphic turns a software objective into a persistent adaptive workspace grounded in live GitHub evidence. Users can refine that workspace, resolve decisions, and approve isolated Morphic Agent runs that end in reviewable pull requests.
 
 ## What is real
 
@@ -10,7 +10,7 @@ Morphic turns a software objective into a persistent adaptive workspace grounded
 - OpenAI structured-output workspace compilation
 - Distributed Upstash rate limiting
 - Durable Vercel Workflow orchestration
-- Isolated Codex execution in Vercel Sandbox
+- Isolated Morphic Agent execution in Vercel Sandbox
 - Explicit run approval, branch creation, push, and pull-request creation
 - Audit logging on all critical operations (workspace creation, Codex approval, user deletion)
 - Clerk webhook for user deletion (GDPR compliance)
@@ -30,7 +30,7 @@ Next.js App Router
   |-- Upstash Redis (distributed rate limiting)
   +-- Vercel Workflow
         +-- Vercel Sandbox
-              +-- Codex CLI -> branch -> GitHub pull request
+              +-- GitHub Models tool loop -> branch -> draft pull request
 ```
 
 ## Rate limits

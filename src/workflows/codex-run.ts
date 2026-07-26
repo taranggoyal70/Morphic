@@ -157,7 +157,7 @@ function sandboxCredentials() {
 async function provisionSandboxStep(userId: string, runId: string) {
   "use step";
 
-  console.info("Provisioning Codex sandbox", { userId, runId });
+  console.info("Provisioning Morphic Agent sandbox", { userId, runId });
   const context = await getCodexExecutionContextForUser(userId, runId);
   const githubToken = await getGitHubAccessToken(userId);
   const sandboxName = `morphic-${context.runId}`;
@@ -179,8 +179,8 @@ async function provisionSandboxStep(userId: string, runId: string) {
     timeout: 1_200_000,
     persistent: false,
     env: {
-      // Drive the Codex CLI through GitHub Models using the same OAuth token
-      // that powers workspace planning — no separate OpenAI credential needed.
+      // Drive the Morphic Agent model loop through GitHub Models using the
+      // same OAuth token that powers repository access.
       OPENAI_API_KEY: githubToken,
       OPENAI_BASE_URL: GITHUB_MODELS_BASE_URL,
     },

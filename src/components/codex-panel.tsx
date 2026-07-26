@@ -78,7 +78,7 @@ export function CodexPanel({
         throw new Error(payload.error?.message ?? "Run could not be created.");
       }
       form.reset();
-      toast.success("Codex proposal created. Review it before approval.");
+      toast.success("Agent proposal created. Review it before approval.");
       router.refresh();
     } catch (error) {
       toast.error(
@@ -138,7 +138,7 @@ export function CodexPanel({
       }
       toast.success(
         decision === "approve"
-          ? "Approved. Codex is starting in an isolated sandbox."
+          ? "Approved. Morphic Agent is starting in an isolated sandbox."
           : "Proposal rejected.",
       );
       router.refresh();
@@ -158,7 +158,9 @@ export function CodexPanel({
       <div className="mx-auto max-w-[1400px] px-4 py-4 sm:px-6">
         <div className="flex items-center gap-2">
           <CodeIcon size={18} weight="duotone" className="text-violet-light" />
-          <h2 className="text-sm font-semibold text-paper">Codex proposals</h2>
+          <h2 className="text-sm font-semibold text-paper">
+            Morphic Agent proposals
+          </h2>
           <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[9px] uppercase text-muted">
             Approval required
           </span>
@@ -174,7 +176,7 @@ export function CodexPanel({
             minLength={8}
             maxLength={4_000}
             disabled={!workspaceReady || pending}
-            placeholder="Propose a scoped Codex task from this objective…"
+            placeholder="Propose a scoped agent task from this objective…"
             className="h-9 min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper placeholder:text-muted"
           />
           <button
