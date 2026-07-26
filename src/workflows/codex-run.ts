@@ -14,9 +14,13 @@ import {
   SYSTEM_PROMPT,
 } from "@/lib/coding-agent";
 import { getGitHubAccessToken } from "@/lib/auth";
-import { assertReviewedCommit } from "@/lib/domain/execution-context";
+import {
+  assertReviewedCommit,
+  type ExecutionContext,
+} from "@/lib/domain/execution-context";
 import { getServerEnv } from "@/lib/env";
 import { errorMessage } from "@/lib/error-message";
+import { buildExecutionContextPrompt } from "@/lib/execution-prompt";
 import { fetchLocusSlice, type LocusSlice } from "@/lib/locus";
 
 const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
@@ -534,9 +538,7 @@ async function openPullRequestStep(input: {
 }
 
 function initialMessages(input: {
-  repositoryFullName: string;
-  objective: string;
-  instruction: string;
+  context: ExecutionContext;
   locusSlice: LocusSlice | null;
 }): ChatMessage[] {
   const scopeHint = input.locusSlice
@@ -550,12 +552,7 @@ Start by reading these files. They are a starting hint, not the full picture —
     { role: "system", content: SYSTEM_PROMPT },
     {
       role: "user",
-      content: `Repository: ${input.repositoryFullName}
-Objective: ${input.objective}
-Approved instruction: ${input.instruction}
-${scopeHint}
-
-The repository is checked out on a fresh branch in the sandbox. Implement the approved instruction, then call finish.`,
+      content: `${buildExecutionContextPrompt(input.context)}${scopeHint}`,
     },
   ];
 }
@@ -611,19 +608,17 @@ export async function codexRunWorkflow(input: {
   let sandboxName: string | undefined;
   try {
     await updateRunProvisioningStep(input.runId);
-    const { run, workspace, repository } = await loadRunContextStep(input);
+    const context = await loadRunContextStep(input);
     const provisioned = await provisionSandboxStep(input.userId, input.runId);
     sandboxName = provisioned.sandboxName;
 
     const locusSlice = await fetchLocusSliceStep({
-      repositoryFullName: repository.fullName,
-      instruction: run.instruction,
+      repositoryFullName: context.repositoryFullName,
+      instruction: context.instruction,
     });
 
     let messages = initialMessages({
-      repositoryFullName: repository.fullName,
-      objective: workspace.objective,
-      instruction: run.instruction,
+      context,
       locusSlice,
     });
 
@@ -691,15 +686,7 @@ async function fetchLocusSliceStep(input: {
 async function loadRunContextStep(input: { userId: string; runId: string }) {
   "use step";
 
-  const { run, workspace, repository } = await getCodexRunForUser(
-    input.userId,
-    input.runId,
-  );
-  return {
-    run: { instruction: run.instruction },
-    workspace: { objective: workspace.objective },
-    repository: { fullName: repository.fullName },
-  };
+  return getCodexExecutionContextForUser(input.userId, input.runId);
 }
 
 async function updateRunProvisioningStep(runId: string) {
