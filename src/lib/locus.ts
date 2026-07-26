@@ -21,7 +21,10 @@ export async function fetchLocusSlice(
   task: string,
 ): Promise<LocusSlice | null> {
   const env = getServerEnv();
-  if (!env.LOCUS_API_KEY) return null;
+  if (!env.LOCUS_API_KEY) {
+    console.info("Locus skipped: LOCUS_API_KEY not set");
+    return null;
+  }
 
   try {
     const response = await fetch(LOCUS_API_URL, {
@@ -33,7 +36,13 @@ export async function fetchLocusSlice(
       body: JSON.stringify({ repo: repositoryFullName, task }),
       signal: AbortSignal.timeout(LOCUS_TIMEOUT_MS),
     });
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.info("Locus call failed", {
+        status: response.status,
+        body: (await response.text()).slice(0, 300),
+      });
+      return null;
+    }
 
     const data = (await response.json()) as {
       reason?: string;
@@ -41,15 +50,25 @@ export async function fetchLocusSlice(
       context?: string;
       tokens?: { savedPct?: number };
     };
-    if (!data.slice || data.slice.length === 0) return null;
+    if (!data.slice || data.slice.length === 0) {
+      console.info("Locus returned no slice", { data });
+      return null;
+    }
 
+    console.info("Locus slice fetched", {
+      files: data.slice.length,
+      savedPct: data.tokens?.savedPct,
+    });
     return {
       reason: data.reason ?? "",
       files: data.slice.map((f) => f.path),
       context: data.context ?? "",
       savedPct: data.tokens?.savedPct ?? 0,
     };
-  } catch {
+  } catch (error) {
+    console.info("Locus call threw", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }
