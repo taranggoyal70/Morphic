@@ -2,6 +2,8 @@ import "server-only";
 
 import type { Sandbox } from "@vercel/sandbox";
 
+import { evaluateSandboxCommand } from "@/lib/sandbox-command-policy";
+
 const SANDBOX_CWD = "/vercel/sandbox";
 // GitHub Models' free tier allows ~8K input tokens per request; a single
 // oversized tool output can consume the whole budget, so file reads must
@@ -154,9 +156,6 @@ export const AGENT_TOOLS = [
     },
   },
 ];
-
-const BLOCKED_COMMAND =
-  /(rm\s+-rf\s+\/|git\s+push|git\s+reset\s+--hard|:\(\)\{)/;
 
 function clamp(text: string, max: number) {
   if (text.length <= max) return text;
@@ -314,10 +313,10 @@ export async function executeToolCall(
   if (name === "run_command") {
     const command = String(args.command ?? "").trim();
     if (!command) return { output: "No command provided.", finished: false };
-    if (BLOCKED_COMMAND.test(command)) {
+    const decision = evaluateSandboxCommand(command);
+    if (!decision.allowed) {
       return {
-        output:
-          "That command is not allowed. Do not push, reset history, or delete the repository — Morphic commits and opens the PR for you.",
+        output: `Blocked ${decision.category} command: ${decision.reason}`,
         finished: false,
       };
     }
