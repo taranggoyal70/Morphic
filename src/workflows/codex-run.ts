@@ -704,10 +704,9 @@ export async function codexRunWorkflow(input: {
     }
 
     if (!done) {
-      // The agent used its full turn budget. Whatever it produced is still
-      // committed below, but we note that it did not signal completion.
-      summary =
-        "The agent reached its step limit. Review the pull request carefully — the change may be incomplete.";
+      throw new Error(
+        "The agent reached its turn limit without declaring completion. Publication was blocked.",
+      );
     }
 
     const verification = await verifyAgentChangeStep({
