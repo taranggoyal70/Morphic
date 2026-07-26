@@ -7,10 +7,15 @@ import {
   approvals,
   codexRunEvents,
   codexRuns,
+  githubSnapshots,
   repositories,
   workspaces,
   workspaceVersions,
 } from "@/db/schema";
+import {
+  repositoryCommitShaSchema,
+  type ExecutionContext,
+} from "@/lib/domain/execution-context";
 import { AppError } from "@/lib/errors";
 
 export async function createCodexRun(input: {
@@ -60,6 +65,7 @@ export async function getCodexRunForUser(userId: string, runId: string) {
       run: codexRuns,
       workspace: workspaces,
       workspaceVersion: workspaceVersions,
+      repositorySnapshot: githubSnapshots,
       repository: repositories,
       approval: approvals,
     })
@@ -73,6 +79,10 @@ export async function getCodexRunForUser(userId: string, runId: string) {
         eq(workspaceVersions.version, workspaces.currentVersion),
       ),
     )
+    .leftJoin(
+      githubSnapshots,
+      eq(githubSnapshots.id, workspaceVersions.snapshotId),
+    )
     .leftJoin(approvals, eq(codexRuns.id, approvals.runId))
     .where(and(eq(codexRuns.id, runId), eq(codexRuns.userId, userId)))
     .limit(1);
@@ -81,6 +91,50 @@ export async function getCodexRunForUser(userId: string, runId: string) {
     throw new AppError("Codex run not found.", 404, "codex_run_not_found");
   }
   return result;
+}
+
+export async function getCodexExecutionContextForUser(
+  userId: string,
+  runId: string,
+): Promise<ExecutionContext> {
+  const result = await getCodexRunForUser(userId, runId);
+  if (!result.workspaceVersion || !result.repositorySnapshot) {
+    throw new AppError(
+      "This run is missing an accepted Workspace Version or Repository Snapshot.",
+      409,
+      "execution_context_missing",
+    );
+  }
+
+  const parsedSha = repositoryCommitShaSchema.safeParse(
+    result.repositorySnapshot.headSha,
+  );
+  if (!parsedSha.success) {
+    throw new AppError(
+      "The accepted Repository Snapshot does not contain a valid commit SHA.",
+      409,
+      "invalid_repository_snapshot",
+    );
+  }
+
+  return {
+    runId: result.run.id,
+    workspaceId: result.workspace.id,
+    workspaceVersionId: result.workspaceVersion.id,
+    workspaceVersion: result.workspaceVersion.version,
+    repositorySnapshotId: result.repositorySnapshot.id,
+    repositoryFullName: result.repository.fullName,
+    repositoryBranch: result.repositorySnapshot.branch,
+    repositoryHeadSha: parsedSha.data,
+    objective: result.workspace.objective,
+    targetDate: result.workspace.targetDate?.toISOString() ?? null,
+    constraints: result.workspace.constraints,
+    instruction: result.run.instruction,
+    plan: result.workspaceVersion.plan,
+    repositoryPaths: result.repositorySnapshot.tree
+      .filter((entry) => entry.type === "blob")
+      .map((entry) => entry.path),
+  };
 }
 
 export async function listCodexRuns(userId: string, workspaceId: string) {
