@@ -33,9 +33,7 @@ import { POST } from "@/app/api/codex-runs/[runId]/approval/route";
 const context = { params: Promise.resolve({ runId: "run-123" }) };
 
 function approvalRequest(
-  body:
-    | { decision: "approve" }
-    | { decision: "reject"; note?: string },
+  body: { decision: "approve" } | { decision: "reject"; note?: string },
 ) {
   return new Request("https://morphic.test/api/codex-runs/run-123/approval", {
     method: "POST",
@@ -52,7 +50,10 @@ describe("codex run approval route", () => {
   });
 
   it("queues the durable workflow only after recording approval", async () => {
-    const response = await POST(approvalRequest({ decision: "approve" }), context);
+    const response = await POST(
+      approvalRequest({ decision: "approve" }),
+      context,
+    );
 
     expect(response.status).toBe(202);
     await expect(response.json()).resolves.toEqual({
@@ -112,9 +113,14 @@ describe("codex run approval route", () => {
   it("marks the approved run failed when workflow startup fails", async () => {
     const error = new Error("Workflow service unavailable.");
     mocks.start.mockRejectedValue(error);
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
-    const response = await POST(approvalRequest({ decision: "approve" }), context);
+    const response = await POST(
+      approvalRequest({ decision: "approve" }),
+      context,
+    );
 
     expect(response.status).toBe(500);
     expect(mocks.update).toHaveBeenCalledWith(
@@ -133,9 +139,14 @@ describe("codex run approval route", () => {
     mocks.setWorkflowRunId.mockRejectedValue(
       new Error("Database temporarily unavailable."),
     );
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
-    const response = await POST(approvalRequest({ decision: "approve" }), context);
+    const response = await POST(
+      approvalRequest({ decision: "approve" }),
+      context,
+    );
 
     expect(response.status).toBe(202);
     await expect(response.json()).resolves.toEqual({

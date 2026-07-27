@@ -29,7 +29,9 @@ describe("buildAgentPullRequest", () => {
       "**Summary:** Added coverage and bounded retry handling.",
     );
     expect(pullRequest.body).toContain("Run ID: `run-123`");
-    expect(pullRequest.body).toContain("explicitly approved, isolated agent run");
+    expect(pullRequest.body).toContain(
+      "explicitly approved, isolated agent run",
+    );
   });
 
   it("caps GitHub's generated title while preserving the full approved instruction", () => {

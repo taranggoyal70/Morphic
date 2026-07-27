@@ -56,9 +56,7 @@ export async function POST(
     });
     let workflowRun: Awaited<ReturnType<typeof start>>;
     try {
-      workflowRun = await start(codexRunWorkflow, [
-        { userId: user.id, runId },
-      ]);
+      workflowRun = await start(codexRunWorkflow, [{ userId: user.id, runId }]);
     } catch (error) {
       await updateCodexRun(runId, {
         status: "failed",

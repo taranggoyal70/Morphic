@@ -1,7 +1,4 @@
-export type AuthenticationMode =
-  | "production"
-  | "development"
-  | "misconfigured";
+export type AuthenticationMode = "production" | "development" | "misconfigured";
 
 export function authenticationReadiness(input: {
   publishableKey?: string;

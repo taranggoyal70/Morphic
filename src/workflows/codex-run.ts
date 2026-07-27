@@ -33,8 +33,7 @@ type ChatMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
 // Tool-call arguments are re-sent every turn too — a write_file call carries
 // the entire file body in its arguments, so ignoring them undercounts badly.
 function messageSize(message: ChatMessage): number {
-  let total =
-    typeof message.content === "string" ? message.content.length : 0;
+  let total = typeof message.content === "string" ? message.content.length : 0;
   if (message.role === "assistant" && message.tool_calls) {
     for (const call of message.tool_calls) {
       if (call.type === "function") total += call.function.arguments.length;
@@ -467,16 +466,18 @@ async function openPullRequestStep(input: {
 
   const { Octokit } = await import("@octokit/rest");
   const github = new Octokit({ auth: githubToken, userAgent: "morphic/0.1.0" });
-  const pull = await github.rest.pulls.create(buildAgentPullRequest({
-    owner: repository.owner,
-    repository: repository.name,
-    branchName: input.branchName,
-    baseBranch: repository.defaultBranch,
-    objective: workspace.objective,
-    instruction: run.instruction,
-    runId: run.id,
-    summary: input.summary,
-  }));
+  const pull = await github.rest.pulls.create(
+    buildAgentPullRequest({
+      owner: repository.owner,
+      repository: repository.name,
+      branchName: input.branchName,
+      baseBranch: repository.defaultBranch,
+      objective: workspace.objective,
+      instruction: run.instruction,
+      runId: run.id,
+      summary: input.summary,
+    }),
+  );
 
   await updateCodexRun(input.runId, {
     status: "completed",
