@@ -54,18 +54,11 @@ export async function POST(
       resourceType: "codex_run",
       resourceId: runId,
     });
+    let workflowRun: Awaited<ReturnType<typeof start>>;
     try {
-      const workflowRun = await start(codexRunWorkflow, [
+      workflowRun = await start(codexRunWorkflow, [
         { userId: user.id, runId },
       ]);
-      await setCodexWorkflowRunId(user.id, runId, workflowRun.runId);
-      return Response.json(
-        {
-          status: "queued",
-          workflowRunId: workflowRun.runId,
-        },
-        { status: 202 },
-      );
     } catch (error) {
       await updateCodexRun(runId, {
         status: "failed",
@@ -77,6 +70,26 @@ export async function POST(
       });
       throw error;
     }
+
+    let trackingPersisted = true;
+    try {
+      await setCodexWorkflowRunId(user.id, runId, workflowRun.runId);
+    } catch (error) {
+      trackingPersisted = false;
+      console.error("Workflow started but its tracking ID could not be saved", {
+        runId,
+        workflowRunId: workflowRun.runId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+    return Response.json(
+      {
+        status: "queued",
+        workflowRunId: workflowRun.runId,
+        trackingPersisted,
+      },
+      { status: 202 },
+    );
   } catch (error) {
     return toErrorResponse(error);
   }

@@ -16,6 +16,7 @@ import { getGitHubAccessToken } from "@/lib/auth";
 import { getServerEnv } from "@/lib/env";
 import { errorMessage } from "@/lib/error-message";
 import { fetchLocusSlice, type LocusSlice } from "@/lib/locus";
+import { buildAgentPullRequest } from "@/lib/pull-request";
 
 const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference";
 const MAX_AGENT_TURNS = 14;
@@ -466,26 +467,16 @@ async function openPullRequestStep(input: {
 
   const { Octokit } = await import("@octokit/rest");
   const github = new Octokit({ auth: githubToken, userAgent: "morphic/0.1.0" });
-  const pull = await github.rest.pulls.create({
+  const pull = await github.rest.pulls.create(buildAgentPullRequest({
     owner: repository.owner,
-    repo: repository.name,
-    head: input.branchName,
-    base: repository.defaultBranch,
-    title: `Morphic: ${workspace.objective.slice(0, 180)}`,
-    body: [
-      "## Morphic agent run",
-      "",
-      `**Approved instruction:** ${run.instruction}`,
-      "",
-      input.summary ? `**Summary:** ${input.summary}` : "",
-      "",
-      `Run ID: \`${run.id}\``,
-      "",
-      "This pull request was created from an explicitly approved, isolated agent run.",
-    ]
-      .filter(Boolean)
-      .join("\n"),
-  });
+    repository: repository.name,
+    branchName: input.branchName,
+    baseBranch: repository.defaultBranch,
+    objective: workspace.objective,
+    instruction: run.instruction,
+    runId: run.id,
+    summary: input.summary,
+  }));
 
   await updateCodexRun(input.runId, {
     status: "completed",
