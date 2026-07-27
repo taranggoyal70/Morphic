@@ -38,7 +38,9 @@ export function compactPlannerInput(input: PlannerInput) {
   return {
     objective: truncate(input.objective, MAX_TEXT),
     targetDate: input.targetDate?.toISOString() ?? null,
-    constraints: input.constraints.map((constraint) => truncate(constraint, MAX_TITLE)),
+    constraints: input.constraints.map((constraint) =>
+      truncate(constraint, MAX_TITLE),
+    ),
     repository: input.repository,
     snapshot: {
       headSha: input.snapshot.headSha,
