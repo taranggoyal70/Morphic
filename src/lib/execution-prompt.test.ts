@@ -16,6 +16,7 @@ function executionContext(): ExecutionContext {
     objective: "Ship reliable onboarding",
     targetDate: "2026-08-01T00:00:00.000Z",
     constraints: ["Preserve the existing sign-in route"],
+    incident: null,
     instruction: "Implement the approved onboarding route.",
     plan: {
       summary: "Prioritize the onboarding path.",
@@ -126,6 +127,40 @@ describe("buildExecutionContextPrompt", () => {
     expect(prompt).toContain("HIGH Session regression");
     expect(prompt).toContain("Changing auth may invalidate active sessions.");
     expect(prompt).toContain("Preserve the existing Clerk integration.");
+  });
+
+  it("binds incident behavior and regression criteria into agent execution", () => {
+    const context = {
+      ...executionContext(),
+      incident: {
+        source: "braintrust",
+        externalId: "bt-9831",
+        title: "Refund assistant repeated a customer credit",
+        observedBehavior: "A retried webhook issued two credits.",
+        expectedBehavior: "A retried webhook issues exactly one credit.",
+        occurredAt: "2026-08-07T14:32:00.000Z",
+        traceUrl: "https://braintrust.dev/app/acme/p/trace/bt-9831",
+        acceptanceCriteria: [
+          "Replaying the same webhook issues exactly one credit.",
+        ],
+        redactionConfirmed: true,
+      },
+    } as ExecutionContext;
+
+    const prompt = buildExecutionContextPrompt(context);
+
+    expect(prompt).toContain("Production incident: bt-9831 (braintrust)");
+    expect(prompt).toContain("Refund assistant repeated a customer credit");
+    expect(prompt).toContain(
+      "Observed behavior: A retried webhook issued two credits.",
+    );
+    expect(prompt).toContain(
+      "Expected behavior: A retried webhook issues exactly one credit.",
+    );
+    expect(prompt).toContain(
+      "Replaying the same webhook issues exactly one credit.",
+    );
+    expect(prompt).toContain("repository-owned behavioral regression test");
   });
 
   it("preserves Critical Path dependencies and estimates", () => {

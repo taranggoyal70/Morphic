@@ -3,6 +3,7 @@ import type {
   GitHubPullEvidence,
   RepositoryTreeEntry,
 } from "@/db/schema";
+import type { IncidentEvidence } from "@/lib/domain/incident";
 import type { WorkspacePlan } from "@/lib/domain/workspace";
 
 export type PlannerInput = {
@@ -10,6 +11,7 @@ export type PlannerInput = {
   objective: string;
   targetDate: Date | null;
   constraints: string[];
+  incident?: IncidentEvidence | null;
   repository: {
     fullName: string;
     defaultBranch: string;
@@ -38,7 +40,22 @@ export function compactPlannerInput(input: PlannerInput) {
   return {
     objective: truncate(input.objective, MAX_TEXT),
     targetDate: input.targetDate?.toISOString() ?? null,
-    constraints: input.constraints.map((constraint) => truncate(constraint, MAX_TITLE)),
+    constraints: input.constraints.map((constraint) =>
+      truncate(constraint, MAX_TITLE),
+    ),
+    incident: input.incident
+      ? {
+          source: input.incident.source,
+          externalId: truncate(input.incident.externalId, MAX_TITLE),
+          title: truncate(input.incident.title, MAX_TITLE),
+          occurredAt: input.incident.occurredAt,
+          observedBehavior: truncate(input.incident.observedBehavior, MAX_TEXT),
+          expectedBehavior: truncate(input.incident.expectedBehavior, MAX_TEXT),
+          acceptanceCriteria: input.incident.acceptanceCriteria.map(
+            (criterion) => truncate(criterion, MAX_TEXT),
+          ),
+        }
+      : null,
     repository: input.repository,
     snapshot: {
       headSha: input.snapshot.headSha,

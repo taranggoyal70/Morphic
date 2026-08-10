@@ -158,6 +158,7 @@ export async function getCodexExecutionContextForUser(
     objective: result.workspace.objective,
     targetDate: result.workspace.targetDate?.toISOString() ?? null,
     constraints: result.workspace.constraints,
+    incident: result.workspace.incident,
     instruction: result.run.instruction,
     plan: result.workspaceVersion.plan,
     repositoryScope,

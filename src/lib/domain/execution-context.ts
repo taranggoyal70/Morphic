@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import type { IncidentEvidence } from "@/lib/domain/incident";
 import type { RepositoryScope } from "@/lib/domain/repository-scope";
 import type { WorkspacePlan } from "@/lib/domain/workspace";
 
@@ -43,6 +44,7 @@ export type ExecutionContext = {
   objective: string;
   targetDate: string | null;
   constraints: string[];
+  incident: IncidentEvidence | null;
   instruction: string;
   plan: WorkspacePlan;
   repositoryScope: RepositoryScope;

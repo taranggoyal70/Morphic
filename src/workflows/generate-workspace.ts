@@ -35,6 +35,7 @@ async function compileWorkspaceStep(input: {
     objective: context.workspace.objective,
     targetDate: context.workspace.targetDate,
     constraints: context.workspace.constraints,
+    incident: context.workspace.incident,
     repository: {
       fullName: context.repository.fullName,
       defaultBranch: context.repository.defaultBranch,
