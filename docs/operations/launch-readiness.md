@@ -14,6 +14,26 @@ binary, has an owner, and requires linked evidence from the release commit.
 
 Do not approve launch with blank release identity fields.
 
+## Latest verified preview
+
+Verified on 2026-08-10. This is preview evidence, not a production-launch
+decision.
+
+- Preview commit: `687827f878158df531c79ec46cc5bd3a7e580552`
+- Immutable deployment:
+  `https://morphic-ann532cx8-taranggoyal2000-8594s-projects.vercel.app`
+- Deployment state: Vercel inspection reported `Ready` in `iad1`.
+- Health: `/api/health` returned `status: ok` and `database: connected` through
+  Vercel's protected-preview access path.
+- Acquisition surface: `/design-partners` rendered the seeking, per-account,
+  and source-drift publication-block claims from the reviewed implementation.
+- Migration: `pnpm db:migrate` applied migrations through
+  `drizzle/0005_flimsy_nova.sql` successfully against the configured remote
+  database before preview verification.
+
+Production owners, production rollback identity, and the remaining unchecked
+launch gates are still required before promotion.
+
 ## Product and market gates
 
 - [ ] At least 15 qualified buyers have been interviewed without pitching the
