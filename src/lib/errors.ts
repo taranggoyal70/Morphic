@@ -1,3 +1,5 @@
+import { ZodError } from "zod";
+
 export class AppError extends Error {
   constructor(
     message: string,
@@ -11,6 +13,23 @@ export class AppError extends Error {
 }
 
 export function toErrorResponse(error: unknown) {
+  if (error instanceof ZodError) {
+    return Response.json(
+      {
+        error: {
+          code: "invalid_request",
+          message: "Check the highlighted fields and try again.",
+          details: {
+            fields: error.issues
+              .map((issue) => issue.path.join("."))
+              .filter(Boolean),
+          },
+        },
+      },
+      { status: 400 },
+    );
+  }
+
   if (error instanceof AppError) {
     return Response.json(
       {

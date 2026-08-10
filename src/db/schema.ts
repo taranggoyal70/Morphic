@@ -44,6 +44,14 @@ export const approvalStatus = pgEnum("approval_status", [
   "rejected",
   "expired",
 ]);
+export const designPartnerStatus = pgEnum("design_partner_status", [
+  "submitted",
+  "interview_scheduled",
+  "artifact_received",
+  "pilot_proposed",
+  "pilot_active",
+  "closed",
+]);
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -57,6 +65,41 @@ export const users = pgTable("users", {
     .defaultNow()
     .notNull(),
 });
+
+export const designPartnerApplications = pgTable(
+  "design_partner_applications",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    status: designPartnerStatus("status").default("submitted").notNull(),
+    companyName: text("company_name").notNull(),
+    role: text("role").notNull(),
+    engineeringTeamSize: text("engineering_team_size").notNull(),
+    productionAgentConfirmed: boolean("production_agent_confirmed").notNull(),
+    githubConfirmed: boolean("github_confirmed").notNull(),
+    incidentOccurredAt: timestamp("incident_occurred_at", {
+      withTimezone: true,
+    }).notNull(),
+    incidentSummary: text("incident_summary").notNull(),
+    currentStack: jsonb("current_stack").$type<string[]>().notNull(),
+    currentProofProcess: text("current_proof_process").notNull(),
+    artifactWilling: boolean("artifact_willing").notNull(),
+    pilotReadiness: text("pilot_readiness").notNull(),
+    redactionConfirmed: boolean("redaction_confirmed").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("design_partner_applications_user_uidx").on(table.userId),
+    index("design_partner_applications_status_idx").on(table.status),
+  ],
+);
 
 export const repositories = pgTable(
   "repositories",
