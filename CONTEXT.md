@@ -48,6 +48,20 @@ reproduces its observed behavior and proves its expected behavior. For a
 independent verification before publication.
 _Avoid_: Passing lint, an unchanged unrelated test suite, agent self-report
 
+**Design Partner Application**:
+An attributable, redacted screening record from a team with a customer-facing
+AI system, GitHub source, and a recent **Production Incident**. It records the
+current release-proof workflow, artifact willingness, and paid-pilot readiness.
+It does not become customer-validation evidence until a qualified problem
+interview or later market gate verifies the claim.
+_Avoid_: Customer, qualified interview, waitlist signup, market-validation point
+
+**Paid Design Partnership**:
+A time-bounded production pilot with upfront payment, pre-registered success
+and stop criteria, and named owners. Interest, a form submission, or an unpaid
+trial is not a **Paid Design Partnership**.
+_Avoid_: Lead, free beta user, verbal intent
+
 **Workspace Version**:
 An immutable generated interpretation of an **Objective** and a specific **Repository Snapshot**. A later user command creates a new **Workspace Version** rather than silently rewriting history.
 _Avoid_: Autosave, mutable dashboard state

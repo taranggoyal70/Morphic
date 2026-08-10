@@ -26,26 +26,27 @@ Do not approve launch with blank release identity fields.
       disposable or non-critical repositories allowed during alpha.
 
 The validation thresholds come from
-[market validation](../research/market-validation-2026-07-25.md). Missing a
+[market validation](../research/market-validation-2026-08-09.md). Missing a
 market gate blocks commercial claims, even if the software gates pass.
 
 ## Verified software gates
 
-| Gate                     | Passing evidence                                                                                                               | Owner            |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ---------------- |
-| Repository checks        | `pnpm check` passes on the exact release commit with no ignored failures                                                       | Engineering      |
-| Database migration       | Migrations through `drizzle/0004_lush_songbird.sql` are reviewed, applied once, and present in the production migration record | Data owner       |
-| Exact snapshot           | A real run provisions the stored 40-character SHA and blocks when the default branch advances                                  | Engineering      |
-| Approval boundary        | The approval panel shows repository + short SHA, Workspace Version, and draft-only authorization copy                          | Product          |
-| Independent verification | At least one repository-owned check is recorded on the run and in the draft pull request                                       | Engineering      |
-| Negative verification    | A deliberately failing check produces no branch publication or pull request                                                    | Engineering      |
-| Empty diff               | A no-change agent run produces no pull request                                                                                 | Engineering      |
-| Turn exhaustion          | A run that never calls finish produces no pull request                                                                         | Engineering      |
-| Path safety              | An invalid or out-of-repository changed path blocks publication                                                                | Security         |
-| Credential cleanup       | The sandbox origin is credential-free after both successful and failed pushes                                                  | Security         |
-| Draft publication        | A passing run opens a draft pull request with reviewed snapshot, Workspace Version, and command results                        | Repository owner |
-| Incident regression      | A changed test names the incident and direct execution reports the incident plus at least one passing test                     | Product owner    |
-| Teardown                 | Successful and failed runs both stop their Vercel Sandbox                                                                      | Operations       |
+| Gate                     | Passing evidence                                                                                                                  | Owner            |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| Repository checks        | `pnpm check` passes on the exact release commit with no ignored failures                                                          | Engineering      |
+| Database migration       | Migrations through `drizzle/0005_flimsy_nova.sql` are reviewed, applied once, and present in the production migration record      | Data owner       |
+| Recruiting intake        | `/design-partners` requires an attributable account and persists one redacted application per user without awarding a market gate | Product owner    |
+| Exact snapshot           | A real run provisions the stored 40-character SHA and blocks when the default branch advances                                     | Engineering      |
+| Approval boundary        | The approval panel shows repository + short SHA, Workspace Version, and draft-only authorization copy                             | Product          |
+| Independent verification | At least one repository-owned check is recorded on the run and in the draft pull request                                          | Engineering      |
+| Negative verification    | A deliberately failing check produces no branch publication or pull request                                                       | Engineering      |
+| Empty diff               | A no-change agent run produces no pull request                                                                                    | Engineering      |
+| Turn exhaustion          | A run that never calls finish produces no pull request                                                                            | Engineering      |
+| Path safety              | An invalid or out-of-repository changed path blocks publication                                                                   | Security         |
+| Credential cleanup       | The sandbox origin is credential-free after both successful and failed pushes                                                     | Security         |
+| Draft publication        | A passing run opens a draft pull request with reviewed snapshot, Workspace Version, and command results                           | Repository owner |
+| Incident regression      | A changed test names the incident and direct execution reports the incident plus at least one passing test                        | Product owner    |
+| Teardown                 | Successful and failed runs both stop their Vercel Sandbox                                                                         | Operations       |
 
 ## Security and data gates
 

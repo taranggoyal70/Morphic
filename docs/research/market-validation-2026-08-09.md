@@ -149,6 +149,29 @@ competitor customer stories do not count.
 Public evidence increases confidence that the problem is real. It cannot
 increase this customer-validation score.
 
+## Validation acquisition instrument
+
+Morphic now includes a product-owned path for turning public interest into
+auditable discovery inputs:
+
+- the [paid design-partner page](../../src/app/design-partners/page.tsx)
+  explains the surviving exact-source and drift-control hypothesis rather than
+  advertising a generic waitlist;
+- the [application contract](../../src/lib/domain/design-partner.ts) requires a
+  customer-facing production agent, GitHub source, and an incident in the last
+  90 days;
+- the [application API](../../src/app/api/design-partner-applications/route.ts)
+  requires an authenticated user, rate-limits submissions, and records a
+  non-sensitive audit event; and
+- the [durable application record](../../src/db/schema.ts) prevents anonymous
+  or duplicate applications from being treated as separate demand signals.
+
+This instrument removes the anonymous-waitlist bottleneck and makes paid-pilot
+readiness observable. It earns **no market gate by itself**. An application is
+only a recruiting lead until a non-leading problem interview verifies the
+recent incident and current workflow. A paid-pilot selection is stated intent,
+not a contract or payment.
+
 ## Public recruiting map
 
 The following are research leads, not qualified prospects. Their appearance in
