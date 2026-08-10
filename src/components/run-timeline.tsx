@@ -90,6 +90,27 @@ function describeEvent(event: RunEvent): Described | null {
     };
   }
 
+  if (event.eventType === "verification.completed") {
+    const passed = payload.status === "passed";
+    const commands = Array.isArray(payload.commands)
+      ? payload.commands
+          .map(asRecord)
+          .filter((command): command is Record<string, unknown> =>
+            Boolean(command),
+          )
+          .map((command) => {
+            const name = asText(command.command) ?? "verification command";
+            return `${name} · ${command.exitCode === 0 ? "passed" : "failed"}`;
+          })
+      : [];
+    return {
+      icon: passed ? CheckCircleIcon : WarningIcon,
+      label: `Independent verification ${passed ? "passed" : "failed"}`,
+      detail: commands.join("\n") || null,
+      tone: passed ? "success" : "error",
+    };
+  }
+
   // Only the completed side of each tool call carries the outcome; the
   // "started" half is intentionally dropped to keep the log readable.
   if (event.eventType !== "item.completed") return null;
