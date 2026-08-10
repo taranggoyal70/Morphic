@@ -161,7 +161,7 @@ export function CodexPanel({
   }
 
   return (
-    <section className="border-t border-line bg-[#0a0d13]">
+    <section className="border-t border-line bg-surface/55">
       <div className="mx-auto max-w-[1400px] px-4 py-4 sm:px-6">
         <div className="flex items-center gap-2">
           <ShieldChevronIcon

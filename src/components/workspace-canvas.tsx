@@ -105,7 +105,7 @@ export function WorkspaceCanvas({
     <main className="min-h-screen bg-ink">
       <WorkspaceRefresh workspaceId={workspace.id} active={adapting} />
 
-      <header className="bg-[#090b10] px-4 pt-5 sm:px-6 lg:px-7">
+      <header className="bg-ink px-4 pt-5 sm:px-6 lg:px-7">
         <div className="mx-auto max-w-[1500px] rounded-xl border border-line-strong bg-surface/40 px-5 py-5">
           <div className="flex flex-col justify-between gap-5 xl:flex-row xl:items-start">
             <div className="min-w-0">

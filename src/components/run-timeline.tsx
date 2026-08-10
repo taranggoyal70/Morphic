@@ -275,7 +275,7 @@ export function RunTimeline({
       </button>
 
       {open && (
-        <div className="mt-2 overflow-hidden rounded-lg border border-line bg-[#07090e]">
+        <div className="mt-2 overflow-hidden rounded-lg border border-line bg-black/30">
           {usage && (usage.inputTokens > 0 || usage.outputTokens > 0) && (
             <div className="flex flex-wrap gap-x-3 gap-y-1 border-b border-line px-3 py-2 font-mono text-[10px] text-muted">
               <span>{usage.inputTokens.toLocaleString()} in</span>
