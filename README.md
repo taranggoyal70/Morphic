@@ -15,7 +15,14 @@ Morphic turns a software objective into a persistent adaptive workspace grounded
 - Audit logging on all critical operations (workspace creation, Codex approval, user deletion)
 - Clerk webhook for user deletion (GDPR compliance)
 - Workspace archival and deletion endpoints
-- No `localStorage`, `sessionStorage`, seeded product records, or mock API responses
+- No `localStorage`, `sessionStorage`, seeded durable product records, or mock API responses
+
+## Product demo
+
+The public `/demo` route tells a clearly labeled, synthetic
+incident-to-pull-request story without requiring provider credentials. Use the
+[five-minute demo guide](docs/demo/five-minute-incident-to-pr.md) to pair that
+fixture with a live run on a disposable repository.
 
 ## Architecture
 
