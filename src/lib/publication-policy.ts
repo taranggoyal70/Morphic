@@ -15,3 +15,36 @@ export function assertPublishablePaths(paths: string[]) {
   }
   return paths;
 }
+
+export function buildPullRequestDraft(input: {
+  owner: string;
+  repo: string;
+  head: string;
+  base: string;
+  objective: string;
+  instruction: string;
+  runId: string;
+  summary: string | null;
+}) {
+  return {
+    owner: input.owner,
+    repo: input.repo,
+    head: input.head,
+    base: input.base,
+    draft: true,
+    title: `Morphic: ${input.objective.slice(0, 180)}`,
+    body: [
+      "## Morphic agent run",
+      "",
+      `**Approved instruction:** ${input.instruction}`,
+      "",
+      input.summary ? `**Summary:** ${input.summary}` : "",
+      "",
+      `Run ID: \`${input.runId}\``,
+      "",
+      "This draft pull request was created from an explicitly approved, isolated agent run.",
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  };
+}

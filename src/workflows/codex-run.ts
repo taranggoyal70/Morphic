@@ -21,7 +21,10 @@ import {
 import { getServerEnv } from "@/lib/env";
 import { errorMessage } from "@/lib/error-message";
 import { buildExecutionContextPrompt } from "@/lib/execution-prompt";
-import { assertPublishablePaths } from "@/lib/publication-policy";
+import {
+  assertPublishablePaths,
+  buildPullRequestDraft,
+} from "@/lib/publication-policy";
 import {
   assertVerificationPassed,
   createVerificationPlan,
@@ -56,8 +59,7 @@ function redactSensitiveText(value: string) {
 // Tool-call arguments are re-sent every turn too — a write_file call carries
 // the entire file body in its arguments, so ignoring them undercounts badly.
 function messageSize(message: ChatMessage): number {
-  let total =
-    typeof message.content === "string" ? message.content.length : 0;
+  let total = typeof message.content === "string" ? message.content.length : 0;
   if (message.role === "assistant" && message.tool_calls) {
     for (const call of message.tool_calls) {
       if (call.type === "function") total += call.function.arguments.length;
@@ -479,7 +481,9 @@ async function openPullRequestStep(input: {
     `${input.baseSha}...${commitSha}`,
   ]);
   if (diffResult.exitCode !== 0) {
-    throw new Error(`Could not inspect the final diff: ${await diffResult.stderr()}`);
+    throw new Error(
+      `Could not inspect the final diff: ${await diffResult.stderr()}`,
+    );
   }
   const changedPaths = assertPublishablePaths(
     (await diffResult.stdout())
@@ -524,26 +528,18 @@ async function openPullRequestStep(input: {
 
   const { Octokit } = await import("@octokit/rest");
   const github = new Octokit({ auth: githubToken, userAgent: "morphic/0.1.0" });
-  const pull = await github.rest.pulls.create({
-    owner: repository.owner,
-    repo: repository.name,
-    head: input.branchName,
-    base: repository.defaultBranch,
-    title: `Morphic: ${workspace.objective.slice(0, 180)}`,
-    body: [
-      "## Morphic agent run",
-      "",
-      `**Approved instruction:** ${run.instruction}`,
-      "",
-      input.summary ? `**Summary:** ${input.summary}` : "",
-      "",
-      `Run ID: \`${run.id}\``,
-      "",
-      "This pull request was created from an explicitly approved, isolated agent run.",
-    ]
-      .filter(Boolean)
-      .join("\n"),
-  });
+  const pull = await github.rest.pulls.create(
+    buildPullRequestDraft({
+      owner: repository.owner,
+      repo: repository.name,
+      head: input.branchName,
+      base: repository.defaultBranch,
+      objective: workspace.objective,
+      instruction: run.instruction,
+      runId: run.id,
+      summary: input.summary,
+    }),
+  );
 
   await updateCodexRun(input.runId, {
     status: "completed",
@@ -639,9 +635,7 @@ async function verifyAgentChangeStep(input: {
     packageJson.exitCode === 0 ? await packageJson.stdout() : null,
   );
   if (plan.commands.length === 0) {
-    throw new Error(
-      `Independent verification could not start: ${plan.reason}`,
-    );
+    throw new Error(`Independent verification could not start: ${plan.reason}`);
   }
 
   const commands: VerificationResult["commands"] = [];
