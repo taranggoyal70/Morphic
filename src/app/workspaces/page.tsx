@@ -9,7 +9,7 @@ import { getGitHubAccessToken, requireMorphicUser } from "@/lib/auth";
 import { listRepositories } from "@/lib/github";
 
 export const metadata: Metadata = {
-  title: "New objective",
+  title: "New incident regression",
 };
 
 export default async function WorkspacesPage() {
@@ -28,14 +28,16 @@ export default async function WorkspacesPage() {
         <div>
           <div className="mb-4 flex items-center gap-2 text-xs font-medium text-violet-light">
             <SparkleIcon size={15} weight="fill" />
-            New adaptive workspace
+            New evidence workspace
           </div>
           <h1 className="text-3xl font-semibold tracking-[-0.04em] text-paper sm:text-4xl">
-            Begin with the outcome.
+            Begin with the failure.
           </h1>
           <p className="mt-3 max-w-2xl text-[15px] leading-7 text-muted-light">
-            Morphic will inspect live GitHub evidence, compile the critical
-            path, and shape the interface around what must happen next.
+            Bring a redacted production incident. Morphic binds its expected
+            behavior to live GitHub evidence, independent verification, and a
+            human-approved draft pull request. General objectives remain
+            available when there is no incident.
           </p>
         </div>
         {githubConnected ? (

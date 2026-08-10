@@ -199,6 +199,72 @@ export function WorkspaceCanvas({
               ))}
             </div>
           )}
+          {workspace.incident && (
+            <section
+              aria-label="Production incident evidence"
+              className="mt-5 rounded-lg border border-amber/20 bg-amber/5 p-4"
+            >
+              <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-amber">
+                      Production incident
+                    </span>
+                    <code className="rounded border border-amber/20 bg-black/15 px-1.5 py-0.5 font-mono text-[10px] text-amber">
+                      {workspace.incident.externalId}
+                    </code>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-muted">
+                      {workspace.incident.source}
+                    </span>
+                  </div>
+                  <h2 className="mt-2 text-sm font-semibold text-paper">
+                    {workspace.incident.title}
+                  </h2>
+                </div>
+                {workspace.incident.traceUrl && (
+                  <a
+                    href={workspace.incident.traceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-amber transition hover:text-paper"
+                  >
+                    Open redacted trace
+                    <ArrowSquareOutIcon size={12} />
+                  </a>
+                )}
+              </div>
+              <dl className="mt-3 grid gap-3 text-xs md:grid-cols-2">
+                <div>
+                  <dt className="text-muted">Observed behavior</dt>
+                  <dd className="mt-1 leading-5 text-muted-light">
+                    {workspace.incident.observedBehavior}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted">Expected behavior</dt>
+                  <dd className="mt-1 leading-5 text-muted-light">
+                    {workspace.incident.expectedBehavior}
+                  </dd>
+                </div>
+              </dl>
+              <div className="mt-3 border-t border-amber/10 pt-3">
+                <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">
+                  Behavioral acceptance
+                </p>
+                <ul className="mt-2 grid gap-1.5 text-xs text-muted-light sm:grid-cols-2">
+                  {workspace.incident.acceptanceCriteria.map((criterion) => (
+                    <li key={criterion} className="flex gap-2 leading-5">
+                      <CheckCircleIcon
+                        size={13}
+                        className="mt-1 shrink-0 text-amber"
+                      />
+                      {criterion}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          )}
         </div>
       </header>
 
