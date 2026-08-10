@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { ApprovalEvidence } from "@/components/approval-evidence";
 import { RunTimeline } from "@/components/run-timeline";
 
 type CodexRun = {
@@ -37,10 +38,14 @@ const activeStatuses = new Set(["queued", "provisioning", "running"]);
 export function CodexPanel({
   workspaceId,
   workspaceReady,
+  repositoryFullName,
+  snapshotSha,
   runs,
 }: {
   workspaceId: string;
   workspaceReady: boolean;
+  repositoryFullName?: string;
+  snapshotSha?: string | null;
   runs: CodexRun[];
 }) {
   const router = useRouter();
@@ -229,6 +234,14 @@ export function CodexPanel({
                         {run.resultSummary ?? run.error}
                       </p>
                     )}
+                    {run.status === "awaiting_approval" &&
+                      repositoryFullName &&
+                      snapshotSha && (
+                        <ApprovalEvidence
+                          repositoryFullName={repositoryFullName}
+                          snapshotSha={snapshotSha}
+                        />
+                      )}
                   </div>
 
                   {run.status === "awaiting_approval" && (

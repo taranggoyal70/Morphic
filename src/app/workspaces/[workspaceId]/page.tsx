@@ -19,10 +19,11 @@ export default async function WorkspacePage(context: {
 }) {
   const user = await requireMorphicUser();
   const { workspaceId } = await context.params;
-  const [{ workspace, repository, version }, runs] = await Promise.all([
-    getWorkspaceView(user.id, workspaceId),
-    listCodexRuns(user.id, workspaceId),
-  ]);
+  const [{ workspace, repository, version, snapshot }, runs] =
+    await Promise.all([
+      getWorkspaceView(user.id, workspaceId),
+      listCodexRuns(user.id, workspaceId),
+    ]);
 
   return (
     <WorkspaceCanvas
@@ -43,6 +44,7 @@ export default async function WorkspacePage(context: {
       }}
       plan={version?.plan ?? null}
       version={version?.version ?? null}
+      snapshotSha={snapshot?.headSha ?? null}
       runs={runs.map((run) => ({
         id: run.id,
         instruction: run.instruction,

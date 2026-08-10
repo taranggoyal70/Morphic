@@ -88,12 +88,14 @@ export function WorkspaceCanvas({
   repository,
   plan,
   version,
+  snapshotSha = null,
   runs,
 }: {
   workspace: WorkspaceData;
   repository: RepositoryData;
   plan: WorkspacePlan | null;
   version: number | null;
+  snapshotSha?: string | null;
   runs: RunData[];
 }) {
   const adapting = workspace.status === "generating";
@@ -527,6 +529,8 @@ export function WorkspaceCanvas({
           <CodexPanel
             workspaceId={workspace.id}
             workspaceReady={workspace.status === "active"}
+            repositoryFullName={repository.fullName}
+            snapshotSha={snapshotSha}
             runs={runs}
           />
           <section className="mx-auto max-w-[1000px] px-4 py-3 sm:px-6">
