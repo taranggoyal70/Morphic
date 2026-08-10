@@ -20,7 +20,7 @@ The maximum score without exercised production evidence is 97.
 
 ## Baseline
 
-Fixed point: `ebb4e2ee965c2caef4a5fb2229a9ca4d18d7ca53`
+Fixed point: `ebb4e2ee5bd96ec89f3bf16e6b855520a0bf9964`
 
 | Dimension                       |      Score | Evidence and gap                                                                                                           |
 | ------------------------------- | ---------: | -------------------------------------------------------------------------------------------------------------------------- |
@@ -40,13 +40,28 @@ remain external facts. The repository cannot award itself those points.
 Current verified result: **0 of 8 evidenced in this repository**. This means
 the business remains unvalidated even if repository readiness reaches 90.
 
-## Release score
+## Incident-regression v1 score
 
-Complete this section only from the exact reviewed release commit.
+Scored implementation commit: `69ec3c962026770e5ebfda6255137449db459fbb`
 
-- Release commit: _pending_
-- Repository readiness: _pending_
-- `pnpm check`: _pending_
-- Standards review: _pending_
-- Specification review: _pending_
-- Market validation: **0 of 8 evidenced in this repository**
+| Dimension                       |      Score | Evidence                                                                                                                                                                                                                                           |
+| ------------------------------- | ---------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wedge expression                |      15/15 | The narrow job is defined in the [product specification](../specs/incident-regression-v1.md), incident intake is first-class, and the primary workspace flow begins with a production failure.                                                     |
+| Incident workflow               |      25/25 | The implementation validates and persists redacted evidence, structurally binds every criterion into planning, carries it into Codex Run execution, displays it at approval, and records it in the draft pull request.                             |
+| Evidence and publication safety |      25/25 | Repository Snapshots and approvals are run-scoped, incident evidence is immutable, base drift blocks publication, and an incident run now requires a changed test that names the incident identifier plus a passing repository-owned test command. |
+| Technical health                |      16/20 | Lint, typecheck, 18 test files with 99 tests, and the production build passed through `pnpm check` at the scored commit. The independent-review point is conservatively unawarded in this recorded score.                                          |
+| Operability                     |      12/15 | Health, failure guidance, release controls, rollback documentation, and named ownership controls exist. Exercised production evidence remains unearned.                                                                                            |
+| **Repository readiness**        | **93/100** | Meets the 90-point repository-readiness threshold without awarding production exercises or the independent-review point.                                                                                                                           |
+
+### Verification record
+
+- `pnpm check`: passed at the scored implementation commit.
+- Standards review: the initial review found canonical-language and domain
+  typing issues; their hard findings were resolved before this score was
+  recorded. The independent-review point remains unawarded above.
+- Specification review: the initial review found weak behavioral linkage,
+  advisory-only planning, and a truncated SHA. Those findings were resolved by
+  requiring incident-linked changed tests, structural plan bindings, and the
+  full 40-character SHA.
+- User-owned `launch/`: absent from every commit and excluded from this score.
+- Market validation: **0 of 8 evidenced in this repository**.
