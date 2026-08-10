@@ -79,6 +79,10 @@ In the Clerk development instance, enable GitHub under **SSO connections -> For 
 
 ## Go-live requirements
 
+Accountability, credential custody, deployment, rollback, and incident
+procedures are defined in
+[production controls and environment ownership](docs/operations/production-controls.md).
+
 Before accepting production traffic:
 
 1. Activate the Clerk production instance and replace the `pk_test_` / `sk_test_` variables with production keys (`pk_live_` / `sk_live_`).
