@@ -1,0 +1,1 @@
+ALTER TABLE "codex_runs" ADD COLUMN "verification" jsonb;

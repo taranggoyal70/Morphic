@@ -663,6 +663,7 @@ async function verifyAgentChangeStep(input: {
       : "failed",
     commands,
   };
+  await updateCodexRun(input.runId, { verification });
   await appendCodexEvents(input.runId, [
     {
       sequence: 90_000,

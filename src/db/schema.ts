@@ -258,6 +258,17 @@ export const codexRuns = pgTable(
     commitSha: text("commit_sha"),
     pullRequestNumber: integer("pull_request_number"),
     pullRequestUrl: text("pull_request_url"),
+    verification: jsonb("verification").$type<{
+      status: "passed" | "failed";
+      commands: Array<{
+        id: string;
+        label: string;
+        command: string;
+        timeoutMs: number;
+        exitCode: number;
+        output: string;
+      }>;
+    }>(),
     resultSummary: text("result_summary"),
     usage: jsonb("usage").$type<{
       inputTokens: number;
