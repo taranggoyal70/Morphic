@@ -14,9 +14,7 @@ const LOCKFILES: Array<[string, PackageManager]> = [
 
 export function detectPackageManager(paths: string[]): PackageManager {
   const names = new Set(paths);
-  return (
-    LOCKFILES.find(([lockfile]) => names.has(lockfile))?.[1] ?? "unknown"
-  );
+  return LOCKFILES.find(([lockfile]) => names.has(lockfile))?.[1] ?? "unknown";
 }
 
 function packageScripts(packageJson: unknown): Record<string, string> {
@@ -74,10 +72,25 @@ export function createVerificationPlan(
   };
 }
 
-export function assertVerificationPassed(result: VerificationResult) {
-  if (result.status === "passed") return;
-  const failed = result.commands.find(({ exitCode }) => exitCode !== 0);
-  throw new Error(
-    `Independent verification failed${failed ? `: ${failed.command} exited ${failed.exitCode}` : ""}. Publication was blocked.`,
-  );
+export function assertVerificationPassed(
+  result: VerificationResult,
+  options: { requireBehavioralRegression?: boolean } = {},
+) {
+  if (result.status !== "passed") {
+    const failed = result.commands.find(({ exitCode }) => exitCode !== 0);
+    throw new Error(
+      `Independent verification failed${failed ? `: ${failed.command} exited ${failed.exitCode}` : ""}. Publication was blocked.`,
+    );
+  }
+
+  if (
+    options.requireBehavioralRegression &&
+    !result.commands.some(
+      ({ id, exitCode }) => (id === "test" || id === "check") && exitCode === 0,
+    )
+  ) {
+    throw new Error(
+      "Independent verification did not record a passing repository-owned test or check for the behavioral regression. Publication was blocked.",
+    );
+  }
 }

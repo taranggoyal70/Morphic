@@ -744,7 +744,9 @@ export async function codexRunWorkflow(input: {
       sandboxName,
       runId: input.runId,
     });
-    assertVerificationPassed(verification);
+    assertVerificationPassed(verification, {
+      requireBehavioralRegression: context.incident !== null,
+    });
 
     return await openPullRequestStep({
       userId: input.userId,

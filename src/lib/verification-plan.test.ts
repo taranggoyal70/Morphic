@@ -47,6 +47,51 @@ describe("assertVerificationPassed", () => {
       }),
     ).toThrow("pnpm run test");
   });
+
+  it("blocks incident publication without a passing behavioral command", () => {
+    expect(() =>
+      assertVerificationPassed(
+        {
+          status: "passed",
+          commands: [
+            {
+              id: "lint",
+              label: "Run lint",
+              command: "pnpm run lint",
+              timeoutMs: 300_000,
+              exitCode: 0,
+              output: "",
+            },
+          ],
+        },
+        { requireBehavioralRegression: true },
+      ),
+    ).toThrow("behavioral regression");
+  });
+
+  it.each(["test", "check"])(
+    "accepts incident publication after a passing %s command",
+    (id) => {
+      expect(() =>
+        assertVerificationPassed(
+          {
+            status: "passed",
+            commands: [
+              {
+                id,
+                label: `Run ${id}`,
+                command: `pnpm run ${id}`,
+                timeoutMs: 300_000,
+                exitCode: 0,
+                output: "",
+              },
+            ],
+          },
+          { requireBehavioralRegression: true },
+        ),
+      ).not.toThrow();
+    },
+  );
 });
 
 describe("createVerificationPlan", () => {
