@@ -68,6 +68,17 @@ export function buildPullRequestDraft(input: {
           (criterion) => `- [ ] ${criterion}`,
         ),
         "",
+        ...(input.verification.behavioralEvidence?.incidentExternalId ===
+        input.incident.externalId
+          ? [
+              "### Linked regression tests",
+              "",
+              ...input.verification.behavioralEvidence.testPaths.map(
+                (path) => `- \`${path}\``,
+              ),
+              "",
+            ]
+          : []),
       ]
     : [];
   return {
@@ -89,7 +100,7 @@ export function buildPullRequestDraft(input: {
       "",
       "| Evidence | Value |",
       "| --- | --- |",
-      `| Reviewed snapshot | \`${input.reviewedSha.slice(0, 7)}\` |`,
+      `| Reviewed snapshot | \`${input.reviewedSha}\` |`,
       `| Workspace Version | \`v${input.workspaceVersion}\` |`,
       `| Independent verification | ${input.verification.status === "passed" ? "Passed" : "Failed"} |`,
       "",

@@ -1,5 +1,6 @@
 import type {
   PackageManager,
+  VerificationCapability,
   VerificationPlan,
   VerificationResult,
 } from "@/lib/domain/verification";
@@ -11,6 +12,29 @@ const LOCKFILES: Array<[string, PackageManager]> = [
   ["bun.lock", "bun"],
   ["bun.lockb", "bun"],
 ];
+
+const TEST_PATH_PATTERNS = [
+  /(^|\/)(?:__tests__|test|tests|spec)\/.*\.(?:[cm]?[jt]sx?|py|rb|go)$/,
+  /\.(?:test|spec)\.[cm]?[jt]sx?$/,
+  /(^|\/)test_[^/]+\.py$/,
+  /_(?:test\.(?:go|py)|spec\.rb)$/,
+];
+
+export function isRepositoryTestPath(path: string) {
+  return TEST_PATH_PATTERNS.some((pattern) => pattern.test(path));
+}
+
+export function findIncidentRegressionTestPaths(
+  incidentExternalId: string,
+  changedFiles: Array<{ path: string; content: string }>,
+) {
+  return changedFiles
+    .filter(
+      ({ path, content }) =>
+        isRepositoryTestPath(path) && content.includes(incidentExternalId),
+    )
+    .map(({ path }) => path);
+}
 
 export function detectPackageManager(paths: string[]): PackageManager {
   const names = new Set(paths);
@@ -42,23 +66,52 @@ function runCommand(manager: PackageManager, script: string) {
   return `${manager} run ${script}`;
 }
 
+function scriptCapabilities(
+  script: string,
+  body: string,
+): VerificationCapability[] {
+  if (script === "test") return ["repository-tests"];
+  if (
+    script === "check" &&
+    /\b(?:pnpm|npm|yarn|bun)(?:\s+run)?\s+test\b/.test(body)
+  ) {
+    return ["repository-tests"];
+  }
+  if (script === "typecheck" || script === "lint") {
+    return ["static-analysis"];
+  }
+  if (script === "build") return ["production-build"];
+  return [];
+}
+
 export function createVerificationPlan(
   paths: string[],
   packageJson: unknown,
+  options: { requireRepositoryTests?: boolean } = {},
 ): VerificationPlan {
   const packageManager = detectPackageManager(paths);
   const scripts = packageScripts(packageJson);
-  const selected = scripts.check
-    ? ["check"]
-    : ["test", "typecheck", "lint", "build"]
-        .filter((script) => scripts[script])
-        .slice(0, 3);
+  const selected = options.requireRepositoryTests
+    ? scripts.test
+      ? ["test"]
+      : scripts.check &&
+          scriptCapabilities("check", scripts.check).includes(
+            "repository-tests",
+          )
+        ? ["check"]
+        : []
+    : scripts.check
+      ? ["check"]
+      : ["test", "typecheck", "lint", "build"]
+          .filter((script) => scripts[script])
+          .slice(0, 3);
   const commands = selected
     .map((script) => ({
       id: script,
       label: `Run ${script}`,
       command: runCommand(packageManager, script),
       timeoutMs: script === "build" || script === "check" ? 600_000 : 300_000,
+      capabilities: [...scriptCapabilities(script, scripts[script])],
     }))
     .filter(({ command }) => command.length > 0);
 
@@ -74,7 +127,7 @@ export function createVerificationPlan(
 
 export function assertVerificationPassed(
   result: VerificationResult,
-  options: { requireBehavioralRegression?: boolean } = {},
+  options: { incidentExternalId?: string } = {},
 ) {
   if (result.status !== "passed") {
     const failed = result.commands.find(({ exitCode }) => exitCode !== 0);
@@ -83,14 +136,18 @@ export function assertVerificationPassed(
     );
   }
 
-  if (
-    options.requireBehavioralRegression &&
-    !result.commands.some(
-      ({ id, exitCode }) => (id === "test" || id === "check") && exitCode === 0,
-    )
-  ) {
+  if (options.incidentExternalId) {
+    const evidence = result.behavioralEvidence;
+    const hasLinkedEvidence =
+      evidence?.incidentExternalId === options.incidentExternalId &&
+      evidence.testPaths.length > 0;
+    const behavioralCommandPassed = result.commands.some(
+      ({ capabilities, exitCode }) =>
+        capabilities.includes("behavioral-regression") && exitCode === 0,
+    );
+    if (hasLinkedEvidence && behavioralCommandPassed) return;
     throw new Error(
-      "Independent verification did not record a passing repository-owned test or check for the behavioral regression. Publication was blocked.",
+      "Independent verification did not record a linked behavioral regression test and a passing repository-owned test command for this incident. Publication was blocked.",
     );
   }
 }

@@ -30,6 +30,8 @@ import { pushWithEphemeralCredentials } from "@/lib/publication-remote";
 import {
   assertVerificationPassed,
   createVerificationPlan,
+  findIncidentRegressionTestPaths,
+  isRepositoryTestPath,
 } from "@/lib/verification-plan";
 import type { VerificationResult } from "@/lib/domain/verification";
 
@@ -163,6 +165,59 @@ function git(
     cwd: REPO_CWD,
     timeoutMs,
   });
+}
+
+async function inspectChangedTestFiles(
+  sandbox: Awaited<ReturnType<typeof Sandbox.getOrCreate>>,
+  baseSha: string,
+) {
+  const changed = await git(sandbox, [
+    "diff",
+    "--name-only",
+    "--diff-filter=ACMR",
+    "-z",
+    baseSha,
+  ]);
+  if (changed.exitCode !== 0) {
+    throw new Error(
+      `Could not inspect changed files for behavioral verification: ${await changed.stderr()}`,
+    );
+  }
+  const untracked = await git(sandbox, [
+    "ls-files",
+    "--others",
+    "--exclude-standard",
+    "-z",
+  ]);
+  if (untracked.exitCode !== 0) {
+    throw new Error(
+      `Could not inspect untracked files for behavioral verification: ${await untracked.stderr()}`,
+    );
+  }
+  const paths = assertPublishablePaths(
+    [
+      ...(await changed.stdout()).split("\0"),
+      ...(await untracked.stdout()).split("\0"),
+    ]
+      .filter(Boolean)
+      .filter((path, index, all) => all.indexOf(path) === index),
+  );
+  const files: Array<{ path: string; content: string }> = [];
+  for (const path of paths.filter(isRepositoryTestPath)) {
+    const content = await sandbox.runCommand({
+      cmd: "head",
+      args: ["-c", "200000", "--", path],
+      cwd: REPO_CWD,
+      timeoutMs: 30_000,
+    });
+    if (content.exitCode !== 0) {
+      throw new Error(
+        `Could not inspect changed regression test ${path}: ${await content.stderr()}`,
+      );
+    }
+    files.push({ path, content: await content.stdout() });
+  }
+  return files;
 }
 
 function sandboxCredentials() {
@@ -634,6 +689,8 @@ async function stopSandboxStep(sandboxName: string) {
 async function verifyAgentChangeStep(input: {
   sandboxName: string;
   runId: string;
+  baseSha: string;
+  incidentExternalId?: string;
 }): Promise<VerificationResult> {
   "use step";
 
@@ -651,9 +708,19 @@ async function verifyAgentChangeStep(input: {
     "-lc",
     `cd ${REPO_CWD} && test -f package.json && cat package.json`,
   ]);
+  const changedTestFiles = input.incidentExternalId
+    ? await inspectChangedTestFiles(sandbox, input.baseSha)
+    : [];
+  const linkedTestPaths = input.incidentExternalId
+    ? findIncidentRegressionTestPaths(
+        input.incidentExternalId,
+        changedTestFiles,
+      )
+    : [];
   const plan = createVerificationPlan(
     (await trackedFiles.stdout()).split("\n").filter(Boolean),
     packageJson.exitCode === 0 ? await packageJson.stdout() : null,
+    { requireRepositoryTests: Boolean(input.incidentExternalId) },
   );
   if (plan.commands.length === 0) {
     throw new Error(`Independent verification could not start: ${plan.reason}`);
@@ -672,7 +739,20 @@ async function verifyAgentChangeStep(input: {
         .join("\n")
         .slice(-4_000),
     );
-    commands.push({ ...command, exitCode: result.exitCode, output });
+    const capabilities = [...command.capabilities];
+    if (
+      result.exitCode === 0 &&
+      linkedTestPaths.length > 0 &&
+      capabilities.includes("repository-tests")
+    ) {
+      capabilities.push("behavioral-regression");
+    }
+    commands.push({
+      ...command,
+      capabilities,
+      exitCode: result.exitCode,
+      output,
+    });
     if (result.exitCode !== 0) break;
   }
 
@@ -680,6 +760,12 @@ async function verifyAgentChangeStep(input: {
     status: commands.every(({ exitCode }) => exitCode === 0)
       ? "passed"
       : "failed",
+    behavioralEvidence: input.incidentExternalId
+      ? {
+          incidentExternalId: input.incidentExternalId,
+          testPaths: linkedTestPaths,
+        }
+      : undefined,
     commands,
   };
   await updateCodexRun(input.runId, { verification });
@@ -744,9 +830,11 @@ export async function codexRunWorkflow(input: {
     const verification = await verifyAgentChangeStep({
       sandboxName,
       runId: input.runId,
+      baseSha: provisioned.baseSha,
+      incidentExternalId: context.incident?.externalId,
     });
     assertVerificationPassed(verification, {
-      requireBehavioralRegression: context.incident !== null,
+      incidentExternalId: context.incident?.externalId,
     });
 
     return await openPullRequestStep({

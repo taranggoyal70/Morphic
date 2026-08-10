@@ -43,6 +43,7 @@ describe("buildPullRequestDraft", () => {
               label: "Tests",
               command: "pnpm test",
               timeoutMs: 120_000,
+              capabilities: ["repository-tests"],
               exitCode: 0,
               output: "12 tests passed",
             },
@@ -79,6 +80,7 @@ describe("buildPullRequestDraft", () => {
             label: "Tests",
             command: "pnpm test",
             timeoutMs: 120_000,
+            capabilities: ["repository-tests"],
             exitCode: 0,
             output: "12 tests passed",
           },
@@ -86,7 +88,9 @@ describe("buildPullRequestDraft", () => {
       },
     });
 
-    expect(draft.body).toContain("| Reviewed snapshot | `1111111` |");
+    expect(draft.body).toContain(
+      "| Reviewed snapshot | `1111111111111111111111111111111111111111` |",
+    );
     expect(draft.body).toContain("| Workspace Version | `v3` |");
     expect(draft.body).toContain("| `pnpm test` | Passed |");
   });
@@ -118,12 +122,17 @@ describe("buildPullRequestDraft", () => {
       },
       verification: {
         status: "passed",
+        behavioralEvidence: {
+          incidentExternalId: "bt-9831",
+          testPaths: ["src/checkout/idempotency.test.ts"],
+        },
         commands: [
           {
             id: "test",
             label: "Tests",
             command: "pnpm test",
             timeoutMs: 120_000,
+            capabilities: ["repository-tests", "behavioral-regression"],
             exitCode: 0,
             output: "12 tests passed",
           },
@@ -139,6 +148,7 @@ describe("buildPullRequestDraft", () => {
     expect(draft.body).toContain(
       "https://braintrust.dev/app/acme/p/trace/bt-9831",
     );
+    expect(draft.body).toContain("`src/checkout/idempotency.test.ts`");
   });
 });
 

@@ -4,7 +4,29 @@ import {
   assertVerificationPassed,
   createVerificationPlan,
   detectPackageManager,
+  findIncidentRegressionTestPaths,
 } from "@/lib/verification-plan";
+
+describe("findIncidentRegressionTestPaths", () => {
+  it("links an incident only to changed test files that name its identifier", () => {
+    expect(
+      findIncidentRegressionTestPaths("bt-9831", [
+        {
+          path: "src/refund.ts",
+          content: "// bt-9831 production fix",
+        },
+        {
+          path: "src/refund.test.ts",
+          content: "it('prevents bt-9831 from recurring', () => {})",
+        },
+        {
+          path: "src/unrelated.test.ts",
+          content: "it('covers another behavior', () => {})",
+        },
+      ]),
+    ).toEqual(["src/refund.test.ts"]);
+  });
+});
 
 describe("detectPackageManager", () => {
   it.each([
@@ -40,6 +62,7 @@ describe("assertVerificationPassed", () => {
             label: "Run test",
             command: "pnpm run test",
             timeoutMs: 300_000,
+            capabilities: ["repository-tests"],
             exitCode: 1,
             output: "one test failed",
           },
@@ -48,7 +71,7 @@ describe("assertVerificationPassed", () => {
     ).toThrow("pnpm run test");
   });
 
-  it("blocks incident publication without a passing behavioral command", () => {
+  it("blocks incident publication without a linked changed regression test", () => {
     expect(() =>
       assertVerificationPassed(
         {
@@ -59,35 +82,41 @@ describe("assertVerificationPassed", () => {
               label: "Run lint",
               command: "pnpm run lint",
               timeoutMs: 300_000,
+              capabilities: ["static-analysis"],
               exitCode: 0,
               output: "",
             },
           ],
         },
-        { requireBehavioralRegression: true },
+        { incidentExternalId: "bt-9831" },
       ),
-    ).toThrow("behavioral regression");
+    ).toThrow("linked behavioral regression");
   });
 
   it.each(["test", "check"])(
-    "accepts incident publication after a passing %s command",
+    "accepts incident publication after a linked passing %s command",
     (id) => {
       expect(() =>
         assertVerificationPassed(
           {
             status: "passed",
+            behavioralEvidence: {
+              incidentExternalId: "bt-9831",
+              testPaths: ["src/refund.test.ts"],
+            },
             commands: [
               {
                 id,
                 label: `Run ${id}`,
                 command: `pnpm run ${id}`,
                 timeoutMs: 300_000,
+                capabilities: ["repository-tests", "behavioral-regression"],
                 exitCode: 0,
                 output: "",
               },
             ],
           },
-          { requireBehavioralRegression: true },
+          { incidentExternalId: "bt-9831" },
         ),
       ).not.toThrow();
     },
@@ -95,6 +124,21 @@ describe("assertVerificationPassed", () => {
 });
 
 describe("createVerificationPlan", () => {
+  it("selects an explicit test command for incident verification", () => {
+    expect(
+      createVerificationPlan(
+        ["package.json", "pnpm-lock.yaml"],
+        JSON.stringify({
+          scripts: {
+            check: "pnpm lint && pnpm test",
+            test: "vitest run",
+          },
+        }),
+        { requireRepositoryTests: true },
+      ).commands.map(({ id }) => id),
+    ).toEqual(["test"]);
+  });
+
   it("prefers a repository-owned check script", () => {
     expect(
       createVerificationPlan(
