@@ -10,6 +10,7 @@ import {
   workspaces,
   workspaceVersions,
 } from "@/db/schema";
+import type { IncidentEvidence } from "@/lib/domain/incident";
 import type { WorkspacePlan } from "@/lib/domain/workspace";
 import { AppError } from "@/lib/errors";
 
@@ -31,6 +32,7 @@ export async function createWorkspaceRecord(input: {
   objective: string;
   targetDate?: string | null;
   constraints: string[];
+  incident?: IncidentEvidence | null;
 }) {
   const [repository] = await getDb()
     .select({ id: repositories.id })
@@ -54,6 +56,7 @@ export async function createWorkspaceRecord(input: {
       objective: input.objective,
       targetDate: input.targetDate ? new Date(input.targetDate) : null,
       constraints: input.constraints,
+      incident: input.incident ?? null,
       status: "generating",
     })
     .returning();

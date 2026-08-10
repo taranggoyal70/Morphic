@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { incidentEvidenceSchema } from "./incident";
+
 export const workspacePlanSchema = z.object({
   summary: z.string().min(1).max(600),
   outcome: z.object({
@@ -94,6 +96,7 @@ export const createWorkspaceSchema = z.object({
   objective: z.string().trim().min(8).max(500),
   targetDate: z.string().datetime().nullable().optional(),
   constraints: z.array(z.string().trim().min(1).max(180)).max(12).default([]),
+  incident: incidentEvidenceSchema.nullable().optional(),
 });
 
 export const adaptWorkspaceSchema = z.object({

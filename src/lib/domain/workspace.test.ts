@@ -69,6 +69,55 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("accepts a redacted production incident with measurable acceptance criteria", () => {
+    const incident = {
+      source: "braintrust",
+      externalId: "bt-9831",
+      title: "Refund assistant repeated a customer credit",
+      observedBehavior: "A retried webhook issued two credits.",
+      expectedBehavior: "A retried webhook issues exactly one credit.",
+      occurredAt: "2026-08-07T14:32:00.000Z",
+      traceUrl: "https://braintrust.dev/app/acme/p/trace/bt-9831",
+      acceptanceCriteria: [
+        "Replaying the same webhook issues exactly one credit.",
+        "The regression is covered by a repository-owned test.",
+      ],
+      redactionConfirmed: true,
+    } as const;
+
+    expect(
+      createWorkspaceSchema.parse({
+        repositoryId: crypto.randomUUID(),
+        objective: "Prevent duplicate credits on retried support actions",
+        constraints: [],
+        incident,
+      }).incident,
+    ).toEqual(incident);
+  });
+
+  it("rejects incident evidence before redaction is confirmed", () => {
+    expect(() =>
+      createWorkspaceSchema.parse({
+        repositoryId: crypto.randomUUID(),
+        objective: "Prevent duplicate credits on retried support actions",
+        constraints: [],
+        incident: {
+          source: "manual",
+          externalId: "INC-284",
+          title: "Refund assistant repeated a customer credit",
+          observedBehavior: "A retried webhook issued two credits.",
+          expectedBehavior: "A retried webhook issues exactly one credit.",
+          occurredAt: "2026-08-07T14:32:00.000Z",
+          traceUrl: null,
+          acceptanceCriteria: [
+            "Replaying the same webhook issues exactly one credit.",
+          ],
+          redactionConfirmed: false,
+        },
+      }),
+    ).toThrow();
+  });
+
   it("requires explicit approval for every Codex proposal", () => {
     const base = {
       workspaceId: crypto.randomUUID(),

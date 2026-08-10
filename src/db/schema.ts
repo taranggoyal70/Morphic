@@ -13,6 +13,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+import type { IncidentEvidence } from "@/lib/domain/incident";
 import type { WorkspacePlan } from "@/lib/domain/workspace";
 import type { VerificationResult } from "@/lib/domain/verification";
 
@@ -157,6 +158,7 @@ export const workspaces = pgTable(
     objective: text("objective").notNull(),
     targetDate: timestamp("target_date", { withTimezone: true }),
     constraints: jsonb("constraints").$type<string[]>().default([]).notNull(),
+    incident: jsonb("incident").$type<IncidentEvidence | null>(),
     status: workspaceStatus("status").default("generating").notNull(),
     currentVersion: integer("current_version").default(0).notNull(),
     generationRunId: text("generation_run_id"),

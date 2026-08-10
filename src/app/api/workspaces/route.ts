@@ -45,6 +45,8 @@ export async function POST(request: Request) {
       metadata: {
         objective: input.objective,
         repositoryId: input.repositoryId,
+        incidentExternalId: input.incident?.externalId,
+        incidentSource: input.incident?.source,
       },
     });
     const run = await start(generateWorkspaceWorkflow, [
