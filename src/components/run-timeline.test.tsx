@@ -1,9 +1,10 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { RunTimeline } from "@/components/run-timeline";
 
 afterEach(() => {
+  cleanup();
   vi.unstubAllGlobals();
 });
 
@@ -45,5 +46,36 @@ describe("RunTimeline", () => {
       await screen.findByText("Independent verification passed"),
     ).toBeInTheDocument();
     expect(screen.getByText("pnpm test · passed")).toBeInTheDocument();
+  });
+
+  it("shows the exact publication-blocking reason even without activity", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          data: {
+            run: {
+              status: "failed",
+              pullRequestUrl: null,
+              error:
+                "Publication was blocked because the base branch advanced since review.",
+              usage: null,
+            },
+            events: [],
+          },
+        }),
+      }),
+    );
+
+    render(<RunTimeline runId="run-456" runStatus="failed" />);
+    fireEvent.click(screen.getByRole("button", { name: /activity/i }));
+
+    expect(await screen.findByText("Publication blocked")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Publication was blocked because the base branch advanced since review.",
+      ),
+    ).toBeInTheDocument();
   });
 });

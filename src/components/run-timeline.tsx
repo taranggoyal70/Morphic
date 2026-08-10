@@ -360,22 +360,19 @@ export function RunTimeline({
               </p>
             )}
 
-            {!isActive &&
-              runStatus === "failed" &&
-              detail &&
-              rows.length > 0 && (
-                <div className="mt-2">
-                  <p className="flex items-center gap-1.5 text-[11px] text-danger">
-                    <WarningIcon size={12} weight="fill" />
-                    Run failed before completion.
-                  </p>
-                  {detail.run.error && (
-                    <pre className="mt-1 max-h-24 overflow-y-auto whitespace-pre-wrap rounded border border-danger/30 bg-danger/5 px-2 py-1 font-mono text-[10px] leading-4 text-danger">
-                      {detail.run.error}
-                    </pre>
-                  )}
-                </div>
-              )}
+            {!isActive && runStatus === "failed" && detail?.run.error && (
+              <div className="mt-2">
+                <p className="flex items-center gap-1.5 text-[11px] text-danger">
+                  <WarningIcon size={12} weight="fill" />
+                  {detail.run.error.startsWith("Publication was blocked")
+                    ? "Publication blocked"
+                    : "Run failed before completion"}
+                </p>
+                <pre className="mt-1 max-h-24 overflow-y-auto whitespace-pre-wrap rounded border border-danger/30 bg-danger/5 px-2 py-1 font-mono text-[10px] leading-4 text-danger">
+                  {detail.run.error}
+                </pre>
+              </div>
+            )}
           </div>
         </div>
       )}
