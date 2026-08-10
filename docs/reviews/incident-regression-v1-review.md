@@ -1,12 +1,15 @@
 # Independent review of incident-regression v1
 
-- Implementation fixed point:
+- Core implementation fixed point:
   `52d9894dfa6383851a289c89c4b6713eeaa82d8d`
-- Reviewed range: `ebb4e2ee5bd96ec89f3bf16e6b855520a0bf9964...52d9894`
+- Design-partner acquisition fixed point:
+  `5bc0dd8c2958165eeca34e484847ddaaf25ac660`
+- Reviewed acquisition range:
+  `9e4b485237d637d05e4d56fb57458512f6cb1904...5bc0dd8`
 - Specification: [`incident-regression-v1.md`](../specs/incident-regression-v1.md)
 - Standards: `AGENTS.md`, `CONTEXT.md`, and inherited repository guidance
-- Release check: `pnpm check` passed at the implementation fixed point with 18
-  test files and 112 tests
+- Release check: `pnpm check` passed at the acquisition fixed point with 22
+  test files and 117 tests
 
 Two review agents independently reviewed the specification and repository
 standards. This is an independent code-review pass, not external customer or
@@ -66,9 +69,33 @@ and vendor pricing is described as evidence of paid offerings rather than
 proof of purchases. The report continues to score Morphic-specific customer
 validation at 0/8.
 
+## Paid design-partner acquisition review
+
+The acquisition work adds an authenticated, durable application path without
+awarding itself market evidence. Review findings were resolved as follows:
+
+1. The homepage evidence card is labeled as illustrative synthetic evidence,
+   so it cannot be mistaken for stored repository or customer evidence.
+2. Public copy describes the shipped source-drift publication block. It does
+   not claim that approval expires or that policy and environment drift are
+   already enforced.
+3. Intake copy and research documentation state that uniqueness is per
+   authenticated account. Operators must reconcile duplicate people,
+   companies, and aliases before counting demand.
+4. Both public pages say Morphic is seeking three paid design partners; neither
+   implies that contracts or payments already exist.
+5. Incident windows, application choices, labels, and persisted TypeScript
+   types share one domain contract rather than drifting across validation and
+   UI code.
+
+The final independent standards and specification re-reviews reported no
+actionable finding at the acquisition fixed point. The standards review found
+no hard violation or actionable smell. The specification review found no
+missing requirement, incorrect behavior, or scope creep.
+
 ## Release decision
 
-The independent-review rubric item is earned. The implementation fixed point
-has no unresolved high-risk review finding and passes the full repository
-check. Exercised production evidence remains unearned, so repository readiness
-is capped below 100 and customer validation remains a separate gate.
+The independent-review rubric item is earned. The acquisition fixed point has
+no unresolved high-risk review finding and passes the full repository check.
+Exercised production evidence remains unearned, so repository readiness is
+capped below 100 and customer validation remains a separate gate.

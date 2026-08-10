@@ -42,24 +42,24 @@ the repository cannot award itself customer evidence.
 Current verified result: **0 of 8 evidenced in this repository**. This means
 the business remains unvalidated even if repository readiness reaches 90.
 
-## Incident-regression v1 score
+## Current startup-readiness score
 
-Scored implementation commit: `52d9894dfa6383851a289c89c4b6713eeaa82d8d`
+Scored implementation commit: `5bc0dd8c2958165eeca34e484847ddaaf25ac660`
 
 | Dimension                       |      Score | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | ------------------------------- | ---------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Wedge expression                |      15/15 | The narrow job is defined in the [product specification](../specs/incident-regression-v1.md), [incident intake](../../src/components/create-workspace-form.tsx) is first-class, and the primary flow begins with a production failure.                                                                                                                                                                                            |
+| Wedge expression                |      15/15 | The narrow job is defined in the [product specification](../specs/incident-regression-v1.md), [incident intake](../../src/components/create-workspace-form.tsx) is first-class, and the [paid design-partner path](../../src/app/design-partners/page.tsx) recruits against that exact job without claiming validation.                                                                                                           |
 | Incident workflow               |      25/25 | Evidence is [validated](../../src/lib/domain/incident.ts), persisted through the [migration](../../drizzle/0004_lush_songbird.sql), [bound structurally](../../src/lib/incident-plan.ts) into planning and [execution](../../src/lib/execution-prompt.ts), displayed at [approval](../../src/components/approval-evidence.tsx), and recorded in the [draft pull request](../../src/lib/publication-policy.ts).                    |
 | Evidence and publication safety |      25/25 | [Run-scoped bindings](../../src/lib/codex-runs.ts), [base-drift rejection](../../src/lib/publication-policy.ts), and [workflow verification](../../src/workflows/codex-run.ts) require a changed test naming the incident plus direct runner output naming the incident and a pass. [Behavioral gate tests](../../src/lib/verification-plan.test.ts) cover skipped, mixed, regex-significant, wrapper, TAP, and passing outcomes. |
-| Technical health                |      20/20 | Lint, typecheck, 18 test files with 112 tests, and the production build passed through the [`pnpm check` contract](../../package.json) at the scored commit. The [independent specification and standards reviews](incident-regression-v1-review.md) report no unresolved actionable finding at that fixed point.                                                                                                                 |
+| Technical health                |      20/20 | Lint, typecheck, 22 test files with 117 tests, and the production build passed through the [`pnpm check` contract](../../package.json) at the scored commit. The [independent specification and standards reviews](incident-regression-v1-review.md) report no unresolved actionable finding at that fixed point.                                                                                                                 |
 | Operability                     |      12/15 | The [launch checklist](../operations/launch-readiness.md) and [production controls](../operations/production-controls.md) define health, failure guidance, rollback, and ownership. Exercised production evidence remains unearned.                                                                                                                                                                                               |
 | **Repository readiness**        | **97/100** | Meets the 90-point repository-readiness threshold without awarding the unexercised production-evidence item.                                                                                                                                                                                                                                                                                                                      |
 
 ### Verification record
 
 - `pnpm check`: passed at
-  `52d9894dfa6383851a289c89c4b6713eeaa82d8d` with lint, typecheck, 18 test
-  files containing 112 passing tests, and the production build.
+  `5bc0dd8c2958165eeca34e484847ddaaf25ac660` with lint, typecheck, 22 test
+  files containing 117 passing tests, and the production build.
 - Standards and specification reviews: the
   [final review record](incident-regression-v1-review.md) links every material
   finding to its resolution and records clean final reviews at the scored
