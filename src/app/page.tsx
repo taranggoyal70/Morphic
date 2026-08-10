@@ -12,9 +12,9 @@ import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 
 export const metadata: Metadata = {
-  title: "Morphic — Adaptive workspaces for software builders",
+  title: "Morphic — Evidence-bound AI incident fixes",
   description:
-    "Turn a software objective into a living interface grounded in GitHub, then supervise approved Codex work from plan to pull request.",
+    "Bind a production AI incident, reviewed source, repository regression, and human approval into one drift-resistant release record.",
 };
 
 export default async function HomePage() {
@@ -26,6 +26,12 @@ export default async function HomePage() {
       <nav className="mx-auto flex h-16 max-w-[1180px] items-center justify-between px-6">
         <Brand />
         <div className="flex items-center gap-3">
+          <Link
+            href={"/design-partners" as Route}
+            className="rounded-lg border border-mint/30 bg-mint/5 px-3 py-2 text-sm text-mint transition hover:bg-mint/10"
+          >
+            Paid pilot
+          </Link>
           <Link
             href={"/demo" as Route}
             className="rounded-lg border border-line-strong px-3 py-2 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
@@ -50,26 +56,26 @@ export default async function HomePage() {
       <section className="mx-auto grid max-w-[1180px] gap-16 px-6 pb-20 pt-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pt-28">
         <div>
           <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet/30 bg-violet/10 px-3 py-1.5 text-xs font-medium text-violet-light">
-            <SparkleIcon size={14} weight="fill" />
-            Adaptive software for builders
+            <ShieldCheckIcon size={14} weight="fill" />
+            Incident-to-regression release control
           </p>
           <h1 className="max-w-[720px] text-5xl font-semibold leading-[1.02] text-paper sm:text-6xl lg:text-7xl">
-            Describe the outcome.
+            A green check is not proof.
             <span className="block text-muted">
-              Morphic shapes the workspace.
+              Bind the fix to the incident.
             </span>
           </h1>
           <p className="mt-7 max-w-[610px] text-lg leading-8 text-muted-light">
-            Morphic turns a software objective into a living interface grounded
-            in GitHub, then lets you supervise approved Codex work from plan to
-            pull request.
+            Morphic proves that an approved production AI fix and its repository
+            regression ran against the exact source under review, then
+            invalidates approval when the evidence drifts.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
-              href={"/sign-up" as Route}
+              href={"/design-partners" as Route}
               className="inline-flex items-center gap-2 rounded-lg bg-violet px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-light hover:text-ink"
             >
-              Connect GitHub
+              Apply for the paid pilot
               <ArrowRightIcon size={16} weight="bold" />
             </Link>
             <Link
@@ -93,41 +99,48 @@ export default async function HomePage() {
           <div className="flex items-center justify-between border-b border-line px-5 py-4">
             <div>
               <p className="font-mono text-[10px] uppercase text-violet-light">
-                Active objective
+                Production incident · INC-284
               </p>
               <p className="mt-2 text-xl font-semibold text-paper">
-                Ship onboarding by Friday
+                Refund agent repeated a credit
               </p>
             </div>
-            <span className="rounded-md border border-mint/20 bg-mint/10 px-2 py-1 text-xs text-mint">
-              On track
+            <span className="rounded-md border border-amber/20 bg-amber/10 px-2 py-1 text-xs text-amber">
+              Awaiting approval
             </span>
           </div>
           <div className="grid grid-cols-3 border-b border-line">
             <div className="border-r border-line px-5 py-4">
-              <strong className="block text-2xl text-paper">5</strong>
-              <span className="text-xs text-muted">path items</span>
+              <strong className="block font-mono text-sm text-paper">
+                c418a7f
+              </strong>
+              <span className="text-xs text-muted">reviewed SHA</span>
             </div>
             <div className="border-r border-line px-5 py-4">
-              <strong className="block text-2xl text-mint">3</strong>
-              <span className="text-xs text-muted">ready now</span>
+              <strong className="block text-2xl text-mint">1</strong>
+              <span className="text-xs text-muted">linked test</span>
             </div>
             <div className="px-5 py-4">
-              <strong className="block text-2xl text-amber">1</strong>
-              <span className="text-xs text-muted">open decision</span>
+              <strong className="block text-2xl text-paper">0</strong>
+              <span className="text-xs text-muted">skipped cases</span>
             </div>
           </div>
           <div className="px-5 py-2">
             {[
-              ["01", "Map existing auth flow", "Ready", "src/app/sign-in"],
               [
-                "02",
-                "Add organization invite path",
-                "Ready",
-                "src/lib/invites.ts",
+                "01",
+                "Incident evidence bound",
+                "Bound",
+                "Braintrust · INC-284",
               ],
-              ["03", "Choose session handoff", "Decision", "2 options"],
-              ["04", "Implement onboarding state", "Queued", "blocked by 03"],
+              ["02", "Repository snapshot reviewed", "Bound", "main · c418a7f"],
+              [
+                "03",
+                "Behavioral regression passed",
+                "Passed",
+                "refund-idempotency.test.ts",
+              ],
+              ["04", "Human release decision", "Review", "expires on drift"],
             ].map(([index, task, status, evidence]) => (
               <div
                 key={index}
@@ -145,7 +158,7 @@ export default async function HomePage() {
                   </p>
                 </div>
                 <span
-                  className={`rounded px-2 py-1 text-[10px] font-medium ${status === "Ready" ? "bg-mint/10 text-mint" : status === "Decision" ? "bg-amber/10 text-amber" : "bg-white/5 text-muted-light"}`}
+                  className={`rounded px-2 py-1 text-[10px] font-medium ${status === "Passed" ? "bg-mint/10 text-mint" : status === "Review" ? "bg-amber/10 text-amber" : "bg-violet/10 text-violet-light"}`}
                 >
                   {status}
                 </span>
@@ -161,15 +174,15 @@ export default async function HomePage() {
               />
               <div>
                 <p className="text-xs font-medium text-paper">
-                  Codex run awaiting approval
+                  Evidence-bound run awaiting approval
                 </p>
                 <p className="mt-1 text-[11px] text-muted">
-                  Isolated sandbox · branch + draft PR
+                  Workspace v4 · exact SHA · direct test path
                 </p>
               </div>
             </div>
             <span className="rounded border border-violet/30 bg-violet/10 px-3 py-2 text-center text-xs text-violet-light">
-              Review run
+              Review evidence
             </span>
           </div>
         </div>
@@ -231,17 +244,17 @@ export default async function HomePage() {
         <div className="grid gap-8 rounded-lg border border-line-strong bg-paper p-8 text-ink sm:grid-cols-[1fr_auto] sm:items-end sm:p-10">
           <div>
             <p className="font-mono text-[10px] uppercase text-violet">
-              GitHub in. Reviewable work out.
+              Three paid design partnerships
             </p>
             <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight sm:text-5xl">
-              Shape the workspace around the outcome, not the other way around.
+              Test the control gap on a real incident in shadow mode.
             </h2>
           </div>
           <Link
-            href={"/sign-up" as Route}
+            href={"/design-partners" as Route}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-5 py-3 text-sm font-semibold text-paper transition hover:bg-violet"
           >
-            Connect GitHub <ArrowRightIcon size={16} weight="bold" />
+            Apply for the paid pilot <ArrowRightIcon size={16} weight="bold" />
           </Link>
         </div>
       </section>
