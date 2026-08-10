@@ -106,4 +106,10 @@ describe("assertBaseStillReviewed", () => {
     const sha = "1111111111111111111111111111111111111111";
     expect(assertBaseStillReviewed(sha, sha)).toBe(sha);
   });
+
+  it("rejects unvalidated commit identifiers", () => {
+    expect(() => assertBaseStillReviewed("main", "main")).toThrow(
+      /full lowercase Git commit SHA/,
+    );
+  });
 });

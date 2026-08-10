@@ -31,6 +31,10 @@ type CodexRun = {
   resultSummary: string | null;
   error: string | null;
   createdAt: Date;
+  approvalContext: {
+    snapshotSha: string;
+    workspaceVersion: number;
+  } | null;
 };
 
 const activeStatuses = new Set(["queued", "provisioning", "running"]);
@@ -39,15 +43,11 @@ export function CodexPanel({
   workspaceId,
   workspaceReady,
   repositoryFullName,
-  snapshotSha,
-  workspaceVersion,
   runs,
 }: {
   workspaceId: string;
   workspaceReady: boolean;
-  repositoryFullName?: string;
-  snapshotSha?: string | null;
-  workspaceVersion?: number | null;
+  repositoryFullName: string;
   runs: CodexRun[];
 }) {
   const router = useRouter();
@@ -169,9 +169,7 @@ export function CodexPanel({
             weight="duotone"
             className="text-violet-light"
           />
-          <h2 className="text-sm font-semibold text-paper">
-            Change control
-          </h2>
+          <h2 className="text-sm font-semibold text-paper">Change control</h2>
           <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[9px] uppercase text-muted">
             Snapshot-bound
           </span>
@@ -259,13 +257,13 @@ export function CodexPanel({
                       </p>
                     )}
                     {run.status === "awaiting_approval" &&
-                      repositoryFullName &&
-                      snapshotSha &&
-                      workspaceVersion && (
+                      run.approvalContext && (
                         <ApprovalEvidence
                           repositoryFullName={repositoryFullName}
-                          snapshotSha={snapshotSha}
-                          workspaceVersion={workspaceVersion}
+                          snapshotSha={run.approvalContext.snapshotSha}
+                          workspaceVersion={
+                            run.approvalContext.workspaceVersion
+                          }
                         />
                       )}
                   </div>

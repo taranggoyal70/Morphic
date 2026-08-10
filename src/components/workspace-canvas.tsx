@@ -58,6 +58,10 @@ type RunData = {
   resultSummary: string | null;
   error: string | null;
   createdAt: Date;
+  approvalContext: {
+    snapshotSha: string;
+    workspaceVersion: number;
+  } | null;
 };
 
 function statusLabel(status: WorkspaceData["status"]) {
@@ -89,14 +93,12 @@ export function WorkspaceCanvas({
   repository,
   plan,
   version,
-  snapshotSha = null,
   runs,
 }: {
   workspace: WorkspaceData;
   repository: RepositoryData;
   plan: WorkspacePlan | null;
   version: number | null;
-  snapshotSha?: string | null;
   runs: RunData[];
 }) {
   const adapting = workspace.status === "generating";
@@ -531,8 +533,6 @@ export function WorkspaceCanvas({
             workspaceId={workspace.id}
             workspaceReady={workspace.status === "active"}
             repositoryFullName={repository.fullName}
-            snapshotSha={snapshotSha}
-            workspaceVersion={version}
             runs={runs}
           />
           <section className="mx-auto max-w-[1000px] px-4 py-3 sm:px-6">

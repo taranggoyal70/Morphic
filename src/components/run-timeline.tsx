@@ -67,6 +67,18 @@ function asText(value: unknown): string | null {
 function describeEvent(event: RunEvent): Described | null {
   const payload = event.payload;
 
+  if (event.eventType === "execution.context.bound") {
+    const version = payload.workspaceVersion;
+    const sha = asText(payload.repositoryHeadSha)?.slice(0, 7);
+    const branch = asText(payload.repositoryBranch);
+    return {
+      icon: GitBranchIcon,
+      label: `Bound Workspace ${typeof version === "number" ? `v${version}` : "Version"} to snapshot ${sha ?? "unknown"}`,
+      detail: branch ? `reviewed branch ${branch}` : null,
+      tone: "info",
+    };
+  }
+
   if (event.eventType === "run.started") {
     const branch = asText(payload.branchName) ?? "work branch";
     const base = asText(payload.baseSha)?.slice(0, 7);

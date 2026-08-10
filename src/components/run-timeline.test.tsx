@@ -25,6 +25,17 @@ describe("RunTimeline", () => {
             events: [
               {
                 id: 1,
+                sequence: 0,
+                eventType: "execution.context.bound",
+                createdAt: "2026-08-09T17:59:59.000Z",
+                payload: {
+                  workspaceVersion: 3,
+                  repositoryBranch: "main",
+                  repositoryHeadSha: "1111111111111111111111111111111111111111",
+                },
+              },
+              {
+                id: 2,
                 sequence: 90_000,
                 eventType: "verification.completed",
                 createdAt: "2026-08-09T18:00:00.000Z",
@@ -45,6 +56,9 @@ describe("RunTimeline", () => {
     fireEvent.click(activityButton);
     expect(activityButton).toHaveAttribute("aria-expanded", "true");
 
+    expect(
+      await screen.findByText("Bound Workspace v3 to snapshot 1111111"),
+    ).toBeInTheDocument();
     expect(
       await screen.findByText("Independent verification passed"),
     ).toBeInTheDocument();
@@ -83,10 +97,7 @@ describe("RunTimeline", () => {
   });
 
   it("turns an activity load failure into a recoverable state", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: false }),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false }));
 
     render(<RunTimeline runId="run-789" runStatus="completed" />);
     fireEvent.click(screen.getByRole("button", { name: /activity/i }));

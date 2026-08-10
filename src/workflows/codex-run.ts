@@ -542,6 +542,24 @@ async function openPullRequestStep(input: {
       verification: input.verification,
     }),
   );
+  try {
+    assertBaseStillReviewed(input.baseSha, pull.data.base.sha);
+  } catch (error) {
+    await Promise.allSettled([
+      github.rest.pulls.update({
+        owner: repository.owner,
+        repo: repository.name,
+        pull_number: pull.data.number,
+        state: "closed",
+      }),
+      github.rest.git.deleteRef({
+        owner: repository.owner,
+        repo: repository.name,
+        ref: `heads/${input.branchName}`,
+      }),
+    ]);
+    throw error;
+  }
 
   await updateCodexRun(input.runId, {
     status: "completed",

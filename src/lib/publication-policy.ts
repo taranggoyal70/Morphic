@@ -1,4 +1,5 @@
 import type { VerificationResult } from "@/lib/domain/verification";
+import { repositoryCommitShaSchema } from "@/lib/domain/execution-context";
 
 export function assertPublishablePaths(paths: string[]) {
   for (const path of paths) {
@@ -22,12 +23,14 @@ export function assertBaseStillReviewed(
   reviewedSha: string,
   currentBaseSha: string,
 ) {
-  if (currentBaseSha !== reviewedSha) {
+  const reviewed = repositoryCommitShaSchema.parse(reviewedSha);
+  const current = repositoryCommitShaSchema.parse(currentBaseSha);
+  if (current !== reviewed) {
     throw new Error(
       "Publication was blocked because the base branch advanced since the Repository Snapshot was reviewed.",
     );
   }
-  return currentBaseSha;
+  return current;
 }
 
 export function buildPullRequestDraft(input: {

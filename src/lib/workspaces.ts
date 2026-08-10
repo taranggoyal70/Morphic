@@ -99,23 +99,9 @@ export async function getWorkspaceView(userId: string, workspaceId: string) {
     .where(eq(workspaceCommands.workspaceId, workspaceId))
     .orderBy(desc(workspaceCommands.createdAt))
     .limit(1);
-  const [snapshot] = version
-    ? await getDb()
-        .select({ id: githubSnapshots.id, headSha: githubSnapshots.headSha })
-        .from(githubSnapshots)
-        .where(
-          and(
-            eq(githubSnapshots.id, version.snapshotId),
-            eq(githubSnapshots.repositoryId, result.repository.id),
-          ),
-        )
-        .limit(1)
-    : [];
-
   return {
     ...result,
     version: version ?? null,
-    snapshot: snapshot ?? null,
     latestCommand: latestCommand ?? null,
   };
 }

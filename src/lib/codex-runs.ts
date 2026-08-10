@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import {
@@ -166,8 +166,20 @@ export async function getCodexExecutionContextForUser(
 
 export async function listCodexRuns(userId: string, workspaceId: string) {
   return getDb()
-    .select()
+    .select({
+      ...getTableColumns(codexRuns),
+      workspaceVersion: workspaceVersions.version,
+      snapshotSha: githubSnapshots.headSha,
+    })
     .from(codexRuns)
+    .leftJoin(
+      workspaceVersions,
+      eq(workspaceVersions.id, codexRuns.workspaceVersionId),
+    )
+    .leftJoin(
+      githubSnapshots,
+      eq(githubSnapshots.id, codexRuns.repositorySnapshotId),
+    )
     .where(
       and(eq(codexRuns.userId, userId), eq(codexRuns.workspaceId, workspaceId)),
     )

@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import type { WorkspacePlan } from "@/lib/domain/workspace";
+import type { VerificationResult } from "@/lib/domain/verification";
 
 export const workspaceStatus = pgEnum("workspace_status", [
   "generating",
@@ -258,17 +259,7 @@ export const codexRuns = pgTable(
     commitSha: text("commit_sha"),
     pullRequestNumber: integer("pull_request_number"),
     pullRequestUrl: text("pull_request_url"),
-    verification: jsonb("verification").$type<{
-      status: "passed" | "failed";
-      commands: Array<{
-        id: string;
-        label: string;
-        command: string;
-        timeoutMs: number;
-        exitCode: number;
-        output: string;
-      }>;
-    }>(),
+    verification: jsonb("verification").$type<VerificationResult>(),
     resultSummary: text("result_summary"),
     usage: jsonb("usage").$type<{
       inputTokens: number;
@@ -286,9 +277,7 @@ export const codexRuns = pgTable(
   (table) => [
     index("codex_runs_workspace_idx").on(table.workspaceId),
     index("codex_runs_workspace_version_idx").on(table.workspaceVersionId),
-    index("codex_runs_repository_snapshot_idx").on(
-      table.repositorySnapshotId,
-    ),
+    index("codex_runs_repository_snapshot_idx").on(table.repositorySnapshotId),
     index("codex_runs_user_idx").on(table.userId),
   ],
 );
