@@ -1,17 +1,27 @@
 # Morphic
 
-Morphic turns a software objective into a persistent adaptive workspace grounded in live GitHub evidence. Users can refine that workspace, resolve decisions, and approve isolated Morphic Agent runs that end in reviewable pull requests.
+Morphic turns a redacted production AI incident into behavioral regression
+evidence bound to the exact GitHub snapshot and Workspace Version a human
+approved. Incident-driven agent runs cannot publish until an independent,
+repository-owned test or check passes, and successful runs end in a draft pull
+request with the incident, acceptance criteria, source binding, and command
+results attached.
+
+General objective workspaces remain available, but the startup wedge is the
+incident-to-regression workflow.
 
 ## What is real
 
 - Clerk authentication and server-side GitHub OAuth token retrieval
 - Repository synchronization through the GitHub API
 - Immutable repository snapshots and workspace versions in Neon Postgres
+- Redacted incident intake with immutable behavioral acceptance criteria
 - OpenAI structured-output workspace compilation
 - Distributed Upstash rate limiting
 - Durable Vercel Workflow orchestration
 - Isolated Morphic Agent execution in Vercel Sandbox
 - Explicit run approval, branch creation, push, and pull-request creation
+- Publication blocking when an incident run lacks passing behavioral verification
 - Audit logging on all critical operations (workspace creation, Codex approval, user deletion)
 - Clerk webhook for user deletion (GDPR compliance)
 - Workspace archival and deletion endpoints
@@ -87,13 +97,14 @@ The measurable release decision is recorded in the
 
 Before accepting production traffic:
 
-1. Activate the Clerk production instance and replace the `pk_test_` / `sk_test_` variables with production keys (`pk_live_` / `sk_live_`).
-2. Create a GitHub OAuth app, enable the GitHub connection in Clerk production, and grant `repo` plus `read:org`.
-3. Set the production application domain in Clerk and `NEXT_PUBLIC_APP_URL`.
-4. Add Vercel Sandbox credentials: `VERCEL_TOKEN`, `VERCEL_TEAM_ID`, and `VERCEL_PROJECT_ID` as environment variables.
-5. Configure the Clerk webhook endpoint at `/api/webhooks/clerk` subscribed to the `user.deleted` event.
-6. Confirm Neon backups, Upstash limits, OpenAI project spend limits, and Vercel Sandbox/Workflow quotas. Codex sandbox uses 2 vCPUs with a 20-minute timeout per run.
-7. Run the verification suite against preview, then complete one approved Codex run on a disposable repository before enabling it for customers.
+1. Apply the reviewed Drizzle migrations to the intended Neon environment.
+2. Activate the Clerk production instance and replace the `pk_test_` / `sk_test_` variables with production keys (`pk_live_` / `sk_live_`).
+3. Create a GitHub OAuth app, enable the GitHub connection in Clerk production, and grant `repo` plus `read:org`.
+4. Set the production application domain in Clerk and `NEXT_PUBLIC_APP_URL`.
+5. Add Vercel Sandbox credentials: `VERCEL_TOKEN`, `VERCEL_TEAM_ID`, and `VERCEL_PROJECT_ID` as environment variables.
+6. Configure the Clerk webhook endpoint at `/api/webhooks/clerk` subscribed to the `user.deleted` event.
+7. Confirm Neon backups, Upstash limits, OpenAI project spend limits, and Vercel Sandbox/Workflow quotas. Codex sandbox uses 2 vCPUs with a 20-minute timeout per run.
+8. Run the verification suite against preview, then complete one approved incident run on a disposable repository before enabling it for customers.
 
 ## Verification
 
