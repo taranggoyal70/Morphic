@@ -14,6 +14,11 @@ import {
 } from "drizzle-orm/pg-core";
 
 import type { IncidentEvidence } from "@/lib/domain/incident";
+import type {
+  DesignPartnerEngineeringTeamSize,
+  DesignPartnerPilotReadiness,
+  DesignPartnerStack,
+} from "@/lib/domain/design-partner";
 import type { WorkspacePlan } from "@/lib/domain/workspace";
 import type { VerificationResult } from "@/lib/domain/verification";
 
@@ -76,17 +81,23 @@ export const designPartnerApplications = pgTable(
     status: designPartnerStatus("status").default("submitted").notNull(),
     companyName: text("company_name").notNull(),
     role: text("role").notNull(),
-    engineeringTeamSize: text("engineering_team_size").notNull(),
+    engineeringTeamSize: text("engineering_team_size")
+      .$type<DesignPartnerEngineeringTeamSize>()
+      .notNull(),
     productionAgentConfirmed: boolean("production_agent_confirmed").notNull(),
     githubConfirmed: boolean("github_confirmed").notNull(),
     incidentOccurredAt: timestamp("incident_occurred_at", {
       withTimezone: true,
     }).notNull(),
     incidentSummary: text("incident_summary").notNull(),
-    currentStack: jsonb("current_stack").$type<string[]>().notNull(),
+    currentStack: jsonb("current_stack")
+      .$type<DesignPartnerStack[]>()
+      .notNull(),
     currentProofProcess: text("current_proof_process").notNull(),
     artifactWilling: boolean("artifact_willing").notNull(),
-    pilotReadiness: text("pilot_readiness").notNull(),
+    pilotReadiness: text("pilot_readiness")
+      .$type<DesignPartnerPilotReadiness>()
+      .notNull(),
     redactionConfirmed: boolean("redaction_confirmed").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()

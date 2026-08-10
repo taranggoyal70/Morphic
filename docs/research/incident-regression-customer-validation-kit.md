@@ -90,8 +90,8 @@ Only now present this statement:
 
 > Morphic connects an existing incident trace to a repository-owned behavioral
 > regression, independently runs that regression against the exact reviewed
-> source, binds human approval to the evidence, and invalidates approval when
-> the evidence drifts.
+> source, binds human approval to the evidence, and blocks draft publication
+> when the repository's default branch moves beyond that reviewed source.
 
 Then ask:
 

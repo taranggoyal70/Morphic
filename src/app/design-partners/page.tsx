@@ -12,6 +12,10 @@ import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { DesignPartnerApplicationForm } from "@/components/design-partner-application-form";
 import { getDesignPartnerApplicationForUser } from "@/lib/design-partners";
+import {
+  DESIGN_PARTNER_INCIDENT_WINDOW_DAYS,
+  DESIGN_PARTNER_PILOT_DURATION_DAYS,
+} from "@/lib/domain/design-partner";
 
 export const metadata: Metadata = {
   title: "Paid design partnership",
@@ -37,7 +41,7 @@ const EVIDENCE_CHAIN = [
   },
   {
     label: "Required decision",
-    evidence: "Human approval that expires when evidence drifts",
+    evidence: "Human approval plus a publication block on source drift",
     icon: ShieldCheckIcon,
   },
 ] as const;
@@ -74,7 +78,8 @@ export default async function DesignPartnersPage() {
       <section className="mx-auto grid max-w-[1180px] gap-14 px-6 pb-20 pt-16 lg:grid-cols-[0.92fr_1.08fr] lg:items-end lg:pt-24">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-mint">
-            Three paid design partnerships · 90 days · shadow mode first
+            Seeking three paid design partners ·{" "}
+            {DESIGN_PARTNER_PILOT_DURATION_DAYS} days · shadow mode first
           </p>
           <h1 className="mt-7 max-w-3xl text-5xl font-semibold leading-[0.98] tracking-[-0.04em] text-paper sm:text-7xl">
             A green check is not proof.
@@ -82,8 +87,8 @@ export default async function DesignPartnersPage() {
           <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-light">
             Morphic is testing one release-control job: after a production AI
             incident, prove the approved fix and its repository regression ran
-            against the exact source under review. If the evidence changes, the
-            approval expires.
+            against the exact source under review. If the default branch moves
+            beyond that reviewed commit, draft publication is blocked.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <a
@@ -147,7 +152,7 @@ export default async function DesignPartnersPage() {
           {[
             [
               "Who fits",
-              "A B2B team with a customer-facing AI agent, GitHub source, and a behavioral incident in the last 90 days.",
+              `A B2B team with a customer-facing AI agent, GitHub source, and a behavioral incident in the last ${DESIGN_PARTNER_INCIDENT_WINDOW_DAYS} days.`,
             ],
             [
               "What stays",
@@ -155,7 +160,7 @@ export default async function DesignPartnersPage() {
             ],
             [
               "What commits",
-              "$10K-$25K upfront for 90 days, starting in shadow mode with pre-registered success and stop criteria.",
+              `$10K-$25K upfront for ${DESIGN_PARTNER_PILOT_DURATION_DAYS} days, starting in shadow mode with pre-registered success and stop criteria.`,
             ],
           ].map(([title, body]) => (
             <div
@@ -233,8 +238,8 @@ export default async function DesignPartnersPage() {
               </h2>
               <p className="mt-3 max-w-xl text-sm leading-6 text-muted-light">
                 Morphic ties each application to a verified account so the
-                validation ledger cannot be filled with anonymous or duplicate
-                submissions.
+                intake accepts one submission per account. Operators reconcile
+                duplicate people or companies before counting demand.
               </p>
               <Link
                 href={"/sign-up?redirect_url=/design-partners" as Route}

@@ -29,7 +29,8 @@ The strongest defensible hypothesis is narrower than "incident to regression":
 > Morphic is the evidence-bound release control between an existing
 > observability or evaluation platform and GitHub. It proves that an approved
 > incident fix and its repository-owned behavioral regression were executed
-> against the exact source under review, and invalidates approval on drift.
+> against the exact source under review, and blocks draft publication when the
+> repository's default branch has moved beyond that reviewed source.
 
 This positioning still needs buyer discovery. It is not a validated business.
 
@@ -97,16 +98,16 @@ Sources:
 
 ## Competitive reality
 
-| Capability                                                                     | Braintrust                                   | LangSmith Engine                             | Sentry Seer                                               | GitHub                                                               | Morphic hypothesis                                        |
-| ------------------------------------------------------------------------------ | -------------------------------------------- | -------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------- |
-| Production trace to regression data                                            | Shipped                                      | Shipped                                      | Issue telemetry is the input                              | Not native                                                           | Integrate, do not rebuild                                 |
-| Detect or group production failures                                            | Shipped through logs, scores, and topics     | Shipped for recurring trace issues           | Shipped for application issues                            | Not native                                                           | Defer to source platform                                  |
-| Generate evaluator or test evidence                                            | Shipped                                      | Shipped                                      | Official docs reviewed do not make this the core contract | Runs repository checks                                               | Require a repository-owned behavioral regression          |
-| Propose a code fix and open a PR                                               | Not the documented core workflow reviewed    | Shipped in beta                              | Shipped                                                   | Coding agents and PRs are native                                     | Use a disposable coding sandbox and draft PR              |
-| Version evaluation inputs and results                                          | Shipped                                      | Datasets and evaluations shipped             | Not the documented core workflow reviewed                 | Commits and checks are versioned                                     | Bind incident, workspace version, and repository snapshot |
-| CI or merge gate                                                               | GitHub Action and CI support shipped         | GitHub workflow thresholds shipped           | PR integrates with GitHub                                 | Required status checks shipped                                       | Publish independently verified behavioral evidence        |
-| Approval invalidated on source, policy, or environment drift                   | No claim found in the reviewed official docs | No claim found in the reviewed official docs | No claim found in the reviewed official docs              | Latest-SHA checks are required, but approval semantics are external  | Core proposed differentiation                             |
-| Direct proof that an incident-linked repository test executed and did not skip | No claim found in the reviewed official docs | No claim found in the reviewed official docs | No claim found in the reviewed official docs              | GitHub documents that a conditionally skipped job can report success | Core proposed differentiation                             |
+| Capability                                                                     | Braintrust                                   | LangSmith Engine                             | Sentry Seer                                               | GitHub                                                               | Morphic hypothesis                                                         |
+| ------------------------------------------------------------------------------ | -------------------------------------------- | -------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Production trace to regression data                                            | Shipped                                      | Shipped                                      | Issue telemetry is the input                              | Not native                                                           | Integrate, do not rebuild                                                  |
+| Detect or group production failures                                            | Shipped through logs, scores, and topics     | Shipped for recurring trace issues           | Shipped for application issues                            | Not native                                                           | Defer to source platform                                                   |
+| Generate evaluator or test evidence                                            | Shipped                                      | Shipped                                      | Official docs reviewed do not make this the core contract | Runs repository checks                                               | Require a repository-owned behavioral regression                           |
+| Propose a code fix and open a PR                                               | Not the documented core workflow reviewed    | Shipped in beta                              | Shipped                                                   | Coding agents and PRs are native                                     | Use a disposable coding sandbox and draft PR                               |
+| Version evaluation inputs and results                                          | Shipped                                      | Datasets and evaluations shipped             | Not the documented core workflow reviewed                 | Commits and checks are versioned                                     | Bind incident, workspace version, and repository snapshot                  |
+| CI or merge gate                                                               | GitHub Action and CI support shipped         | GitHub workflow thresholds shipped           | PR integrates with GitHub                                 | Required status checks shipped                                       | Publish independently verified behavioral evidence                         |
+| Approval or publication invalidated on source, policy, or environment drift    | No claim found in the reviewed official docs | No claim found in the reviewed official docs | No claim found in the reviewed official docs              | Latest-SHA checks are required, but approval semantics are external  | Source-drift publication block shipped; broader drift remains a hypothesis |
+| Direct proof that an incident-linked repository test executed and did not skip | No claim found in the reviewed official docs | No claim found in the reviewed official docs | No claim found in the reviewed official docs              | GitHub documents that a conditionally skipped job can report success | Core proposed differentiation                                              |
 
 "No claim found" is a documentation observation, not proof that the vendor
 lacks the capability.
@@ -163,8 +164,12 @@ auditable discovery inputs:
 - the [application API](../../src/app/api/design-partner-applications/route.ts)
   requires an authenticated user, rate-limits submissions, and records a
   non-sensitive audit event; and
-- the [durable application record](../../src/db/schema.ts) prevents anonymous
-  or duplicate applications from being treated as separate demand signals.
+- the [durable application record](../../src/db/schema.ts) rejects anonymous
+  submissions and limits intake to one application per authenticated account.
+
+Per-account uniqueness is not person or company deduplication. An operator must
+reconcile duplicate people, companies, and email aliases during qualification
+before application counts can become demand evidence.
 
 This instrument removes the anonymous-waitlist bottleneck and makes paid-pilot
 readiness observable. It earns **no market gate by itself**. An application is

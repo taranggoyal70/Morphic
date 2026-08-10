@@ -4,19 +4,18 @@ import { CheckCircleIcon, SpinnerGapIcon } from "@phosphor-icons/react";
 import { type FormEvent, useState } from "react";
 
 import { errorMessage } from "@/lib/error-message";
+import {
+  DESIGN_PARTNER_ENGINEERING_TEAM_SIZES,
+  DESIGN_PARTNER_INCIDENT_WINDOW_DAYS,
+  DESIGN_PARTNER_PILOT_DURATION_DAYS,
+  DESIGN_PARTNER_PILOT_READINESS_LABELS,
+  DESIGN_PARTNER_PILOT_READINESS_OPTIONS,
+  DESIGN_PARTNER_STACK_LABELS,
+  DESIGN_PARTNER_STACKS,
+} from "@/lib/domain/design-partner";
 
 const fieldClass =
   "mt-2 w-full rounded-lg border border-line-strong bg-ink/70 px-3.5 py-3 text-sm text-paper placeholder:text-muted focus:border-violet-light";
-
-const STACK_OPTIONS = [
-  ["braintrust", "Braintrust"],
-  ["langsmith", "LangSmith"],
-  ["arize", "Arize"],
-  ["langfuse", "Langfuse"],
-  ["sentry", "Sentry"],
-  ["github_actions", "GitHub Actions"],
-  ["other", "Other"],
-] as const;
 
 export function DesignPartnerApplicationForm({ today }: { today: string }) {
   const [state, setState] = useState<"idle" | "pending" | "submitted">("idle");
@@ -92,7 +91,8 @@ export function DesignPartnerApplicationForm({ today }: { today: string }) {
 
   const latestIncidentDate = today;
   const earliestIncidentDate = new Date(
-    new Date(`${today}T12:00:00.000Z`).getTime() - 90 * 24 * 60 * 60 * 1_000,
+    new Date(`${today}T12:00:00.000Z`).getTime() -
+      DESIGN_PARTNER_INCIDENT_WINDOW_DAYS * 24 * 60 * 60 * 1_000,
   )
     .toISOString()
     .slice(0, 10);
@@ -134,11 +134,11 @@ export function DesignPartnerApplicationForm({ today }: { today: string }) {
             <option value="" disabled>
               Select a range
             </option>
-            <option value="1-19">1-19 engineers</option>
-            <option value="20-49">20-49 engineers</option>
-            <option value="50-99">50-99 engineers</option>
-            <option value="100-200">100-200 engineers</option>
-            <option value="201+">201+ engineers</option>
+            {DESIGN_PARTNER_ENGINEERING_TEAM_SIZES.map((size) => (
+              <option key={size} value={size}>
+                {size} engineers
+              </option>
+            ))}
           </select>
         </label>
       </div>
@@ -178,7 +178,7 @@ export function DesignPartnerApplicationForm({ today }: { today: string }) {
             Recent incident date
           </label>
           <p id="incident-date-guidance" className="mt-1 text-xs text-muted">
-            Must be within 90 days.
+            Must be within {DESIGN_PARTNER_INCIDENT_WINDOW_DAYS} days.
           </p>
           <input
             id="incidentOccurredAt"
@@ -214,7 +214,7 @@ export function DesignPartnerApplicationForm({ today }: { today: string }) {
           checks.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {STACK_OPTIONS.map(([value, label]) => (
+          {DESIGN_PARTNER_STACKS.map((value) => (
             <label
               key={value}
               className="flex items-center gap-2 rounded-lg border border-line-strong bg-ink/50 px-3 py-2.5 text-sm text-muted-light transition hover:border-violet/40 hover:text-paper"
@@ -225,7 +225,7 @@ export function DesignPartnerApplicationForm({ today }: { today: string }) {
                 value={value}
                 className="size-4 accent-violet"
               />
-              {label}
+              {DESIGN_PARTNER_STACK_LABELS[value]}
             </label>
           ))}
         </div>
@@ -246,13 +246,9 @@ export function DesignPartnerApplicationForm({ today }: { today: string }) {
 
       <fieldset className="space-y-3">
         <legend className="text-sm font-medium text-paper">
-          90-day pilot readiness
+          {DESIGN_PARTNER_PILOT_DURATION_DAYS}-day pilot readiness
         </legend>
-        {[
-          ["ready_to_pay", "Ready to fund a $10K-$25K pilot"],
-          ["needs_approval", "Interested, but another owner must approve"],
-          ["not_ready", "Not ready to fund a pilot"],
-        ].map(([value, label]) => (
+        {DESIGN_PARTNER_PILOT_READINESS_OPTIONS.map((value) => (
           <label
             key={value}
             className="flex items-center gap-3 rounded-lg border border-line-strong bg-ink/35 px-4 py-3 text-sm text-muted-light"
@@ -264,7 +260,7 @@ export function DesignPartnerApplicationForm({ today }: { today: string }) {
               required
               className="size-4 accent-violet"
             />
-            {label}
+            {DESIGN_PARTNER_PILOT_READINESS_LABELS[value]}
           </label>
         ))}
       </fieldset>

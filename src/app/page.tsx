@@ -67,8 +67,8 @@ export default async function HomePage() {
           </h1>
           <p className="mt-7 max-w-[610px] text-lg leading-8 text-muted-light">
             Morphic proves that an approved production AI fix and its repository
-            regression ran against the exact source under review, then
-            invalidates approval when the evidence drifts.
+            regression ran against the exact source under review, then blocks
+            publication when the reviewed source drifts.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
@@ -96,10 +96,13 @@ export default async function HomePage() {
         </div>
 
         <div className="relative overflow-hidden rounded-lg border border-line-strong bg-surface shadow-[0_18px_60px_rgba(0,0,0,0.38)] transition duration-200 hover:border-violet/40">
+          <div className="border-b border-violet/20 bg-violet/10 px-5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-violet-light">
+            Illustrative synthetic evidence · not customer or repository data
+          </div>
           <div className="flex items-center justify-between border-b border-line px-5 py-4">
             <div>
               <p className="font-mono text-[10px] uppercase text-violet-light">
-                Production incident · INC-284
+                Illustrative incident · INC-284
               </p>
               <p className="mt-2 text-xl font-semibold text-paper">
                 Refund agent repeated a credit
@@ -140,7 +143,12 @@ export default async function HomePage() {
                 "Passed",
                 "refund-idempotency.test.ts",
               ],
-              ["04", "Human release decision", "Review", "expires on drift"],
+              [
+                "04",
+                "Human release decision",
+                "Review",
+                "source drift blocks publication",
+              ],
             ].map(([index, task, status, evidence]) => (
               <div
                 key={index}
@@ -244,7 +252,7 @@ export default async function HomePage() {
         <div className="grid gap-8 rounded-lg border border-line-strong bg-paper p-8 text-ink sm:grid-cols-[1fr_auto] sm:items-end sm:p-10">
           <div>
             <p className="font-mono text-[10px] uppercase text-violet">
-              Three paid design partnerships
+              Seeking three paid design partners
             </p>
             <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight sm:text-5xl">
               Test the control gap on a real incident in shadow mode.
