@@ -15,5 +15,10 @@ describe("ApprovalEvidence", () => {
 
     expect(screen.getByText("acme/checkout@1111111")).toBeInTheDocument();
     expect(screen.getByText("Workspace Version v3")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Approval authorizes one isolated run against this snapshot. Morphic will verify the diff and can only open a draft pull request.",
+      ),
+    ).toBeInTheDocument();
   });
 });

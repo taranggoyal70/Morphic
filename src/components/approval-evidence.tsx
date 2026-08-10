@@ -17,6 +17,10 @@ export function ApprovalEvidence({
         {repositoryFullName}@{snapshotSha.slice(0, 7)}
       </code>
       <span className="text-muted">Workspace Version v{workspaceVersion}</span>
+      <p className="basis-full leading-4 text-muted-light">
+        Approval authorizes one isolated run against this snapshot. Morphic
+        will verify the diff and can only open a draft pull request.
+      </p>
     </div>
   );
 }
