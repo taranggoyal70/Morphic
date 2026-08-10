@@ -5,10 +5,11 @@ import {
   CircleIcon,
   ClockIcon,
   FileCodeIcon,
+  FingerprintSimpleIcon,
+  FlowArrowIcon,
   GitBranchIcon,
   GithubLogoIcon,
   LockSimpleIcon,
-  SparkleIcon,
   WarningIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { format, formatDistanceToNowStrict } from "date-fns";
@@ -147,9 +148,9 @@ export function WorkspaceCanvas({
                 )}
               >
                 {adapting ? (
-                  <SparkleIcon
+                  <FlowArrowIcon
                     size={13}
-                    weight="fill"
+                    weight="bold"
                     className="animate-pulse"
                   />
                 ) : (
@@ -207,9 +208,9 @@ export function WorkspaceCanvas({
                 className="mx-auto text-danger"
               />
             ) : (
-              <SparkleIcon
+              <FlowArrowIcon
                 size={34}
-                weight="fill"
+                weight="duotone"
                 className="mx-auto animate-pulse text-violet-light"
               />
             )}
@@ -240,13 +241,13 @@ export function WorkspaceCanvas({
           <section className="mx-auto max-w-[1500px] px-4 pb-6 pt-5 sm:px-6 lg:px-7">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <SparkleIcon
+                <FingerprintSimpleIcon
                   size={17}
-                  weight="fill"
+                  weight="duotone"
                   className="text-violet-light"
                 />
                 <h2 className="text-sm font-semibold text-paper">
-                  Morphic&apos;s plan
+                  Evidence plan
                 </h2>
                 <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">
                   v{version}

@@ -4,8 +4,8 @@ import {
   ArrowSquareOutIcon,
   CheckCircleIcon,
   CircleNotchIcon,
-  CodeIcon,
   PlayIcon,
+  ShieldChevronIcon,
   XCircleIcon,
 } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
@@ -145,7 +145,7 @@ export function CodexPanel({
       }
       toast.success(
         decision === "approve"
-          ? "Approved. Morphic Agent is starting in an isolated sandbox."
+          ? "Approved. Isolated execution started."
           : "Proposal rejected.",
       );
       router.refresh();
@@ -164,12 +164,16 @@ export function CodexPanel({
     <section className="border-t border-line bg-[#0a0d13]">
       <div className="mx-auto max-w-[1400px] px-4 py-4 sm:px-6">
         <div className="flex items-center gap-2">
-          <CodeIcon size={18} weight="duotone" className="text-violet-light" />
+          <ShieldChevronIcon
+            size={18}
+            weight="duotone"
+            className="text-violet-light"
+          />
           <h2 className="text-sm font-semibold text-paper">
-            Morphic Agent proposals
+            Change control
           </h2>
           <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[9px] uppercase text-muted">
-            Approval required
+            Snapshot-bound
           </span>
         </div>
 
