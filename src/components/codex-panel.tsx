@@ -221,11 +221,13 @@ export function CodexPanel({
                     <div className="flex items-center gap-2">
                       {activeStatuses.has(run.status) ? (
                         <CircleNotchIcon
+                          aria-hidden="true"
                           size={14}
                           className="animate-spin text-violet-light"
                         />
                       ) : run.status === "completed" ? (
                         <CheckCircleIcon
+                          aria-hidden="true"
                           size={14}
                           weight="fill"
                           className="text-mint"
@@ -233,6 +235,7 @@ export function CodexPanel({
                       ) : run.status === "failed" ||
                         run.status === "cancelled" ? (
                         <XCircleIcon
+                          aria-hidden="true"
                           size={14}
                           weight="fill"
                           className="text-danger"
@@ -244,7 +247,10 @@ export function CodexPanel({
                         {run.instruction}
                       </p>
                     </div>
-                    <p className="mt-1 pl-[22px] font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+                    <p
+                      aria-label={`Run status: ${run.status.replaceAll("_", " ")}`}
+                      className="mt-1 pl-[22px] font-mono text-[10px] uppercase tracking-[0.08em] text-muted"
+                    >
                       {run.status.replaceAll("_", " ")}
                     </p>
                     {(run.resultSummary || run.error) && (

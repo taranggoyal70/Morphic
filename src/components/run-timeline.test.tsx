@@ -40,7 +40,10 @@ describe("RunTimeline", () => {
     );
 
     render(<RunTimeline runId="run-123" runStatus="completed" />);
-    fireEvent.click(screen.getByRole("button", { name: /activity/i }));
+    const activityButton = screen.getByRole("button", { name: /activity/i });
+    expect(activityButton).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(activityButton);
+    expect(activityButton).toHaveAttribute("aria-expanded", "true");
 
     expect(
       await screen.findByText("Independent verification passed"),

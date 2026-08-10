@@ -226,6 +226,7 @@ export function RunTimeline({
   const logRef = useRef<HTMLDivElement | null>(null);
   const isActive = ACTIVE_STATUSES.has(runStatus);
   const loading = open && !detail && !loadError;
+  const panelId = `run-${runId}-activity`;
 
   const load = useCallback(async () => {
     setLoadError(false);
@@ -271,6 +272,8 @@ export function RunTimeline({
     <div className="mt-2 pl-[22px]">
       <button
         type="button"
+        aria-expanded={open}
+        aria-controls={panelId}
         onClick={() => setOpen((value) => !value)}
         className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.08em] text-muted transition hover:text-paper"
       >
@@ -280,7 +283,10 @@ export function RunTimeline({
       </button>
 
       {open && (
-        <div className="mt-2 overflow-hidden rounded-lg border border-line bg-black/30">
+        <div
+          id={panelId}
+          className="mt-2 overflow-hidden rounded-lg border border-line bg-black/30"
+        >
           {usage && (usage.inputTokens > 0 || usage.outputTokens > 0) && (
             <div className="flex flex-wrap gap-x-3 gap-y-1 border-b border-line px-3 py-2 font-mono text-[10px] text-muted">
               <span>{usage.inputTokens.toLocaleString()} in</span>
@@ -293,15 +299,25 @@ export function RunTimeline({
 
           <div ref={logRef} className="max-h-80 overflow-y-auto px-3 py-2.5">
             {loading && (
-              <p className="flex items-center gap-2 py-2 text-xs text-muted">
-                <CircleNotchIcon size={13} className="animate-spin" />
+              <p
+                role="status"
+                className="flex items-center gap-2 py-2 text-xs text-muted"
+              >
+                <CircleNotchIcon
+                  aria-hidden="true"
+                  size={13}
+                  className="animate-spin"
+                />
                 Loading activity…
               </p>
             )}
 
             {loadError && (
-              <p className="flex items-center gap-2 py-2 text-xs text-amber">
-                <WarningIcon size={13} weight="fill" />
+              <p
+                role="alert"
+                className="flex items-center gap-2 py-2 text-xs text-amber"
+              >
+                <WarningIcon aria-hidden="true" size={13} weight="fill" />
                 Activity unavailable. Close and reopen this panel to retry.
               </p>
             )}

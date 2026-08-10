@@ -77,6 +77,11 @@ textarea:focus-visible,
 select:focus-visible {
   outline: 2px solid var(--violet-light);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(82, 120, 233, 0.18);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
