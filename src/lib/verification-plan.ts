@@ -51,7 +51,8 @@ export function provesIncidentTestExecution(
   });
   return (
     incidentPassed &&
-    /\b[1-9]\d*\s+(?:tests?\s+)?(?:passed|passing)\b/i.test(output)
+    (/\b[1-9]\d*\s+(?:tests?\s+)?(?:passed|passing)\b/i.test(output) ||
+      /\bpass\s+[1-9]\d*\b/i.test(output))
   );
 }
 
@@ -99,11 +100,7 @@ export function createIncidentTestCommand(
   if (!testScript || manager === "unknown") return null;
   const incidentPattern = escapeRegularExpression(incidentExternalId);
   const runnerArgs = /\bvitest\b/.test(testScript)
-    ? [
-        testPath,
-        "--reporter=verbose",
-        `--testNamePattern=${incidentPattern}`,
-      ]
+    ? [testPath, "--reporter=verbose", `--testNamePattern=${incidentPattern}`]
     : /\bjest\b/.test(testScript)
       ? [
           "--runTestsByPath",

@@ -57,6 +57,16 @@ describe("provesIncidentTestExecution", () => {
       ),
     ).toBe(false);
   });
+
+  it.each([
+    "ok 1 - prevents INC.284 from recurring\n# tests 1\n# pass 1\n# fail 0",
+    "✔ prevents INC.284 from recurring\nℹ tests 1\nℹ pass 1\nℹ fail 0",
+  ])(
+    "accepts native Node test output that proves the incident passed",
+    (output) => {
+      expect(provesIncidentTestExecution("INC.284", output)).toBe(true);
+    },
+  );
 });
 
 describe("createIncidentTestCommand", () => {
