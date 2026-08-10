@@ -531,6 +531,7 @@ export function WorkspaceCanvas({
             workspaceReady={workspace.status === "active"}
             repositoryFullName={repository.fullName}
             snapshotSha={snapshotSha}
+            workspaceVersion={version}
             runs={runs}
           />
           <section className="mx-auto max-w-[1000px] px-4 py-3 sm:px-6">

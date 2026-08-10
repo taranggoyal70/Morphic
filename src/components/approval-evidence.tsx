@@ -1,9 +1,11 @@
 export function ApprovalEvidence({
   repositoryFullName,
   snapshotSha,
+  workspaceVersion,
 }: {
   repositoryFullName: string;
   snapshotSha: string;
+  workspaceVersion: number;
 }) {
   return (
     <div
@@ -14,6 +16,7 @@ export function ApprovalEvidence({
       <code className="rounded border border-line bg-black/20 px-1.5 py-0.5 font-mono text-violet-light">
         {repositoryFullName}@{snapshotSha.slice(0, 7)}
       </code>
+      <span className="text-muted">Workspace Version v{workspaceVersion}</span>
     </div>
   );
 }

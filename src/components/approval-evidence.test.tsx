@@ -9,9 +9,11 @@ describe("ApprovalEvidence", () => {
       <ApprovalEvidence
         repositoryFullName="acme/checkout"
         snapshotSha="1111111111111111111111111111111111111111"
+        workspaceVersion={3}
       />,
     );
 
     expect(screen.getByText("acme/checkout@1111111")).toBeInTheDocument();
+    expect(screen.getByText("Workspace Version v3")).toBeInTheDocument();
   });
 });

@@ -40,12 +40,14 @@ export function CodexPanel({
   workspaceReady,
   repositoryFullName,
   snapshotSha,
+  workspaceVersion,
   runs,
 }: {
   workspaceId: string;
   workspaceReady: boolean;
   repositoryFullName?: string;
   snapshotSha?: string | null;
+  workspaceVersion?: number | null;
   runs: CodexRun[];
 }) {
   const router = useRouter();
@@ -236,10 +238,12 @@ export function CodexPanel({
                     )}
                     {run.status === "awaiting_approval" &&
                       repositoryFullName &&
-                      snapshotSha && (
+                      snapshotSha &&
+                      workspaceVersion && (
                         <ApprovalEvidence
                           repositoryFullName={repositoryFullName}
                           snapshotSha={snapshotSha}
+                          workspaceVersion={workspaceVersion}
                         />
                       )}
                   </div>
