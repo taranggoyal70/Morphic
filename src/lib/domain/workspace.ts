@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-import { incidentEvidenceSchema } from "./incident";
+import {
+  incidentEvidenceSchema,
+  incidentExternalIdSchema,
+} from "./incident";
 
 export const workspacePlanSchema = z.object({
   summary: z.string().min(1).max(600),
@@ -11,7 +14,7 @@ export const workspacePlanSchema = z.object({
   }),
   incidentRegression: z
     .object({
-      incidentExternalId: z.string().min(1).max(160),
+      incidentExternalId: incidentExternalIdSchema,
       acceptanceCriteria: z.array(z.string().min(8).max(400)).min(1).max(8),
       criticalPathItemId: z.string().min(1).max(80),
     })

@@ -84,6 +84,66 @@ describe("createIncidentTestCommand", () => {
       },
     });
   });
+
+  it("treats regex metacharacters in incident identifiers as literals", () => {
+    expect(
+      createIncidentTestCommand(
+        "pnpm",
+        JSON.stringify({ scripts: { test: "vitest run" } }),
+        "src/refund.test.ts",
+        "bt.9831[retry]",
+      ),
+    ).toMatchObject({
+      execution: {
+        args: [
+          "run",
+          "test",
+          "--",
+          "src/refund.test.ts",
+          "--reporter=verbose",
+          "--testNamePattern=bt\\.9831\\[retry\\]",
+        ],
+      },
+    });
+  });
+
+  it("targets a linked test with Node's repository-owned test runner", () => {
+    expect(
+      createIncidentTestCommand(
+        "npm",
+        JSON.stringify({ scripts: { test: "node --test" } }),
+        "test/refund.test.js",
+        "INC.284",
+      ),
+    ).toMatchObject({
+      execution: {
+        executable: "npm",
+        args: [
+          "run",
+          "test",
+          "--",
+          "--test-name-pattern=INC\\.284",
+          "test/refund.test.js",
+        ],
+      },
+    });
+  });
+
+  it("passes the linked path to a repository-owned test wrapper", () => {
+    expect(
+      createIncidentTestCommand(
+        "pnpm",
+        JSON.stringify({ scripts: { test: "./scripts/test-ci" } }),
+        "tests/refund.spec.ts",
+        "INC-284",
+      ),
+    ).toMatchObject({
+      execution: {
+        executable: "pnpm",
+        args: ["run", "test", "--", "tests/refund.spec.ts"],
+      },
+    });
+  });
 });
 
 describe("detectPackageManager", () => {

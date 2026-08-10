@@ -85,6 +85,10 @@ function runCommand(manager: PackageManager, script: string) {
   return `${manager} run ${script}`;
 }
 
+function escapeRegularExpression(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 export function createIncidentTestCommand(
   manager: PackageManager,
   packageJson: unknown,
@@ -93,23 +97,31 @@ export function createIncidentTestCommand(
 ) {
   const testScript = packageScripts(packageJson).test;
   if (!testScript || manager === "unknown") return null;
+  const incidentPattern = escapeRegularExpression(incidentExternalId);
   const runnerArgs = /\bvitest\b/.test(testScript)
     ? [
         testPath,
         "--reporter=verbose",
-        `--testNamePattern=${incidentExternalId}`,
+        `--testNamePattern=${incidentPattern}`,
       ]
     : /\bjest\b/.test(testScript)
       ? [
           "--runTestsByPath",
           testPath,
           "--verbose",
-          `--testNamePattern=${incidentExternalId}`,
+          `--testNamePattern=${incidentPattern}`,
         ]
       : /\bmocha\b/.test(testScript)
-        ? [testPath, "--grep", incidentExternalId]
-        : null;
-  if (!runnerArgs) return null;
+        ? [testPath, "--grep", incidentPattern]
+        : /\bnode\s+--test\b/.test(testScript)
+          ? [`--test-name-pattern=${incidentPattern}`, testPath]
+          : /\bplaywright\s+test\b/.test(testScript)
+            ? [testPath, "--grep", incidentPattern, "--reporter=line"]
+            : /\bava\b/.test(testScript)
+              ? [testPath, `--match=${incidentPattern}`, "--verbose"]
+              : /\bcypress\s+run\b/.test(testScript)
+                ? ["--spec", testPath, "--reporter", "spec"]
+                : [testPath];
   const args =
     manager === "yarn"
       ? ["test", ...runnerArgs]

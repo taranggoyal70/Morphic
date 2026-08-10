@@ -119,6 +119,32 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it.each([".", "[]", "incident id"])(
+    "rejects an unsafe incident identifier: %s",
+    (externalId) => {
+      expect(() =>
+        createWorkspaceSchema.parse({
+          repositoryId: crypto.randomUUID(),
+          objective: "Prevent duplicate credits on retried support actions",
+          constraints: [],
+          incident: {
+            source: "manual",
+            externalId,
+            title: "Refund assistant repeated a customer credit",
+            observedBehavior: "A retried webhook issued two credits.",
+            expectedBehavior: "A retried webhook issues exactly one credit.",
+            occurredAt: "2026-08-07T14:32:00.000Z",
+            traceUrl: null,
+            acceptanceCriteria: [
+              "Replaying the same webhook issues exactly one credit.",
+            ],
+            redactionConfirmed: true,
+          },
+        }),
+      ).toThrow();
+    },
+  );
+
   it("requires explicit approval for every Codex proposal", () => {
     const base = {
       workspaceId: crypto.randomUUID(),

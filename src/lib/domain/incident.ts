@@ -1,8 +1,18 @@
 import { z } from "zod";
 
+export const incidentExternalIdSchema = z
+  .string()
+  .trim()
+  .min(3)
+  .max(160)
+  .regex(
+    /^[A-Za-z0-9](?:[A-Za-z0-9._:/-]*[A-Za-z0-9])?$/,
+    "Use a stable identifier containing only letters, numbers, dots, colons, slashes, underscores, or hyphens.",
+  );
+
 export const incidentEvidenceSchema = z.object({
   source: z.enum(["manual", "braintrust", "langsmith"]),
-  externalId: z.string().trim().min(1).max(160),
+  externalId: incidentExternalIdSchema,
   title: z.string().trim().min(8).max(240),
   observedBehavior: z.string().trim().min(8).max(2_000),
   expectedBehavior: z.string().trim().min(8).max(2_000),
