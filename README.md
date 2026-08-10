@@ -34,6 +34,20 @@ incident-to-pull-request story without requiring provider credentials. Use the
 [five-minute demo guide](docs/demo/five-minute-incident-to-pr.md) to pair that
 fixture with a live run on a disposable repository.
 
+## Production AI incident research
+
+Morphic is recruiting 15 engineering, AI platform, reliability, and product
+leaders for non-leading interviews about recent production AI incidents. The
+study starts with the participant's existing trace-to-release workflow before
+showing or pitching Morphic.
+
+Read the [public research call](docs/research/production-ai-incident-research-call.md)
+or use the
+[GitHub research form](https://github.com/taranggoyal70/Morphic/issues/new?template=production-ai-incident-research.yml).
+Do not submit customer data, traces, secrets, private links, or proprietary
+incident content. Applications and expressions of interest are recruiting
+leads, not customer-validation points.
+
 ## Architecture
 
 ```text

@@ -1,0 +1,105 @@
+name: Production AI incident research
+description: Volunteer for a non-leading interview about a recent production AI incident
+title: "[Research participant] "
+labels:
+  - market-validation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Help test the problem before the product
+
+        Morphic is recruiting engineering, AI platform, reliability, and product leaders for a 45-minute research interview about a recent production AI incident and the release workflow that followed.
+
+        This issue is public. Do not include customer names, prompts, messages, traces, credentials, private links, personal contact details, or proprietary incident information. A submission is a recruiting lead, not customer validation.
+
+  - type: input
+    id: organization
+    attributes:
+      label: Public organization or project
+      description: Use only a name that is already public and safe to associate with your GitHub account.
+      placeholder: Example B2B product
+    validations:
+      required: true
+
+  - type: dropdown
+    id: role
+    attributes:
+      label: Your role
+      options:
+        - Engineering leader
+        - AI or ML platform leader
+        - Reliability or security leader
+        - Product leader responsible for an AI agent
+        - Software engineer who owns the release workflow
+    validations:
+      required: true
+
+  - type: dropdown
+    id: team-size
+    attributes:
+      label: Engineering team size
+      options:
+        - 1-19
+        - 20-49
+        - 50-99
+        - 100-200
+        - 201+
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: qualification
+    attributes:
+      label: Research screen
+      description: Confirm each statement without sharing incident details.
+      options:
+        - label: A customer-facing AI agent or AI feature is running in production.
+          required: true
+        - label: Application code and release checks live in GitHub.
+          required: true
+        - label: The team had a behavioral production incident in the last 90 days.
+          required: true
+
+  - type: dropdown
+    id: stack
+    attributes:
+      label: Current observability or evaluation stack
+      multiple: true
+      options:
+        - Braintrust
+        - LangSmith
+        - Arize
+        - Langfuse
+        - Sentry
+        - Internal tooling
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: release-process
+    attributes:
+      label: Current release-proof process
+      description: At a high level, which durable artifacts usually connect a reported AI failure to a code change, regression, approval, and deployment? Do not describe the incident itself.
+      placeholder: Trace or ticket -> pull request -> checks -> reviewer decision -> deployment record
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: interview
+    attributes:
+      label: Interview commitment
+      options:
+        - label: I am willing to join a 45-minute problem interview before seeing a product pitch.
+          required: true
+        - label: I understand that interest or this issue does not count as customer validation.
+          required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Public-data confirmation
+      options:
+        - label: I confirm this issue contains no customer data, secrets, private links, personal contact details, or proprietary incident content.
+          required: true
