@@ -222,18 +222,23 @@ export function RunTimeline({
 }) {
   const [open, setOpen] = useState(false);
   const [detail, setDetail] = useState<RunDetail | null>(null);
+  const [loadError, setLoadError] = useState(false);
   const logRef = useRef<HTMLDivElement | null>(null);
   const isActive = ACTIVE_STATUSES.has(runStatus);
-  const loading = open && !detail;
+  const loading = open && !detail && !loadError;
 
   const load = useCallback(async () => {
+    setLoadError(false);
     try {
       const response = await fetch(`/api/codex-runs/${runId}`);
-      if (!response.ok) return;
+      if (!response.ok) {
+        setLoadError(true);
+        return;
+      }
       const payload = (await response.json()) as { data: RunDetail };
       setDetail(payload.data);
     } catch {
-      // Non-critical: the panel keeps its last known state.
+      setLoadError(true);
     }
   }, [runId]);
 
@@ -291,6 +296,13 @@ export function RunTimeline({
               <p className="flex items-center gap-2 py-2 text-xs text-muted">
                 <CircleNotchIcon size={13} className="animate-spin" />
                 Loading activity…
+              </p>
+            )}
+
+            {loadError && (
+              <p className="flex items-center gap-2 py-2 text-xs text-amber">
+                <WarningIcon size={13} weight="fill" />
+                Activity unavailable. Close and reopen this panel to retry.
               </p>
             )}
 

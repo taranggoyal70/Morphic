@@ -78,4 +78,20 @@ describe("RunTimeline", () => {
       ),
     ).toBeInTheDocument();
   });
+
+  it("turns an activity load failure into a recoverable state", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: false }),
+    );
+
+    render(<RunTimeline runId="run-789" runStatus="completed" />);
+    fireEvent.click(screen.getByRole("button", { name: /activity/i }));
+
+    expect(
+      await screen.findByText(
+        "Activity unavailable. Close and reopen this panel to retry.",
+      ),
+    ).toBeInTheDocument();
+  });
 });

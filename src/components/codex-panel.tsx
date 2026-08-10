@@ -200,6 +200,18 @@ export function CodexPanel({
           </button>
         </form>
 
+        {runs.length === 0 && (
+          <div className="mt-3 rounded-xl border border-dashed border-line-strong px-4 py-4">
+            <p className="text-xs font-medium text-paper">
+              No change proposals yet
+            </p>
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
+              Propose one bounded change from the critical path. You will review
+              its snapshot and Workspace Version before anything runs.
+            </p>
+          </div>
+        )}
+
         {runs.length > 0 && (
           <div className="mt-3 divide-y divide-line rounded-xl border border-line">
             {runs.map((run) => (
