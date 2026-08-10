@@ -89,7 +89,7 @@ export function buildPullRequestDraft(input: {
     draft: true,
     title: `Morphic: ${input.objective.slice(0, 180)}`,
     body: [
-      "## Morphic agent run",
+      "## Morphic Codex Run",
       "",
       `**Approved instruction:** ${input.instruction}`,
       "",
@@ -110,7 +110,7 @@ export function buildPullRequestDraft(input: {
       "",
       `Run ID: \`${input.runId}\``,
       "",
-      "This draft pull request was created from an explicitly approved, isolated agent run.",
+      "This draft pull request was created from an explicitly approved, isolated Codex Run.",
     ]
       .filter(Boolean)
       .join("\n"),

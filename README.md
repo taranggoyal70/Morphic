@@ -2,7 +2,7 @@
 
 Morphic turns a redacted production AI incident into behavioral regression
 evidence bound to the exact GitHub snapshot and Workspace Version a human
-approved. Incident-driven agent runs cannot publish until an independent,
+approved. Incident-driven Codex Runs cannot publish until an independent,
 repository-owned test or check passes, and successful runs end in a draft pull
 request with the incident, acceptance criteria, source binding, and command
 results attached.
@@ -19,7 +19,7 @@ incident-to-regression workflow.
 - OpenAI structured-output workspace compilation
 - Distributed Upstash rate limiting
 - Durable Vercel Workflow orchestration
-- Isolated Morphic Agent execution in Vercel Sandbox
+- Isolated Codex Run execution in Vercel Sandbox
 - Explicit run approval, branch creation, push, and pull-request creation
 - Publication blocking when an incident run lacks passing behavioral verification
 - Audit logging on all critical operations (workspace creation, Codex approval, user deletion)

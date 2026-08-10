@@ -182,7 +182,7 @@ export default async function HomePage() {
               One durable path
             </p>
             <h2 className="mt-5 max-w-sm text-4xl font-semibold leading-tight text-paper sm:text-5xl">
-              From objective to reviewed PR.
+              From incident to reviewed PR.
             </h2>
           </div>
           <div className="border-t border-line">
@@ -190,17 +190,17 @@ export default async function HomePage() {
               {
                 icon: GitBranchIcon,
                 title: "Ground",
-                body: "Snapshot the repository, issues, and pull requests into durable evidence.",
+                body: "Bind a redacted production incident to a durable repository snapshot.",
               },
               {
                 icon: SparkleIcon,
                 title: "Shape",
-                body: "Compile a critical path, open decisions, and the interface this objective needs.",
+                body: "Compile its acceptance criteria into a critical path and repository-owned regression.",
               },
               {
                 icon: ShieldCheckIcon,
                 title: "Execute",
-                body: "Approve an isolated agent run and receive a reviewable branch and draft pull request.",
+                body: "Approve an isolated Codex Run and receive independently verified draft evidence.",
               },
             ].map((item, index) => (
               <div

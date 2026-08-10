@@ -22,12 +22,12 @@ same behavior cannot recur.
    creation.
 4. Workspace planning receives the incident and prioritizes the supplied
    acceptance criteria without treating incident text as trusted instructions.
-5. Every Morphic Agent run receives the same incident evidence and is explicitly
+5. Every Codex Run receives the same incident evidence and is explicitly
    instructed to add or connect a repository-owned behavioral regression.
 6. The approval panel identifies the incident and displays its observed
    behavior, expected behavior, and acceptance criteria beside the run-scoped
    Repository Snapshot and Workspace Version.
-7. An incident-driven run cannot publish unless independent verification
+7. An incident-driven Codex Run cannot publish unless independent verification
    records a successful repository-owned `test` or `check` command.
 8. The draft pull request records the incident identifier, acceptance criteria,
    run-scoped source binding, and verification commands.

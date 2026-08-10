@@ -1,6 +1,8 @@
 # Morphic
 
-This context defines the language for an adaptive workspace that turns a builder's outcome into a governed interface backed by live repository evidence.
+This context defines the language for an adaptive workspace that turns a
+builder's outcome and optional production incident into a governed interface
+backed by live repository evidence.
 
 ## Language
 
@@ -19,6 +21,32 @@ _Avoid_: Dashboard, disposable generated page, chat transcript
 **Repository Evidence**:
 GitHub data that supports or constrains an **Adaptive Workspace**, including issues, pull requests, branches, commits, and repository paths.
 _Avoid_: AI guess, invented task, mock project data
+
+**Production Incident**:
+An observed failure in a customer-facing system that motivates an **Objective**.
+A **Production Incident** does not replace the **Objective**; it supplies the
+specific observed and expected behavior that constrains it.
+_Avoid_: Bug title, generic task, unverified anecdote
+
+**Incident Evidence**:
+The immutable, redacted description of one **Production Incident**, including
+its source identifier, observed behavior, expected behavior, provenance link,
+and acceptance criteria. It may refer to an external trace, but raw provider
+traces do not become Morphic product state.
+_Avoid_: Raw customer trace, prompt, mutable incident notes
+
+**Incident-Driven Workspace**:
+An **Adaptive Workspace** created with **Incident Evidence**. Its generated
+**Workspace Version** must preserve every accepted criterion and link those
+criteria to the **Critical Path Item** responsible for the regression.
+_Avoid_: Incident dashboard, trace viewer, generic workspace with an incident label
+
+**Behavioral Regression**:
+A repository-owned executable test linked to a **Production Incident** that
+reproduces its observed behavior and proves its expected behavior. For a
+**Codex Run**, the changed test identifies the incident and must pass during
+independent verification before publication.
+_Avoid_: Passing lint, an unchanged unrelated test suite, agent self-report
 
 **Workspace Version**:
 An immutable generated interpretation of an **Objective** and a specific **Repository Snapshot**. A later user command creates a new **Workspace Version** rather than silently rewriting history.
