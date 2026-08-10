@@ -33,6 +33,21 @@ describe("buildPullRequestDraft", () => {
         instruction: "Add idempotency to checkout",
         runId: "run-123",
         summary: "Added an idempotency key to payment requests.",
+        reviewedSha: "1111111111111111111111111111111111111111",
+        workspaceVersion: 3,
+        verification: {
+          status: "passed",
+          commands: [
+            {
+              id: "test",
+              label: "Tests",
+              command: "pnpm test",
+              timeoutMs: 120_000,
+              exitCode: 0,
+              output: "12 tests passed",
+            },
+          ],
+        },
       }),
     ).toMatchObject({
       owner: "acme",
@@ -42,6 +57,38 @@ describe("buildPullRequestDraft", () => {
       draft: true,
       title: "Morphic: Prevent duplicate charges",
     });
+  });
+
+  it("renders the reviewed snapshot and independent checks as evidence", () => {
+    const draft = buildPullRequestDraft({
+      owner: "acme",
+      repo: "checkout",
+      head: "morphic/run-123",
+      base: "main",
+      objective: "Prevent duplicate charges",
+      instruction: "Add idempotency to checkout",
+      runId: "run-123",
+      summary: null,
+      reviewedSha: "1111111111111111111111111111111111111111",
+      workspaceVersion: 3,
+      verification: {
+        status: "passed",
+        commands: [
+          {
+            id: "test",
+            label: "Tests",
+            command: "pnpm test",
+            timeoutMs: 120_000,
+            exitCode: 0,
+            output: "12 tests passed",
+          },
+        ],
+      },
+    });
+
+    expect(draft.body).toContain("| Reviewed snapshot | `1111111` |");
+    expect(draft.body).toContain("| Workspace Version | `v3` |");
+    expect(draft.body).toContain("| `pnpm test` | Passed |");
   });
 });
 

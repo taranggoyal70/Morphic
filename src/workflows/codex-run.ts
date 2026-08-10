@@ -449,7 +449,9 @@ async function openPullRequestStep(input: {
   sandboxName: string;
   branchName: string;
   baseSha: string;
+  workspaceVersion: number;
   summary: string | null;
+  verification: VerificationResult;
 }) {
   "use step";
 
@@ -535,6 +537,9 @@ async function openPullRequestStep(input: {
       instruction: run.instruction,
       runId: run.id,
       summary: input.summary,
+      reviewedSha: input.baseSha,
+      workspaceVersion: input.workspaceVersion,
+      verification: input.verification,
     }),
   );
 
@@ -728,7 +733,9 @@ export async function codexRunWorkflow(input: {
       sandboxName,
       branchName: provisioned.branchName,
       baseSha: provisioned.baseSha,
+      workspaceVersion: context.workspaceVersion,
       summary,
+      verification,
     });
   } catch (error) {
     await failCodexRunStep(

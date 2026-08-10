@@ -1,3 +1,5 @@
+import type { VerificationResult } from "@/lib/domain/verification";
+
 export function assertPublishablePaths(paths: string[]) {
   for (const path of paths) {
     if (
@@ -37,7 +39,14 @@ export function buildPullRequestDraft(input: {
   instruction: string;
   runId: string;
   summary: string | null;
+  reviewedSha: string;
+  workspaceVersion: number;
+  verification: VerificationResult;
 }) {
+  const verificationRows = input.verification.commands.map(
+    (command) =>
+      `| \`${command.command}\` | ${command.exitCode === 0 ? "Passed" : `Failed (${command.exitCode})`} |`,
+  );
   return {
     owner: input.owner,
     repo: input.repo,
@@ -51,6 +60,18 @@ export function buildPullRequestDraft(input: {
       `**Approved instruction:** ${input.instruction}`,
       "",
       input.summary ? `**Summary:** ${input.summary}` : "",
+      "",
+      "## Execution evidence",
+      "",
+      "| Evidence | Value |",
+      "| --- | --- |",
+      `| Reviewed snapshot | \`${input.reviewedSha.slice(0, 7)}\` |`,
+      `| Workspace Version | \`v${input.workspaceVersion}\` |`,
+      `| Independent verification | ${input.verification.status === "passed" ? "Passed" : "Failed"} |`,
+      "",
+      "| Verification command | Result |",
+      "| --- | --- |",
+      ...verificationRows,
       "",
       `Run ID: \`${input.runId}\``,
       "",
