@@ -14,6 +14,7 @@ const validPlan = {
     definitionOfDone: ["The onboarding route exists."],
     successSignal: "A verified end-to-end test passes.",
   },
+  incidentRegression: null,
   criticalPath: [
     {
       id: "onboarding-route",

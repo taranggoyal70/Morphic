@@ -25,6 +25,7 @@ function executionContext(): ExecutionContext {
         definitionOfDone: ["The onboarding route is verified."],
         successSignal: "The onboarding integration test passes.",
       },
+      incidentRegression: null,
       criticalPath: [
         {
           id: "route",

@@ -9,6 +9,13 @@ export const workspacePlanSchema = z.object({
     definitionOfDone: z.array(z.string().min(1).max(240)).min(1).max(8),
     successSignal: z.string().min(1).max(300),
   }),
+  incidentRegression: z
+    .object({
+      incidentExternalId: z.string().min(1).max(160),
+      acceptanceCriteria: z.array(z.string().min(8).max(400)).min(1).max(8),
+      criticalPathItemId: z.string().min(1).max(80),
+    })
+    .nullable(),
   criticalPath: z
     .array(
       z.object({
