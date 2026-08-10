@@ -2,10 +2,10 @@
 
 Morphic turns a redacted production AI incident into behavioral regression
 evidence bound to the exact GitHub snapshot and Workspace Version a human
-approved. Incident-driven Codex Runs cannot publish until an independent,
-repository-owned test or check passes, and successful runs end in a draft pull
-request with the incident, acceptance criteria, source binding, and command
-results attached.
+approved. Incident-driven Codex Runs cannot publish until a changed test names
+the incident and passes when Morphic executes that test path directly.
+Successful runs end in a draft pull request with the incident, acceptance
+criteria, source binding, linked test, and command results attached.
 
 General objective workspaces remain available, but the startup wedge is the
 incident-to-regression workflow.

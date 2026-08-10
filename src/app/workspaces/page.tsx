@@ -9,7 +9,7 @@ import { getGitHubAccessToken, requireMorphicUser } from "@/lib/auth";
 import { listRepositories } from "@/lib/github";
 
 export const metadata: Metadata = {
-  title: "New incident regression",
+  title: "New incident-driven workspace",
 };
 
 export default async function WorkspacesPage() {

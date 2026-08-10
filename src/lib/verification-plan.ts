@@ -36,6 +36,16 @@ export function findIncidentRegressionTestPaths(
     .map(({ path }) => path);
 }
 
+export function provesIncidentTestExecution(
+  incidentExternalId: string,
+  output: string,
+) {
+  return (
+    output.includes(incidentExternalId) &&
+    /\b[1-9]\d*\s+(?:tests?\s+)?(?:passed|passing)\b/i.test(output)
+  );
+}
+
 export function detectPackageManager(paths: string[]): PackageManager {
   const names = new Set(paths);
   return LOCKFILES.find(([lockfile]) => names.has(lockfile))?.[1] ?? "unknown";
@@ -64,6 +74,32 @@ function runCommand(manager: PackageManager, script: string) {
   if (manager === "yarn") return `yarn ${script}`;
   if (manager === "unknown") return "";
   return `${manager} run ${script}`;
+}
+
+export function createIncidentTestCommand(
+  manager: PackageManager,
+  packageJson: unknown,
+  testPath: string,
+) {
+  const testScript = packageScripts(packageJson).test;
+  if (!testScript || manager === "unknown") return null;
+  const runnerArgs = /\bvitest\b/.test(testScript)
+    ? [testPath, "--reporter=verbose"]
+    : /\bjest\b/.test(testScript)
+      ? ["--runTestsByPath", testPath, "--verbose"]
+      : [testPath];
+  const args =
+    manager === "yarn"
+      ? ["test", ...runnerArgs]
+      : ["run", "test", "--", ...runnerArgs];
+  return {
+    id: `incident-regression:${testPath}`,
+    label: `Run linked regression ${testPath}`,
+    command: [manager, ...args].join(" "),
+    timeoutMs: 300_000,
+    capabilities: ["repository-tests"] as VerificationCapability[],
+    execution: { executable: manager, args },
+  };
 }
 
 function scriptCapabilities(
@@ -131,9 +167,16 @@ export function assertVerificationPassed(
 ) {
   if (result.status !== "passed") {
     const failed = result.commands.find(({ exitCode }) => exitCode !== 0);
-    throw new Error(
-      `Independent verification failed${failed ? `: ${failed.command} exited ${failed.exitCode}` : ""}. Publication was blocked.`,
-    );
+    if (failed) {
+      throw new Error(
+        `Independent verification failed: ${failed.command} exited ${failed.exitCode}. Publication was blocked.`,
+      );
+    }
+    if (!options.incidentExternalId) {
+      throw new Error(
+        "Independent verification failed. Publication was blocked.",
+      );
+    }
   }
 
   if (options.incidentExternalId) {

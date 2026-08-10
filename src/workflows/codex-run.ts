@@ -29,9 +29,11 @@ import {
 import { pushWithEphemeralCredentials } from "@/lib/publication-remote";
 import {
   assertVerificationPassed,
+  createIncidentTestCommand,
   createVerificationPlan,
   findIncidentRegressionTestPaths,
   isRepositoryTestPath,
+  provesIncidentTestExecution,
 } from "@/lib/verification-plan";
 import type { VerificationResult } from "@/lib/domain/verification";
 
@@ -708,6 +710,8 @@ async function verifyAgentChangeStep(input: {
     "-lc",
     `cd ${REPO_CWD} && test -f package.json && cat package.json`,
   ]);
+  const packageJsonContent =
+    packageJson.exitCode === 0 ? await packageJson.stdout() : null;
   const changedTestFiles = input.incidentExternalId
     ? await inspectChangedTestFiles(sandbox, input.baseSha)
     : [];
@@ -719,7 +723,7 @@ async function verifyAgentChangeStep(input: {
     : [];
   const plan = createVerificationPlan(
     (await trackedFiles.stdout()).split("\n").filter(Boolean),
-    packageJson.exitCode === 0 ? await packageJson.stdout() : null,
+    packageJsonContent,
     { requireRepositoryTests: Boolean(input.incidentExternalId) },
   );
   if (plan.commands.length === 0) {
@@ -739,31 +743,69 @@ async function verifyAgentChangeStep(input: {
         .join("\n")
         .slice(-4_000),
     );
-    const capabilities = [...command.capabilities];
-    if (
-      result.exitCode === 0 &&
-      linkedTestPaths.length > 0 &&
-      capabilities.includes("repository-tests")
-    ) {
-      capabilities.push("behavioral-regression");
-    }
     commands.push({
       ...command,
-      capabilities,
       exitCode: result.exitCode,
       output,
     });
     if (result.exitCode !== 0) break;
   }
 
+  const provenTestPaths: string[] = [];
+  if (
+    input.incidentExternalId &&
+    commands.every(({ exitCode }) => exitCode === 0)
+  ) {
+    for (const testPath of linkedTestPaths) {
+      const directCommand = createIncidentTestCommand(
+        plan.packageManager,
+        packageJsonContent,
+        testPath,
+      );
+      if (!directCommand?.execution) continue;
+      const result = await sandbox.runCommand({
+        cmd: directCommand.execution.executable,
+        args: directCommand.execution.args,
+        cwd: REPO_CWD,
+        timeoutMs: directCommand.timeoutMs,
+      });
+      const output = redactSensitiveText(
+        [(await result.stdout()).trim(), (await result.stderr()).trim()]
+          .filter(Boolean)
+          .join("\n")
+          .slice(-4_000),
+      );
+      const proved =
+        result.exitCode === 0 &&
+        provesIncidentTestExecution(input.incidentExternalId, output);
+      commands.push({
+        ...directCommand,
+        capabilities: proved
+          ? [...directCommand.capabilities, "behavioral-regression"]
+          : directCommand.capabilities,
+        exitCode: result.exitCode,
+        output,
+      });
+      if (proved) provenTestPaths.push(testPath);
+      if (result.exitCode !== 0) break;
+    }
+  }
+
+  const behavioralEvidencePassed = input.incidentExternalId
+    ? linkedTestPaths.length > 0 &&
+      provenTestPaths.length === linkedTestPaths.length
+    : true;
+
   const verification: VerificationResult = {
-    status: commands.every(({ exitCode }) => exitCode === 0)
-      ? "passed"
-      : "failed",
+    status:
+      commands.every(({ exitCode }) => exitCode === 0) &&
+      behavioralEvidencePassed
+        ? "passed"
+        : "failed",
     behavioralEvidence: input.incidentExternalId
       ? {
           incidentExternalId: input.incidentExternalId,
-          testPaths: linkedTestPaths,
+          testPaths: provenTestPaths,
         }
       : undefined,
     commands,

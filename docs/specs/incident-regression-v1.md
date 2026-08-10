@@ -27,8 +27,10 @@ same behavior cannot recur.
 6. The approval panel identifies the incident and displays its observed
    behavior, expected behavior, and acceptance criteria beside the run-scoped
    Repository Snapshot and Workspace Version.
-7. An incident-driven Codex Run cannot publish unless independent verification
-   records a successful repository-owned `test` or `check` command.
+7. An incident-driven Codex Run cannot publish unless a changed repository test
+   names the incident identifier and independent verification executes that
+   test path directly. Runner output must name the incident and report at least
+   one passing test; skipped, excluded, or silent tests do not qualify.
 8. The draft pull request records the incident identifier, acceptance criteria,
    run-scoped source binding, and verification commands.
 9. Missing behavioral evidence produces a specific blocking explanation and no

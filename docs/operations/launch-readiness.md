@@ -44,7 +44,7 @@ market gate blocks commercial claims, even if the software gates pass.
 | Path safety              | An invalid or out-of-repository changed path blocks publication                                                                | Security         |
 | Credential cleanup       | The sandbox origin is credential-free after both successful and failed pushes                                                  | Security         |
 | Draft publication        | A passing run opens a draft pull request with reviewed snapshot, Workspace Version, and command results                        | Repository owner |
-| Incident regression      | An incident run records immutable acceptance criteria and blocks publication unless `test` or `check` passes                   | Product owner    |
+| Incident regression      | A changed test names the incident and direct execution reports the incident plus at least one passing test                     | Product owner    |
 | Teardown                 | Successful and failed runs both stop their Vercel Sandbox                                                                      | Operations       |
 
 ## Security and data gates

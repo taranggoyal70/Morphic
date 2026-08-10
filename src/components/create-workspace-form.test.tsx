@@ -90,7 +90,7 @@ describe("CreateWorkspaceForm", () => {
       screen.getByLabelText("I confirm this incident evidence is redacted"),
     );
     fireEvent.click(
-      screen.getByRole("button", { name: "Create regression workspace" }),
+      screen.getByRole("button", { name: "Create incident-driven workspace" }),
     );
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
@@ -113,7 +113,7 @@ describe("CreateWorkspaceForm", () => {
       new Date("2026-08-07T14:32").toISOString(),
     );
     expect(success).toHaveBeenCalledWith(
-      "Morphic is compiling the incident regression workspace.",
+      "Morphic is compiling your incident-driven workspace.",
     );
     expect(push).toHaveBeenCalledWith("/workspaces/workspace-1");
   });

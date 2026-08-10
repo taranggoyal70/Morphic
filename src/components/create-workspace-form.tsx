@@ -90,7 +90,7 @@ export function CreateWorkspaceForm({
       }
       toast.success(
         mode === "incident"
-          ? "Morphic is compiling the incident regression workspace."
+          ? "Morphic is compiling your incident-driven workspace."
           : "Morphic is compiling your workspace.",
       );
       router.push(`/workspaces/${payload.workspace.id}`);
@@ -120,7 +120,7 @@ export function CreateWorkspaceForm({
           }`}
         >
           <span className="block text-sm font-semibold">
-            Incident regression
+            Incident-driven workspace
           </span>
           <span className="mt-1 block text-xs leading-5 text-muted">
             Turn a redacted production failure into verified behavioral
@@ -508,7 +508,7 @@ export function CreateWorkspaceForm({
           {pending
             ? "Compiling…"
             : mode === "incident"
-              ? "Create regression workspace"
+              ? "Create incident-driven workspace"
               : "Shape workspace"}
           {!pending && <ArrowRightIcon size={16} weight="bold" />}
         </button>

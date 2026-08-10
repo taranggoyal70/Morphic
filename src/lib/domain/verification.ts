@@ -12,6 +12,10 @@ export type VerificationCommand = {
   command: string;
   timeoutMs: number;
   capabilities: VerificationCapability[];
+  execution?: {
+    executable: string;
+    args: string[];
+  };
 };
 
 export type VerificationPlan = {

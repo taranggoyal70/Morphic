@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import {
   assertVerificationPassed,
+  createIncidentTestCommand,
   createVerificationPlan,
   detectPackageManager,
   findIncidentRegressionTestPaths,
+  provesIncidentTestExecution,
 } from "@/lib/verification-plan";
 
 describe("findIncidentRegressionTestPaths", () => {
@@ -25,6 +27,45 @@ describe("findIncidentRegressionTestPaths", () => {
         },
       ]),
     ).toEqual(["src/refund.test.ts"]);
+  });
+});
+
+describe("provesIncidentTestExecution", () => {
+  it("rejects a linked test file when the incident case was only skipped", () => {
+    expect(
+      provesIncidentTestExecution(
+        "bt-9831",
+        "refund.test.ts > prevents bt-9831 (skipped)\nTests 1 skipped",
+      ),
+    ).toBe(false);
+  });
+
+  it("accepts runner output that names the incident and a passing test", () => {
+    expect(
+      provesIncidentTestExecution(
+        "bt-9831",
+        "✓ refund.test.ts > prevents bt-9831 from recurring\nTests 1 passed (1)",
+      ),
+    ).toBe(true);
+  });
+});
+
+describe("createIncidentTestCommand", () => {
+  it("targets a linked Vitest file with verbose runner output", () => {
+    expect(
+      createIncidentTestCommand(
+        "pnpm",
+        JSON.stringify({ scripts: { test: "vitest run" } }),
+        "src/refund.test.ts",
+      ),
+    ).toMatchObject({
+      id: "incident-regression:src/refund.test.ts",
+      capabilities: ["repository-tests"],
+      execution: {
+        executable: "pnpm",
+        args: ["run", "test", "--", "src/refund.test.ts", "--reporter=verbose"],
+      },
+    });
   });
 });
 
@@ -85,6 +126,32 @@ describe("assertVerificationPassed", () => {
               capabilities: ["static-analysis"],
               exitCode: 0,
               output: "",
+            },
+          ],
+        },
+        { incidentExternalId: "bt-9831" },
+      ),
+    ).toThrow("linked behavioral regression");
+  });
+
+  it("reports missing execution proof even when the direct runner exits zero", () => {
+    expect(() =>
+      assertVerificationPassed(
+        {
+          status: "failed",
+          behavioralEvidence: {
+            incidentExternalId: "bt-9831",
+            testPaths: [],
+          },
+          commands: [
+            {
+              id: "incident-regression:src/refund.test.ts",
+              label: "Run linked regression",
+              command: "pnpm run test -- src/refund.test.ts",
+              timeoutMs: 300_000,
+              capabilities: ["repository-tests"],
+              exitCode: 0,
+              output: "Tests 1 skipped",
             },
           ],
         },
