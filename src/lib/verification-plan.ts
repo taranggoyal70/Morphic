@@ -40,8 +40,17 @@ export function provesIncidentTestExecution(
   incidentExternalId: string,
   output: string,
 ) {
+  const incidentPassed = output.split(/\r?\n/).some((line) => {
+    if (!line.includes(incidentExternalId)) return false;
+    if (/\b(?:skipped|pending|todo)\b/i.test(line)) return false;
+    return (
+      /(?:^|\s)[✓✔](?:\s|$)/.test(line) ||
+      /\bpass(?:ed)?\b/i.test(line) ||
+      /\bok\s+\d+\b/i.test(line)
+    );
+  });
   return (
-    output.includes(incidentExternalId) &&
+    incidentPassed &&
     /\b[1-9]\d*\s+(?:tests?\s+)?(?:passed|passing)\b/i.test(output)
   );
 }
@@ -80,14 +89,27 @@ export function createIncidentTestCommand(
   manager: PackageManager,
   packageJson: unknown,
   testPath: string,
+  incidentExternalId: string,
 ) {
   const testScript = packageScripts(packageJson).test;
   if (!testScript || manager === "unknown") return null;
   const runnerArgs = /\bvitest\b/.test(testScript)
-    ? [testPath, "--reporter=verbose"]
+    ? [
+        testPath,
+        "--reporter=verbose",
+        `--testNamePattern=${incidentExternalId}`,
+      ]
     : /\bjest\b/.test(testScript)
-      ? ["--runTestsByPath", testPath, "--verbose"]
-      : [testPath];
+      ? [
+          "--runTestsByPath",
+          testPath,
+          "--verbose",
+          `--testNamePattern=${incidentExternalId}`,
+        ]
+      : /\bmocha\b/.test(testScript)
+        ? [testPath, "--grep", incidentExternalId]
+        : null;
+  if (!runnerArgs) return null;
   const args =
     manager === "yarn"
       ? ["test", ...runnerArgs]

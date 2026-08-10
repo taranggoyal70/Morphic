@@ -48,6 +48,15 @@ describe("provesIncidentTestExecution", () => {
       ),
     ).toBe(true);
   });
+
+  it("rejects a skipped incident case when an unrelated case passes", () => {
+    expect(
+      provesIncidentTestExecution(
+        "bt-9831",
+        "- prevents bt-9831 (skipped)\n✓ calculates tax\nTests 1 passed | 1 skipped",
+      ),
+    ).toBe(false);
+  });
 });
 
 describe("createIncidentTestCommand", () => {
@@ -57,13 +66,21 @@ describe("createIncidentTestCommand", () => {
         "pnpm",
         JSON.stringify({ scripts: { test: "vitest run" } }),
         "src/refund.test.ts",
+        "bt-9831",
       ),
     ).toMatchObject({
       id: "incident-regression:src/refund.test.ts",
       capabilities: ["repository-tests"],
       execution: {
         executable: "pnpm",
-        args: ["run", "test", "--", "src/refund.test.ts", "--reporter=verbose"],
+        args: [
+          "run",
+          "test",
+          "--",
+          "src/refund.test.ts",
+          "--reporter=verbose",
+          "--testNamePattern=bt-9831",
+        ],
       },
     });
   });

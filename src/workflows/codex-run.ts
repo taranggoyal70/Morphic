@@ -761,6 +761,7 @@ async function verifyAgentChangeStep(input: {
         plan.packageManager,
         packageJsonContent,
         testPath,
+        input.incidentExternalId,
       );
       if (!directCommand?.execution) continue;
       const result = await sandbox.runCommand({
