@@ -22,6 +22,7 @@ import { getServerEnv } from "@/lib/env";
 import { errorMessage } from "@/lib/error-message";
 import { buildExecutionContextPrompt } from "@/lib/execution-prompt";
 import {
+  assertBaseStillReviewed,
   assertPublishablePaths,
   buildPullRequestDraft,
 } from "@/lib/publication-policy";
@@ -528,6 +529,12 @@ async function openPullRequestStep(input: {
 
   const { Octokit } = await import("@octokit/rest");
   const github = new Octokit({ auth: githubToken, userAgent: "morphic/0.1.0" });
+  const baseBranch = await github.rest.repos.getBranch({
+    owner: repository.owner,
+    repo: repository.name,
+    branch: repository.defaultBranch,
+  });
+  assertBaseStillReviewed(input.baseSha, baseBranch.data.commit.sha);
   const pull = await github.rest.pulls.create(
     buildPullRequestDraft({
       owner: repository.owner,

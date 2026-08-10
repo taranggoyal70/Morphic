@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  assertBaseStillReviewed,
   assertPublishablePaths,
   buildPullRequestDraft,
 } from "@/lib/publication-policy";
@@ -41,5 +42,21 @@ describe("buildPullRequestDraft", () => {
       draft: true,
       title: "Morphic: Prevent duplicate charges",
     });
+  });
+});
+
+describe("assertBaseStillReviewed", () => {
+  it("blocks publication when the reviewed base branch has advanced", () => {
+    expect(() =>
+      assertBaseStillReviewed(
+        "1111111111111111111111111111111111111111",
+        "2222222222222222222222222222222222222222",
+      ),
+    ).toThrow(/advanced since the Repository Snapshot was reviewed/);
+  });
+
+  it("accepts the exact reviewed commit", () => {
+    const sha = "1111111111111111111111111111111111111111";
+    expect(assertBaseStillReviewed(sha, sha)).toBe(sha);
   });
 });

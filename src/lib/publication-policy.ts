@@ -16,6 +16,18 @@ export function assertPublishablePaths(paths: string[]) {
   return paths;
 }
 
+export function assertBaseStillReviewed(
+  reviewedSha: string,
+  currentBaseSha: string,
+) {
+  if (currentBaseSha !== reviewedSha) {
+    throw new Error(
+      "Publication was blocked because the base branch advanced since the Repository Snapshot was reviewed.",
+    );
+  }
+  return currentBaseSha;
+}
+
 export function buildPullRequestDraft(input: {
   owner: string;
   repo: string;
