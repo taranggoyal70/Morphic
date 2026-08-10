@@ -30,8 +30,9 @@ evidence-bound release-control hypothesis and ask what is redundant, what is
 missing, and whether the problem is budget-worthy.
 
 Use the full
-[customer-validation protocol](incident-regression-customer-validation-kit.md)
-for screening, questions, artifact handling, and evidence records.
+[customer-validation protocol](https://github.com/taranggoyal70/Morphic/blob/agent/incident-regression-v1/docs/research/incident-regression-customer-validation-kit.md)
+for screening, questions, artifact handling, and evidence records. The branch
+link will move to `main` after the reviewed pull request is merged.
 
 ## Volunteer safely
 

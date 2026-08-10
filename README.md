@@ -41,8 +41,9 @@ leaders for non-leading interviews about recent production AI incidents. The
 study starts with the participant's existing trace-to-release workflow before
 showing or pitching Morphic.
 
-Read the [public research call](docs/research/production-ai-incident-research-call.md)
-or use the
+Read the [public research call](docs/research/production-ai-incident-research-call.md),
+join the
+[open recruiting thread](https://github.com/taranggoyal70/Morphic/issues/4), or use the
 [GitHub research form](https://github.com/taranggoyal70/Morphic/issues/new?template=production-ai-incident-research.yml).
 Do not submit customer data, traces, secrets, private links, or proprietary
 incident content. Applications and expressions of interest are recruiting

@@ -9,6 +9,12 @@ This document converts each zero into the next observable customer event. It
 does not award points for public research, recruiting assets, outreach, or
 product readiness.
 
+Public recruiting began with
+[research call #4](https://github.com/taranggoyal70/Morphic/issues/4) on
+2026-08-10. At creation it had no participant response, completed interview, or
+other score-bearing evidence. The targeted lead queue below remained
+uncontacted.
+
 | Gate                     | Why it is zero                                   | First evidence that can change it                                                  |
 | ------------------------ | ------------------------------------------------ | ---------------------------------------------------------------------------------- |
 | Problem interviews       | No completed qualified interview records         | 15 dated records from screened buyers, each reconstructing a recent incident       |

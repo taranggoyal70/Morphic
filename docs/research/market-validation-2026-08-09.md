@@ -193,8 +193,12 @@ behavioral incident, decision authority, current stack, and team size.
 Public lead sources are the
 [LangChain customer index](https://www.langchain.com/customers), the
 [Braintrust customer index](https://www.braintrust.dev/customers), and the
-individual customer accounts cited above. No outreach was performed during
-this research.
+individual customer accounts cited above. No targeted individual outreach was
+performed during the desk research. On 2026-08-10, Morphic posted
+[a public, privacy-safe research call](https://github.com/taranggoyal70/Morphic/issues/4)
+and recorded the source-backed first wave in the
+[fieldwork queue](market-validation-fieldwork-2026-08-10.md). Publishing a
+recruiting call is activity, not an interview or customer-validation point.
 
 Use the same non-leading sequence in every interview:
 
