@@ -82,6 +82,8 @@ In the Clerk development instance, enable GitHub under **SSO connections -> For 
 Accountability, credential custody, deployment, rollback, and incident
 procedures are defined in
 [production controls and environment ownership](docs/operations/production-controls.md).
+The measurable release decision is recorded in the
+[private-alpha launch checklist](docs/operations/launch-readiness.md).
 
 Before accepting production traffic:
 
