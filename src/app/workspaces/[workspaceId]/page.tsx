@@ -31,6 +31,7 @@ export default async function WorkspacePage(context: {
         objective: workspace.objective,
         targetDate: workspace.targetDate,
         constraints: workspace.constraints,
+        incident: workspace.incident,
         status: workspace.status,
         currentVersion: workspace.currentVersion,
         lastError: workspace.lastError,

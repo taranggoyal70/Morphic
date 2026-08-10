@@ -22,6 +22,7 @@ import {
   WorkspaceActions,
 } from "@/components/workspace-actions";
 import { WorkspaceRefresh } from "@/components/workspace-refresh";
+import type { IncidentEvidence } from "@/lib/domain/incident";
 import type { WorkspacePlan } from "@/lib/domain/workspace";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ type WorkspaceData = {
   objective: string;
   targetDate: Date | null;
   constraints: string[];
+  incident: IncidentEvidence | null;
   status: "generating" | "active" | "archived" | "failed";
   currentVersion: number;
   lastError: string | null;
@@ -533,6 +535,7 @@ export function WorkspaceCanvas({
             workspaceId={workspace.id}
             workspaceReady={workspace.status === "active"}
             repositoryFullName={repository.fullName}
+            incident={workspace.incident}
             runs={runs}
           />
           <section className="mx-auto max-w-[1000px] px-4 py-3 sm:px-6">

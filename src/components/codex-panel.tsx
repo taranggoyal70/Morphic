@@ -14,6 +14,7 @@ import { toast } from "sonner";
 
 import { ApprovalEvidence } from "@/components/approval-evidence";
 import { RunTimeline } from "@/components/run-timeline";
+import type { IncidentEvidence } from "@/lib/domain/incident";
 
 type CodexRun = {
   id: string;
@@ -43,11 +44,13 @@ export function CodexPanel({
   workspaceId,
   workspaceReady,
   repositoryFullName,
+  incident = null,
   runs,
 }: {
   workspaceId: string;
   workspaceReady: boolean;
   repositoryFullName: string;
+  incident?: IncidentEvidence | null;
   runs: CodexRun[];
 }) {
   const router = useRouter();
@@ -264,6 +267,7 @@ export function CodexPanel({
                           workspaceVersion={
                             run.approvalContext.workspaceVersion
                           }
+                          incident={incident}
                         />
                       )}
                   </div>

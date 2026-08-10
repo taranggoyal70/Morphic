@@ -1,3 +1,4 @@
+import type { IncidentEvidence } from "@/lib/domain/incident";
 import type { VerificationResult } from "@/lib/domain/verification";
 import { repositoryCommitShaSchema } from "@/lib/domain/execution-context";
 
@@ -44,12 +45,31 @@ export function buildPullRequestDraft(input: {
   summary: string | null;
   reviewedSha: string;
   workspaceVersion: number;
+  incident?: IncidentEvidence | null;
   verification: VerificationResult;
 }) {
   const verificationRows = input.verification.commands.map(
     (command) =>
       `| \`${command.command}\` | ${command.exitCode === 0 ? "Passed" : `Failed (${command.exitCode})`} |`,
   );
+  const incidentSection = input.incident
+    ? [
+        "## Production incident",
+        "",
+        `**Evidence:** \`${input.incident.externalId}\` from ${input.incident.source}`,
+        `**Title:** ${input.incident.title}`,
+        `**Observed behavior:** ${input.incident.observedBehavior}`,
+        `**Expected behavior:** ${input.incident.expectedBehavior}`,
+        input.incident.traceUrl ? `**Trace:** ${input.incident.traceUrl}` : "",
+        "",
+        "### Acceptance criteria",
+        "",
+        ...input.incident.acceptanceCriteria.map(
+          (criterion) => `- [ ] ${criterion}`,
+        ),
+        "",
+      ]
+    : [];
   return {
     owner: input.owner,
     repo: input.repo,
@@ -64,6 +84,7 @@ export function buildPullRequestDraft(input: {
       "",
       input.summary ? `**Summary:** ${input.summary}` : "",
       "",
+      ...incidentSection,
       "## Execution evidence",
       "",
       "| Evidence | Value |",

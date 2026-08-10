@@ -539,6 +539,7 @@ async function openPullRequestStep(input: {
       summary: input.summary,
       reviewedSha: input.baseSha,
       workspaceVersion: input.workspaceVersion,
+      incident: workspace.incident,
       verification: input.verification,
     }),
   );

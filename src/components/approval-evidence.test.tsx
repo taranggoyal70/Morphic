@@ -21,4 +21,40 @@ describe("ApprovalEvidence", () => {
       ),
     ).toBeInTheDocument();
   });
+
+  it("shows the incident behavior a proposal is expected to prevent", () => {
+    render(
+      <ApprovalEvidence
+        repositoryFullName="acme/checkout"
+        snapshotSha="1111111111111111111111111111111111111111"
+        workspaceVersion={3}
+        incident={{
+          source: "braintrust",
+          externalId: "bt-9831",
+          title: "Checkout agent repeated a customer charge",
+          observedBehavior: "A retried tool call created two charges.",
+          expectedBehavior: "A retried tool call creates one charge.",
+          occurredAt: "2026-08-07T14:32:00.000Z",
+          traceUrl: "https://braintrust.dev/app/acme/p/trace/bt-9831",
+          acceptanceCriteria: [
+            "Replaying the same tool call creates exactly one charge.",
+          ],
+          redactionConfirmed: true,
+        }}
+      />,
+    );
+
+    expect(screen.getByText("Incident bt-9831")).toBeInTheDocument();
+    expect(
+      screen.getByText("A retried tool call created two charges."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("A retried tool call creates one charge."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Replaying the same tool call creates exactly one charge.",
+      ),
+    ).toBeInTheDocument();
+  });
 });
