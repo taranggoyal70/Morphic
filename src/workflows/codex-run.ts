@@ -26,6 +26,7 @@ import {
   assertPublishablePaths,
   buildPullRequestDraft,
 } from "@/lib/publication-policy";
+import { pushWithEphemeralCredentials } from "@/lib/publication-remote";
 import {
   assertVerificationPassed,
   createVerificationPlan,
@@ -509,23 +510,12 @@ async function openPullRequestStep(input: {
   );
   const githubToken = await getGitHubAccessToken(input.userId);
 
-  // The clone embedded the token in its source config, but the `origin`
-  // remote URL does not carry credentials, so push would be anonymous.
-  // Point origin at an authenticated URL before pushing.
-  await git(sandbox, [
-    "remote",
-    "set-url",
-    "origin",
-    `https://x-access-token:${githubToken}@github.com/${repository.fullName}.git`,
-  ]);
-  const push = await git(
-    sandbox,
-    ["push", "--set-upstream", "origin", input.branchName],
-    120_000,
-  );
-  if (push.exitCode !== 0) {
-    throw new Error(`Git push failed: ${await push.stderr()}`);
-  }
+  await pushWithEphemeralCredentials({
+    repositoryFullName: repository.fullName,
+    githubToken,
+    branchName: input.branchName,
+    runGit: (args, timeoutMs) => git(sandbox, args, timeoutMs),
+  });
 
   const { Octokit } = await import("@octokit/rest");
   const github = new Octokit({ auth: githubToken, userAgent: "morphic/0.1.0" });
