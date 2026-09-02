@@ -291,6 +291,21 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects duplicate Outcome completion criteria", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        outcome: {
+          ...validPlan.outcome,
+          definitionOfDone: [
+            "The onboarding route exists.",
+            "The onboarding route exists.",
+          ],
+        },
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({

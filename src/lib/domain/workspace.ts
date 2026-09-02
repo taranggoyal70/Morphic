@@ -93,6 +93,17 @@ export const workspacePlanSchema = z
     }),
   })
   .superRefine((plan, context) => {
+    if (
+      new Set(plan.outcome.definitionOfDone).size !==
+      plan.outcome.definitionOfDone.length
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "Outcome completion criteria must be unique.",
+        path: ["outcome", "definitionOfDone"],
+      });
+    }
+
     const criticalPathIds = plan.criticalPath.map((item) => item.id);
     if (new Set(criticalPathIds).size !== criticalPathIds.length) {
       context.addIssue({
