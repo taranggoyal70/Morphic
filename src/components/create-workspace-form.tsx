@@ -79,7 +79,7 @@ export function CreateWorkspaceForm({
             htmlFor="objective"
             className="mb-2 block text-sm font-medium text-paper"
           >
-            What outcome are you driving?
+            Verifiable outcome
           </label>
           <textarea
             id="objective"
@@ -88,11 +88,11 @@ export function CreateWorkspaceForm({
             minLength={8}
             maxLength={500}
             autoFocus
-            placeholder="Ship onboarding by Friday"
-            className="min-h-36 w-full resize-none rounded-xl border border-line-strong bg-surface px-4 py-3 text-[17px] leading-7 text-paper placeholder:text-muted focus:border-violet"
+            placeholder="Ship organization onboarding with invitation and recovery paths"
+            className="min-h-40 w-full resize-none rounded-xl border border-line-strong bg-ink px-4 py-4 text-lg leading-7 text-paper placeholder:text-muted focus:border-evidence"
           />
           <p className="mt-2 text-xs text-muted">
-            Use an observable outcome, not a broad project name.
+            Describe the result a reviewer could confirm, not a project label.
           </p>
         </div>
 
