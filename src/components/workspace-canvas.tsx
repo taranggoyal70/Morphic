@@ -244,12 +244,12 @@ export function WorkspaceCanvas({
                 <SparkleIcon
                   size={17}
                   weight="fill"
-                  className="text-violet-light"
+                  className="text-evidence"
                 />
                 <h2 className="text-sm font-semibold text-paper">
                   Evidence route
                 </h2>
-                <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">
+                <span className="rounded-full border border-line px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-light">
                   v{version}
                 </span>
               </div>
