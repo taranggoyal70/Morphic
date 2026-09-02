@@ -23,7 +23,7 @@ export default async function WorkspacesPage() {
   }
 
   return (
-    <main className="mx-auto max-w-[1050px] px-5 py-10 sm:px-8 lg:px-12 lg:py-16">
+    <main id="main-content" className="mx-auto max-w-[1050px] px-5 py-10 sm:px-8 lg:px-12 lg:py-16">
       <div className="flex flex-wrap items-start justify-between gap-5">
         <div>
           <div className="mb-4 flex items-center gap-2 text-xs font-medium text-violet-light">
