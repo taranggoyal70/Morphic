@@ -44,11 +44,11 @@ Electric blue is the only expressive brand accent. Status colors always appear w
 
 ## Signature element
 
-The **evidence route** connects objective, repository facts, decisions, and governed execution. It appears in the landing proof, authenticated workspace, loading states, and empty states. Its line and numbered steps explain provenance; they are not decoration.
+The **execution brief** is a bounded operating document with a policy margin, objective, repository trace, and explicit control rules. Within it, the evidence route connects objective, repository facts, decisions, and governed execution. It appears in the landing proof, authentication entry, workspace, loading states, and empty states.
 
 ## Responsive behavior
 
-- Desktop pairs the outcome statement with live product proof in the first viewport.
+- Desktop gives the outcome the full document width and places the live repository trace directly beneath it.
 - Mobile presents the promise and primary action first, followed immediately by the evidence route.
 - Dense grids collapse into labeled stacks before 720px.
 - Primary actions become full-width when horizontal space is limited.

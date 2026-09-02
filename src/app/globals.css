@@ -351,9 +351,50 @@ select:focus-visible {
   color: var(--ink) !important;
   font-weight: 750 !important;
 }
-/* Evidence-led authentication refresh. */
-.morphic-auth-shell {
-  grid-template-columns: minmax(0, 1.04fr) minmax(460px, 0.96fr);
-  background: var(--ink);
-  color: var(--paper);
+/* Authentication continues the execution-brief layout instead of a split SaaS hero. */
+@media (min-width: 901px) {
+  .morphic-auth-shell {
+    display: block;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .morphic-auth-story {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1.08fr) minmax(460px, 0.92fr);
+    grid-template-rows: auto 1fr;
+    column-gap: clamp(48px, 7vw, 110px);
+    border-right: 0;
+    border-bottom: 1px solid var(--line-strong);
+    background: var(--surface);
+    padding: 28px clamp(34px, 6vw, 96px) 48px;
+  }
+
+  .morphic-auth-brand {
+    grid-column: 1 / -1;
+  }
+
+  .morphic-auth-copy {
+    align-self: end;
+    margin: 64px 0 0;
+  }
+
+  .morphic-auth-copy h1 {
+    font-size: clamp(52px, 5vw, 76px);
+  }
+
+  .morphic-auth-route {
+    align-self: end;
+    width: 100%;
+    margin-top: 64px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .morphic-auth-form {
+    min-height: 650px;
+    border-bottom: 1px solid var(--line);
+    padding-block: 64px 80px;
+  }
 }

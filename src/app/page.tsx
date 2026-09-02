@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { FinalCta } from "@/components/landing/final-cta";
 import { HeroSection } from "@/components/landing/hero-section";
 import { ProcessSection } from "@/components/landing/process-section";
-import { ProofStrip } from "@/components/landing/proof-strip";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { SiteHeader } from "@/components/landing/site-header";
 
@@ -24,7 +23,6 @@ export default async function HomePage() {
       <SiteHeader />
       <main id="main-content">
         <HeroSection />
-        <ProofStrip />
         <ProcessSection />
         <FinalCta />
       </main>

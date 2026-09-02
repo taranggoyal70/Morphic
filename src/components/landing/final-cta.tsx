@@ -4,22 +4,26 @@ import Link from "next/link";
 
 export function FinalCta() {
   return (
-    <section className="bg-surface px-5 pb-5 text-paper sm:px-8 sm:pb-8">
-      <div className="mx-auto grid max-w-[1180px] gap-8 rounded-2xl bg-paper p-7 text-ink sm:p-10 lg:grid-cols-[1fr_auto] lg:items-end lg:p-14">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-evidence">
-            Your repository already has the evidence
+    <section className="border-y border-line bg-ink text-paper">
+      <div className="mx-auto grid max-w-[1440px] border-x border-line lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-evidence">
+            Open a new brief
           </p>
-          <h2 className="font-display mt-5 max-w-3xl text-4xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-6xl">
-            Give the next outcome a path everyone can review.
+          <h2 className="font-display mt-5 max-w-4xl text-5xl font-semibold leading-[0.9] tracking-[-0.055em] sm:text-7xl">
+            Put the next objective on the record.
           </h2>
         </div>
         <Link
           href={"/sign-up" as Route}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded bg-evidence px-6 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence-soft"
+          className="group flex min-h-48 items-center justify-between gap-6 border-t border-line bg-evidence px-8 text-xl font-semibold text-ink transition hover:bg-evidence-soft lg:min-h-0 lg:border-l lg:border-t-0"
         >
           Connect GitHub
-          <ArrowRightIcon size={17} weight="bold" />
+          <ArrowRightIcon
+            size={24}
+            weight="bold"
+            className="transition-transform group-hover:translate-x-1"
+          />
         </Link>
       </div>
     </section>

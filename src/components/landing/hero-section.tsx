@@ -3,15 +3,23 @@ import { HeroCopy } from "@/components/landing/hero-copy";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto grid max-w-[1240px] gap-14 px-5 pb-24 pt-16 sm:px-8 sm:pt-24 lg:grid-cols-[minmax(0,.95fr)_minmax(460px,1.05fr)] lg:items-center lg:gap-16 lg:pb-32 lg:pt-28">
-        <HeroCopy />
-        <EvidenceRoute />
+    <section className="bg-ink">
+      <div className="mx-auto max-w-[1440px] border-x border-line">
+        <div className="grid lg:grid-cols-[88px_minmax(0,1fr)]">
+          <div
+            aria-hidden="true"
+            className="hidden border-r border-line bg-surface lg:flex lg:items-center lg:justify-center"
+          >
+            <p className="rotate-180 [writing-mode:vertical-rl] font-mono text-[10px] uppercase tracking-[0.22em] text-muted">
+              Repository facts · visible decisions · approved execution
+            </p>
+          </div>
+          <div className="min-w-0">
+            <HeroCopy />
+            <EvidenceRoute />
+          </div>
+        </div>
       </div>
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-evidence/45 to-transparent"
-      />
     </section>
   );
 }

@@ -18,59 +18,60 @@ const icons = {
 
 export function EvidenceRoute() {
   return (
-    <div className="relative mx-auto w-full max-w-[620px] rounded-2xl border border-line bg-surface-raised p-3 shadow-[0_2px_8px_rgba(26,26,26,.08)] sm:p-4">
-      <div className="flex items-center justify-between border-b border-line px-3 pb-4 pt-2">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-evidence">
-            Live objective route
-          </p>
-          <p className="mt-1 text-sm text-muted-light">morphic / onboarding</p>
+    <section aria-labelledby="trace-title" className="border-t border-line">
+      <div className="flex flex-col justify-between gap-3 bg-paper px-5 py-4 text-ink sm:flex-row sm:items-center sm:px-10 lg:px-14 xl:px-20">
+        <div className="flex items-center gap-3">
+          <span className="size-2 bg-evidence" aria-hidden="true" />
+          <h2
+            id="trace-title"
+            className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em]"
+          >
+            Repository trace / morphic-onboarding
+          </h2>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-resolved/30 bg-resolved/10 px-2.5 py-1 text-xs font-semibold text-resolved">
-          <CheckCircleIcon size={13} weight="fill" />
-          Synced
+        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-line-strong">
+          <CheckCircleIcon
+            size={13}
+            weight="fill"
+            className="text-evidence-soft"
+          />
+          Snapshot synced 2m ago
         </span>
       </div>
 
-      <ol className="relative mt-2">
-        <span
-          aria-hidden="true"
-          className="absolute bottom-10 left-[30px] top-10 w-px bg-gradient-to-b from-paper/40 via-evidence to-resolved/70"
-        />
+      <ol className="grid gap-px bg-line sm:grid-cols-2 xl:grid-cols-4">
         {evidenceSteps.map((step, index) => {
           const Icon = icons[step.id as keyof typeof icons];
           return (
             <li
               key={step.id}
-              className="relative grid grid-cols-[44px_minmax(0,1fr)] gap-3 rounded-lg px-2 py-3 transition hover:bg-surface sm:gap-4 sm:px-3 sm:py-4"
+              className="group relative min-h-56 bg-ink px-5 py-6 transition hover:bg-surface sm:px-8 sm:py-8"
             >
-              <span
-                className={cn(
-                  "relative z-10 inline-flex size-9 items-center justify-center rounded-full border bg-surface",
-                  step.tone === "paper" && "border-paper/40 text-paper",
-                  step.tone === "evidence" &&
-                    "border-evidence/50 text-evidence",
-                  step.tone === "decision" &&
-                    "border-decision/50 text-decision",
-                  step.tone === "resolved" &&
-                    "border-resolved/50 text-resolved",
-                )}
-              >
-                <Icon size={17} weight="duotone" />
-              </span>
-              <div className="min-w-0 border-b border-line pb-4 last:border-b-0">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
-                    {step.eyebrow}
-                  </span>
-                  <span className="font-mono text-[10px] text-muted">
-                    0{index + 1}
-                  </span>
-                </div>
-                <p className="mt-1 text-sm font-semibold text-paper sm:text-[15px]">
+              <div className="absolute inset-x-0 top-0 h-[3px] bg-line-strong group-hover:bg-evidence" />
+              <div className="flex items-start justify-between gap-5">
+                <span
+                  className={cn(
+                    "inline-flex size-10 items-center justify-center border bg-ink",
+                    step.tone === "paper" && "border-paper text-paper",
+                    step.tone === "evidence" && "border-evidence text-evidence",
+                    step.tone === "decision" && "border-decision text-decision",
+                    step.tone === "resolved" && "border-resolved text-resolved",
+                  )}
+                >
+                  <Icon size={18} weight="duotone" />
+                </span>
+                <span className="font-mono text-[10px] text-muted">
+                  TRACE-{String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <div className="mt-10">
+                <p className="font-mono text-[10px] uppercase tracking-[0.13em] text-muted">
+                  {step.eyebrow}
+                </p>
+                <p className="mt-3 max-w-[250px] text-lg font-semibold leading-6 text-paper">
                   {step.title}
                 </p>
-                <p className="mt-1 truncate font-mono text-[11px] text-muted-light">
+                <p className="mt-3 font-mono text-[10px] leading-5 text-muted-light">
                   {step.detail}
                 </p>
               </div>
@@ -78,6 +79,6 @@ export function EvidenceRoute() {
           );
         })}
       </ol>
-    </div>
+    </section>
   );
 }

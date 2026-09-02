@@ -43,7 +43,9 @@ No value from the retired navy/cyan/orange Morphic palette may be reintroduced.
 
 ## Composition
 
-Public pages place the outcome and live evidence proof together. Product screens preserve a stable navigation rail and a broad evidence canvas. The objective → evidence → decision → execution route is the recurring structural motif.
+Public pages are composed as a bounded **execution brief**, not a split marketing hero. A narrow policy margin identifies the governing rules, the objective owns the full page width, and the repository trace runs edge-to-edge beneath it. Product screens preserve a stable navigation rail and a broad evidence canvas. The objective → evidence → decision → execution route is the recurring structural motif.
+
+Avoid the headline-left/dashboard-right composition used by generic developer SaaS pages. Product proof belongs inside the document structure rather than in a floating preview card.
 
 ## Avoid
 
