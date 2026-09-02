@@ -119,6 +119,27 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects cycles in the Critical Path", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        criticalPath: [
+          {
+            ...validPlan.criticalPath[0],
+            id: "design",
+            sourceNumber: 41,
+            dependencyIds: ["build"],
+          },
+          {
+            ...validPlan.criticalPath[0],
+            id: "build",
+            dependencyIds: ["design"],
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({

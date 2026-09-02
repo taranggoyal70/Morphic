@@ -130,6 +130,28 @@ export const workspacePlanSchema = z
         });
       }
     }
+
+    const dependencies = new Map(
+      plan.criticalPath.map((item) => [item.id, item.dependencyIds]),
+    );
+    const visiting = new Set<string>();
+    const visited = new Set<string>();
+    function hasCycle(itemId: string): boolean {
+      if (visiting.has(itemId)) return true;
+      if (visited.has(itemId)) return false;
+      visiting.add(itemId);
+      const cyclic = (dependencies.get(itemId) ?? []).some(hasCycle);
+      visiting.delete(itemId);
+      visited.add(itemId);
+      return cyclic;
+    }
+    if (criticalPathIds.some(hasCycle)) {
+      context.addIssue({
+        code: "custom",
+        message: "Critical Path dependencies cannot contain a cycle.",
+        path: ["criticalPath"],
+      });
+    }
   });
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;
