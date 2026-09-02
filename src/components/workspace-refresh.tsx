@@ -14,17 +14,23 @@ export function WorkspaceRefresh({
 
   useEffect(() => {
     if (!active) return;
+    const controller = new AbortController();
     const refreshWhenComplete = async () => {
       if (document.visibilityState !== "visible") return;
-      const response = await fetch(`/api/workspaces/${workspaceId}`, {
-        cache: "no-store",
-      });
-      if (!response.ok) return;
-      const payload = (await response.json()) as {
-        data?: { workspace?: { status?: string } };
-      };
-      if (payload.data?.workspace?.status !== "generating") {
-        router.refresh();
+      try {
+        const response = await fetch(`/api/workspaces/${workspaceId}`, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        if (!response.ok) return;
+        const payload = (await response.json()) as {
+          data?: { workspace?: { status?: string } };
+        };
+        if (payload.data?.workspace?.status !== "generating") {
+          router.refresh();
+        }
+      } catch {
+        // A later poll or navigation can retry transient failures.
       }
     };
     const timer = window.setInterval(refreshWhenComplete, 2_500);
@@ -32,6 +38,7 @@ export function WorkspaceRefresh({
     return () => {
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange", refreshWhenComplete);
+      controller.abort();
     };
   }, [active, router, workspaceId]);
 
