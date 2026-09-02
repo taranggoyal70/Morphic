@@ -133,11 +133,11 @@ export function WorkspaceCanvas({
             <div className="flex shrink-0 flex-wrap items-center gap-2">
               <span
                 className={cn(
-                  "inline-flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium",
+                  "inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-xs font-semibold",
                   workspace.status === "active" &&
                     "border-mint/20 bg-mint/10 text-mint",
                   workspace.status === "generating" &&
-                    "border-violet/25 bg-violet/10 text-violet-light",
+                    "border-evidence/30 bg-evidence/10 text-evidence",
                   workspace.status === "failed" &&
                     "border-danger/25 bg-danger/10 text-danger",
                   workspace.status === "archived" &&
