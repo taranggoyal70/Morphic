@@ -11,8 +11,8 @@ export default function RootError({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-[#0a0d14] text-white antialiased">
-        <main className="grid min-h-screen place-items-center px-5">
+      <body className="bg-ink text-paper antialiased">
+        <main id="main-content" className="grid min-h-screen place-items-center px-5">
           <div className="max-w-md text-center">
             <WarningIcon
               size={34}
