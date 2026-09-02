@@ -64,7 +64,7 @@ export function AppSidebar({
             >
               <span
                 className={cn(
-                  "mt-1 size-2 shrink-0 rounded-full border",
+                  "mt-1 size-2.5 shrink-0 rounded-sm border",
                   workspace.status === "active" && "border-violet bg-violet/30",
                   workspace.status === "generating" &&
                     "animate-pulse border-amber bg-amber/30",
