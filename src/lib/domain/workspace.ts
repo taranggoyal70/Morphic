@@ -181,6 +181,17 @@ export const workspacePlanSchema = z
         path: ["decisions"],
       });
     }
+
+    for (const [index, decision] of plan.decisions.entries()) {
+      const optionIds = decision.options.map((option) => option.id);
+      if (new Set(optionIds).size !== optionIds.length) {
+        context.addIssue({
+          code: "custom",
+          message: "Open Decision option identifiers must be unique.",
+          path: ["decisions", index, "options"],
+        });
+      }
+    }
   });
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;

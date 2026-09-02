@@ -198,6 +198,28 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects duplicate options inside an Open Decision", () => {
+    const option = {
+      id: "keep",
+      label: "Keep the current provider",
+      tradeoff: "Avoids migration work.",
+    };
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        decisions: [
+          {
+            id: "provider",
+            question: "Which provider should remain?",
+            context: "The choice affects the delivery path.",
+            options: [option, { ...option, label: "Duplicate option" }],
+            recommendedOptionId: option.id,
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({
