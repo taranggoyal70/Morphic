@@ -33,9 +33,9 @@ export function AuthExperience({ mode }: { mode: "sign-in" | "sign-up" }) {
       <section className="morphic-auth-story" aria-labelledby="morphic-auth-title">
         <Brand className="morphic-auth-brand" />
         <div className="morphic-auth-copy">
-          <p>Adaptive workspace for builders</p>
-          <h1 id="morphic-auth-title">Start with the outcome.<br /><span>Keep the path visible.</span></h1>
-          <small>Morphic grounds an objective in your repository, surfaces the decisions, and keeps approved Codex work moving toward a pull request.</small>
+          <p>Repository facts in. Reviewable work out.</p>
+          <h1 id="morphic-auth-title">Your next objective,<br /><span>with its evidence attached.</span></h1>
+          <small>Connect GitHub to build a workspace from live repository evidence. Morphic keeps decisions visible and waits for approval before Codex runs.</small>
         </div>
         <AuthRoutePreview />
       </section>
