@@ -7,9 +7,12 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 export async function GET() {
   try {
     const user = await requireMorphicUser();
-    return Response.json({
-      repositories: await listRepositories(user.id),
-    });
+    return Response.json(
+      {
+        repositories: await listRepositories(user.id),
+      },
+      { headers: { "Cache-Control": "private, no-store" } },
+    );
   } catch (error) {
     return toErrorResponse(error);
   }
