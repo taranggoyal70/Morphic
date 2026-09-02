@@ -49,12 +49,12 @@ export function AdaptWorkspaceForm({
   return (
     <form
       onSubmit={submit}
-      className="flex items-center gap-2 rounded-xl border border-line-strong bg-surface px-3 py-2 shadow-[0_14px_50px_rgba(0,0,0,0.35)] focus-within:border-violet/60"
+      className="flex items-center gap-2 rounded-xl border border-line-strong bg-surface px-3 py-2 shadow-[0_14px_50px_rgba(0,0,0,0.25)] focus-within:border-evidence/70 focus-within:ring-2 focus-within:ring-evidence/10"
     >
       <SparkleIcon
         size={17}
         weight="fill"
-        className="shrink-0 text-violet-light"
+        className="shrink-0 text-evidence"
       />
       <input
         name="command"
