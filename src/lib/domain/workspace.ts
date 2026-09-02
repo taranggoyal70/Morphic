@@ -92,10 +92,22 @@ export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;
 export const createWorkspaceSchema = z
   .object({
     repositoryId: z.string().uuid(),
-    objective: z.string().trim().min(8).max(500),
+    objective: z
+      .string()
+      .trim()
+      .min(8)
+      .max(500)
+      .transform((value) => value.replace(/\s+/g, " ")),
     targetDate: z.string().datetime().nullable().optional(),
     constraints: z
-      .array(z.string().trim().min(1).max(180))
+      .array(
+        z
+          .string()
+          .trim()
+          .min(1)
+          .max(180)
+          .transform((value) => value.replace(/\s+/g, " ")),
+      )
       .max(12)
       .default([]),
   })

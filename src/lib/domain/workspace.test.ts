@@ -93,6 +93,17 @@ describe("workspace domain contracts", () => {
     ]);
   });
 
+  it("normalizes repeated whitespace in user-authored inputs", () => {
+    const parsed = createWorkspaceSchema.parse({
+      repositoryId: crypto.randomUUID(),
+      objective: "  Ship   a reviewable\n onboarding outcome  ",
+      constraints: ["  Keep   the API\n stable  "],
+    });
+
+    expect(parsed.objective).toBe("Ship a reviewable onboarding outcome");
+    expect(parsed.constraints).toEqual(["Keep the API stable"]);
+  });
+
   it("requires explicit approval for every Codex proposal", () => {
     const base = {
       workspaceId: crypto.randomUUID(),
