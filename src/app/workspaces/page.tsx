@@ -30,8 +30,8 @@ export default async function WorkspacesPage() {
             <SparkleIcon size={15} weight="fill" />
             New outcome route
           </div>
-          <h1 className="text-3xl font-semibold tracking-[-0.04em] text-paper sm:text-4xl">
-            Begin with the outcome.
+          <h1 className="font-display text-4xl font-semibold tracking-[-0.05em] text-paper sm:text-5xl">
+            Name the outcome. Attach the evidence.
           </h1>
           <p className="mt-3 max-w-2xl text-[15px] leading-7 text-muted-light">
             Morphic will inspect live GitHub evidence, compile the critical
