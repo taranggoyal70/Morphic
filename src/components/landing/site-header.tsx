@@ -14,19 +14,19 @@ export function SiteHeader() {
         <div className="flex items-center gap-1 sm:gap-3">
           <a
             href="#how-it-works"
-            className="hidden min-h-10 items-center rounded-lg px-3 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper sm:inline-flex"
+            className="hidden min-h-10 items-center rounded px-3 text-sm text-muted-light transition hover:bg-surface hover:text-paper sm:inline-flex"
           >
             How it works
           </a>
           <Link
             href={"/sign-in" as Route}
-            className="inline-flex min-h-10 items-center rounded-lg px-3 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
+            className="inline-flex min-h-10 items-center rounded px-3 text-sm text-muted-light transition hover:bg-surface hover:text-paper"
           >
             Sign in
           </Link>
           <Link
             href={"/sign-up" as Route}
-            className="inline-flex min-h-10 items-center rounded-lg bg-paper px-4 text-sm font-semibold text-ink transition hover:bg-evidence-soft"
+            className="inline-flex min-h-11 items-center rounded bg-paper px-5 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence"
           >
             Connect GitHub
           </Link>

@@ -44,13 +44,13 @@ export default async function ConnectGitHubPage({
     >
       <Link
         href={"/workspaces" as Route}
-        className="mb-8 inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
+        className="mb-8 inline-flex min-h-10 items-center gap-1.5 rounded px-2 text-sm text-muted-light transition hover:bg-surface hover:text-paper"
       >
         <ArrowLeftIcon size={14} />
         Back to workspaces
       </Link>
 
-      <div className="rounded-[20px] border border-line-strong bg-surface px-6 py-8 shadow-[0_28px_80px_rgba(0,0,0,.18)] sm:px-8">
+      <div className="rounded-2xl border border-line-strong bg-surface-raised px-6 py-8 shadow-[0_2px_8px_rgba(26,26,26,.08)] sm:px-8">
         <div className="flex items-center gap-3">
           <span className="inline-flex size-12 items-center justify-center rounded-xl border border-evidence/30 bg-evidence/10 text-evidence">
             <GithubLogoIcon size={24} weight="fill" />
@@ -140,7 +140,7 @@ export default async function ConnectGitHubPage({
           <div className="mt-6 text-center">
             <Link
               href={"/workspaces" as Route}
-              className="inline-flex h-11 items-center rounded-lg bg-evidence px-5 text-sm font-bold text-ink transition hover:bg-evidence-soft"
+              className="inline-flex h-11 items-center rounded bg-evidence px-6 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence-soft"
             >
               Create your first workspace
             </Link>

@@ -20,7 +20,7 @@ export function HeroCopy() {
       <div className="mt-9 flex flex-col gap-3 sm:flex-row">
         <Link
           href={"/sign-up" as Route}
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-evidence px-5 text-sm font-bold text-ink transition hover:bg-evidence-soft"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded bg-evidence px-6 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence-soft"
         >
           Connect a repository
           <ArrowRightIcon size={17} weight="bold" />
@@ -29,7 +29,7 @@ export function HeroCopy() {
           href="https://github.com/taranggoyal70/Morphic"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-line-strong px-5 text-sm font-semibold text-paper transition hover:border-evidence/60 hover:bg-white/5"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded border border-paper px-6 text-sm font-semibold uppercase tracking-[0.05em] text-paper transition hover:bg-surface"
         >
           <GithubLogoIcon size={17} weight="fill" />
           Inspect the source

@@ -103,7 +103,7 @@ export function WorkspaceCanvas({
       <WorkspaceRefresh workspaceId={workspace.id} active={adapting} />
 
       <header className="bg-surface px-4 pb-5 pt-5 sm:px-6 lg:px-7">
-        <div className="mx-auto max-w-[1500px] rounded-[18px] border border-line-strong bg-ink/70 px-5 py-5 shadow-[0_24px_70px_rgba(0,0,0,.16)]">
+        <div className="mx-auto max-w-[1500px] rounded-2xl border border-line bg-surface-raised px-5 py-5 shadow-[0_2px_8px_rgba(26,26,26,.08)]">
           <div className="flex flex-col justify-between gap-5 xl:flex-row xl:items-start">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-[0.13em] text-evidence">
@@ -200,7 +200,7 @@ export function WorkspaceCanvas({
 
       {!plan ? (
         <section className="mx-auto grid min-h-[640px] max-w-[1500px] place-items-center px-5">
-          <div className="max-w-lg rounded-[20px] border border-line-strong bg-surface px-7 py-9 text-center shadow-[0_28px_80px_rgba(0,0,0,.18)]">
+          <div className="max-w-lg rounded-2xl border border-line bg-surface-raised px-7 py-9 text-center shadow-[0_2px_8px_rgba(26,26,26,.08)]">
             {workspace.status === "failed" ? (
               <WarningIcon
                 size={34}
@@ -430,7 +430,7 @@ export function WorkspaceCanvas({
                       <p className="mt-1 text-[11px] leading-4 text-muted">
                         {impact.reason}
                       </p>
-                      <div className="mt-2 h-px bg-white/5">
+                      <div className="mt-2 h-px bg-line">
                         <div
                           className="h-px bg-violet/70"
                           style={{ width: `${impact.confidence * 100}%` }}

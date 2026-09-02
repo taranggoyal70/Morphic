@@ -74,7 +74,7 @@ export default async function WorkspacesPage() {
             ) : (
               <Link
                 href={"/settings/connect-github" as Route}
-                className="inline-flex h-10 items-center rounded-lg bg-violet px-4 text-sm font-semibold text-white transition hover:bg-violet-light hover:text-ink"
+                className="inline-flex h-11 items-center rounded bg-evidence px-6 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence-soft"
               >
                 Open account connections
               </Link>

@@ -14,7 +14,7 @@ export default function WorkspacesError({
       id="main-content"
       className="grid min-h-screen place-items-center bg-ink px-5"
     >
-      <div className="max-w-md rounded-[20px] border border-line-strong bg-surface px-7 py-9 text-center shadow-[0_28px_80px_rgba(0,0,0,.2)]">
+      <div className="max-w-md rounded-2xl border border-line-strong bg-surface-raised px-7 py-9 text-center shadow-[0_2px_8px_rgba(26,26,26,.08)]">
         <WarningIcon
           size={34}
           weight="duotone"
@@ -29,7 +29,7 @@ export default function WorkspacesError({
         <button
           type="button"
           onClick={reset}
-          className="mt-5 min-h-11 rounded-lg bg-evidence px-4 text-sm font-bold text-ink transition hover:bg-evidence-soft"
+          className="mt-5 min-h-11 rounded bg-evidence px-6 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence-soft"
         >
           Try again
         </button>

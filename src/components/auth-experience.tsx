@@ -6,13 +6,13 @@ import { Brand } from "@/components/brand";
 
 const appearance = {
   variables: {
-    colorPrimary: "#78dce8",
-    colorBackground: "#0b1826",
-    colorInputBackground: "#102235",
-    colorInputText: "#f3f0e8",
-    colorText: "#f3f0e8",
-    colorTextSecondary: "#9eb0bf",
-    borderRadius: "10px",
+    colorPrimary: "#024ad8",
+    colorBackground: "#ffffff",
+    colorInputBackground: "#ffffff",
+    colorInputText: "#1a1a1a",
+    colorText: "#1a1a1a",
+    colorTextSecondary: "#636363",
+    borderRadius: "4px",
   },
   elements: {
     rootBox: "morphic-auth-clerk-root",

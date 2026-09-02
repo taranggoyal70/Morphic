@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils";
 export function Brand({
   compact = false,
   className,
+  inverse = false,
 }: {
   compact?: boolean;
   className?: string;
+  inverse?: boolean;
 }) {
   return (
     <Link
@@ -25,7 +27,10 @@ export function Brand({
         height={32}
         alt=""
         priority
-        className="size-8 object-contain transition-transform duration-200 group-hover:-rotate-6"
+        className={cn(
+          "size-8 object-contain grayscale brightness-0 transition-transform duration-200 group-hover:-rotate-6",
+          inverse && "invert",
+        )}
       />
       {!compact && (
         <span className="font-display text-[16px] font-semibold tracking-[-0.035em]">

@@ -74,7 +74,7 @@ export function DecisionOptions({
         {decision.options.map((option) => (
           <label
             key={option.id}
-            className="flex w-full cursor-pointer items-start gap-2.5 bg-transparent px-3 py-2.5 text-left transition hover:bg-white/[0.035] has-disabled:cursor-not-allowed has-disabled:opacity-60"
+            className="flex w-full cursor-pointer items-start gap-2.5 bg-transparent px-3 py-2.5 text-left transition hover:bg-surface has-disabled:cursor-not-allowed has-disabled:opacity-60"
           >
             <input
               type="radio"

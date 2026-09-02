@@ -59,7 +59,7 @@ export function AppSidebar({
                 "group flex min-h-14 gap-3 rounded-xl border px-3 py-3 text-sm transition",
                 activeWorkspaceId === workspace.id
                   ? "border-evidence/30 bg-evidence/10 text-paper"
-                  : "border-transparent text-muted-light hover:border-line hover:bg-white/[0.035] hover:text-paper",
+                  : "border-transparent text-muted-light hover:border-line hover:bg-surface-hover hover:text-paper",
               )}
             >
               <span
@@ -94,14 +94,14 @@ export function AppSidebar({
       <div className="mt-auto border-t border-line p-3">
         <Link
           href="/workspaces"
-          className="flex min-h-10 items-center gap-2.5 rounded-lg px-3 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
+          className="flex min-h-10 items-center gap-2.5 rounded px-3 text-sm text-muted-light transition hover:bg-surface-hover hover:text-paper"
         >
           <SparkleIcon size={17} />
           New objective
         </Link>
         <Link
           href="/settings/integrations"
-          className="flex min-h-10 items-center gap-2.5 rounded-lg px-3 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
+          className="flex min-h-10 items-center gap-2.5 rounded px-3 text-sm text-muted-light transition hover:bg-surface-hover hover:text-paper"
         >
           <GitBranchIcon size={17} />
           Integrations

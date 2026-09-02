@@ -18,7 +18,7 @@ const icons = {
 
 export function EvidenceRoute() {
   return (
-    <div className="relative mx-auto w-full max-w-[620px] rounded-[22px] border border-line-strong bg-surface/90 p-3 shadow-[0_40px_100px_rgba(0,0,0,.28)] sm:p-4">
+    <div className="relative mx-auto w-full max-w-[620px] rounded-2xl border border-line bg-surface-raised p-3 shadow-[0_2px_8px_rgba(26,26,26,.08)] sm:p-4">
       <div className="flex items-center justify-between border-b border-line px-3 pb-4 pt-2">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-evidence">
@@ -42,7 +42,7 @@ export function EvidenceRoute() {
           return (
             <li
               key={step.id}
-              className="relative grid grid-cols-[44px_minmax(0,1fr)] gap-3 rounded-xl px-2 py-3 transition hover:bg-white/[0.035] sm:gap-4 sm:px-3 sm:py-4"
+              className="relative grid grid-cols-[44px_minmax(0,1fr)] gap-3 rounded-lg px-2 py-3 transition hover:bg-surface sm:gap-4 sm:px-3 sm:py-4"
             >
               <span
                 className={cn(

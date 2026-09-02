@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #07111d;
-  --surface: #0b1826;
-  --surface-raised: #102235;
-  --surface-hover: #152c42;
-  --line: rgba(178, 215, 234, 0.12);
-  --line-strong: rgba(178, 215, 234, 0.24);
-  --muted: #8293a5;
-  --muted-light: #b8c5d0;
-  --paper: #f3f0e8;
-  --violet: #78dce8;
-  --violet-light: #a9edf3;
-  --mint: #a9d18e;
-  --amber: #ff9466;
-  --danger: #ff7a8a;
+  --ink: #ffffff;
+  --surface: #f7f7f7;
+  --surface-raised: #ffffff;
+  --surface-hover: #e8e8e8;
+  --line: #e8e8e8;
+  --line-strong: #c2c2c2;
+  --muted: #636363;
+  --muted-light: #3d3d3d;
+  --paper: #1a1a1a;
+  --violet: #024ad8;
+  --violet-light: #296ef9;
+  --mint: #356373;
+  --amber: #b3262b;
+  --danger: #5a1313;
 }
 
 @theme inline {
@@ -36,9 +36,9 @@
   --color-evidence-soft: var(--violet-light);
   --color-decision: var(--amber);
   --color-resolved: var(--mint);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-manrope);
   --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-bricolage);
+  --font-display: var(--font-manrope);
 }
 
 * {
@@ -47,25 +47,24 @@
 
 html {
   background: var(--ink);
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   min-height: 100vh;
   background: var(--ink);
   color: var(--paper);
-  font-family: var(--font-geist-sans), sans-serif;
+  font-family: var(--font-manrope), Arial, sans-serif;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: rgba(120, 220, 232, 0.28);
-  color: #ffffff;
+  background: #c9e0fc;
+  color: #1a1a1a;
 }
 
 .font-display {
-  font-family: var(--font-bricolage), var(--font-geist-sans), sans-serif;
-  font-variation-settings: "opsz" 48;
+  font-family: var(--font-manrope), Arial, sans-serif;
 }
 
 .skip-link {
@@ -120,7 +119,7 @@ select:focus-visible {
 ::-webkit-scrollbar-thumb {
   border: 3px solid transparent;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(26, 26, 26, 0.24);
   background-clip: padding-box;
 }
 
@@ -140,8 +139,8 @@ select:focus-visible {
   display: grid;
   min-height: 100vh;
   grid-template-columns: minmax(0, 1.08fr) minmax(480px, 0.92fr);
-  background: #080a0f;
-  color: #f5f3ef;
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .morphic-auth-story {
@@ -173,7 +172,7 @@ select:focus-visible {
 
 .morphic-auth-copy h1 {
   margin: 0;
-  font-family: var(--font-bricolage), var(--font-geist-sans), sans-serif;
+  font-family: var(--font-manrope), Arial, sans-serif;
   font-size: clamp(50px, 5.2vw, 78px);
   font-weight: 650;
   line-height: 0.93;
@@ -198,7 +197,7 @@ select:focus-visible {
   border: 1px solid var(--line-strong);
   border-radius: 18px;
   background: var(--ink);
-  box-shadow: 14px 14px 0 rgba(120, 220, 232, 0.09);
+  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.08);
 }
 
 .morphic-auth-route-head {
@@ -314,7 +313,7 @@ select:focus-visible {
 .morphic-auth-clerk-card {
   border-color: var(--line-strong) !important;
   border-radius: 16px !important;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.32) !important;
+  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.08) !important;
 }
 
 .morphic-auth-social,

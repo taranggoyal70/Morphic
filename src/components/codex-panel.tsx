@@ -154,12 +154,12 @@ export function CodexPanel({
   }
 
   return (
-    <section className="border-t border-line bg-[#0a0d13]">
+    <section className="border-t border-line bg-surface">
       <div className="mx-auto max-w-[1400px] px-4 py-4 sm:px-6">
         <div className="flex items-center gap-2">
           <CodeIcon size={18} weight="duotone" className="text-violet-light" />
           <h2 className="text-sm font-semibold text-paper">Codex proposals</h2>
-          <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[9px] uppercase text-muted">
+          <span className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[9px] uppercase text-muted">
             Approval required
           </span>
         </div>
@@ -235,7 +235,7 @@ export function CodexPanel({
                         type="button"
                         disabled={pending}
                         onClick={() => decide(run.id, "reject")}
-                        className="rounded-lg border border-line-strong px-3 py-1.5 text-xs font-medium text-muted-light transition hover:bg-white/5 hover:text-paper disabled:opacity-50"
+                        className="rounded border border-line-strong px-3 py-1.5 text-xs font-medium text-muted-light transition hover:bg-surface-hover hover:text-paper disabled:opacity-50"
                       >
                         Reject
                       </button>
@@ -243,7 +243,7 @@ export function CodexPanel({
                         type="button"
                         disabled={pending}
                         onClick={() => decide(run.id, "approve")}
-                        className="rounded-lg bg-violet px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-light hover:text-ink disabled:opacity-50"
+                        className="rounded bg-evidence px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-evidence-soft disabled:opacity-50"
                       >
                         Approve run
                       </button>

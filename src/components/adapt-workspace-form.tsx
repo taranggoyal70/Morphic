@@ -49,7 +49,7 @@ export function AdaptWorkspaceForm({
   return (
     <form
       onSubmit={submit}
-      className="flex items-center gap-2 rounded-xl border border-line-strong bg-surface px-3 py-2 shadow-[0_14px_50px_rgba(0,0,0,0.25)] focus-within:border-evidence/70 focus-within:ring-2 focus-within:ring-evidence/10"
+      className="flex items-center gap-2 rounded border border-line-strong bg-surface-raised px-3 py-2 focus-within:border-paper"
     >
       <SparkleIcon size={17} weight="fill" className="shrink-0 text-evidence" />
       <input
@@ -64,7 +64,7 @@ export function AdaptWorkspaceForm({
       <button
         type="submit"
         disabled={disabled || pending}
-        className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg bg-evidence text-ink transition hover:bg-evidence-soft disabled:cursor-not-allowed disabled:opacity-40"
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded bg-evidence text-ink transition hover:bg-evidence-soft disabled:cursor-not-allowed disabled:opacity-40"
         aria-label="Adapt workspace"
       >
         <ArrowUpIcon size={15} weight="bold" />

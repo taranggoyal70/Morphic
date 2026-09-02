@@ -4,8 +4,8 @@ import Link from "next/link";
 
 export function FinalCta() {
   return (
-    <section className="bg-paper px-5 pb-5 text-ink sm:px-8 sm:pb-8">
-      <div className="mx-auto grid max-w-[1180px] gap-8 rounded-[22px] bg-[#0b1b2b] p-7 text-paper sm:p-10 lg:grid-cols-[1fr_auto] lg:items-end lg:p-14">
+    <section className="bg-surface px-5 pb-5 text-paper sm:px-8 sm:pb-8">
+      <div className="mx-auto grid max-w-[1180px] gap-8 rounded-2xl bg-paper p-7 text-ink sm:p-10 lg:grid-cols-[1fr_auto] lg:items-end lg:p-14">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-evidence">
             Your repository already has the evidence
@@ -16,7 +16,7 @@ export function FinalCta() {
         </div>
         <Link
           href={"/sign-up" as Route}
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-decision px-5 text-sm font-bold text-ink transition hover:bg-[#ffb08f]"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded bg-evidence px-6 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence-soft"
         >
           Connect GitHub
           <ArrowRightIcon size={17} weight="bold" />

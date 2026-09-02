@@ -4,8 +4,8 @@ export function SiteFooter() {
   return (
     <footer className="bg-paper px-5 py-8 text-ink sm:px-8">
       <div className="mx-auto flex max-w-[1180px] flex-col gap-5 border-t border-ink/15 pt-7 sm:flex-row sm:items-center sm:justify-between">
-        <Brand className="text-ink" />
-        <p className="max-w-lg text-sm leading-6 text-[#516474]">
+        <Brand className="text-ink" inverse />
+        <p className="max-w-lg text-sm leading-6 text-line-strong">
           Adaptive software delivery grounded in GitHub evidence and explicit
           human approval.
         </p>

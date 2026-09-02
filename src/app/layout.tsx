@@ -2,23 +2,18 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Manrope } from "next/font/google";
 import { Toaster } from "sonner";
 
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
   subsets: ["latin"],
 });
 
@@ -35,8 +30,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  colorScheme: "dark",
-  themeColor: "#07111d",
+  colorScheme: "light",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
@@ -45,24 +40,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
-        className={`${bricolage.variable} ${geistSans.variable} ${geistMono.variable} bg-ink text-white antialiased`}
+        className={`${manrope.variable} ${geistMono.variable} bg-ink text-paper antialiased`}
       >
         <ClerkProvider
           appearance={{
             variables: {
-              colorPrimary: "#78dce8",
-              colorBackground: "#0b1826",
-              colorForeground: "#f3f0e8",
-              colorMutedForeground: "#9eb0bf",
-              colorInput: "#102235",
-              colorInputForeground: "#f3f0e8",
-              borderRadius: "0.75rem",
+              colorPrimary: "#024ad8",
+              colorBackground: "#ffffff",
+              colorForeground: "#1a1a1a",
+              colorMutedForeground: "#636363",
+              colorInput: "#ffffff",
+              colorInputForeground: "#1a1a1a",
+              borderRadius: "0.25rem",
             },
             elements: {
-              cardBox: "shadow-2xl shadow-black/40",
-              card: "border border-white/10",
+              cardBox: "shadow-sm shadow-black/10",
+              card: "border border-black/10",
             },
           }}
         >
@@ -71,7 +66,7 @@ export default function RootLayout({
           </a>
           {children}
           <Toaster
-            theme="dark"
+            theme="light"
             richColors
             toastOptions={{ className: "font-sans" }}
           />

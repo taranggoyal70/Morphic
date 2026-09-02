@@ -71,7 +71,7 @@ export function CreateWorkspaceForm({
   return (
     <form
       onSubmit={submit}
-      className="mt-10 rounded-[20px] border border-line-strong bg-surface p-5 shadow-[0_26px_80px_rgba(0,0,0,.18)] sm:p-7"
+      className="mt-10 rounded-2xl border border-line bg-surface-raised p-5 shadow-[0_2px_8px_rgba(26,26,26,.08)] sm:p-7"
     >
       <div className="grid gap-7 lg:grid-cols-[1fr_0.88fr]">
         <div>
@@ -109,7 +109,7 @@ export function CreateWorkspaceForm({
               name="repositoryId"
               required
               defaultValue=""
-              className="h-12 w-full rounded-lg border border-line-strong bg-ink px-3 text-sm text-paper focus:border-evidence"
+              className="h-12 w-full rounded border border-line-strong bg-ink px-3 text-sm text-paper focus:border-paper"
             >
               <option value="" disabled>
                 Choose a GitHub repository
@@ -134,7 +134,7 @@ export function CreateWorkspaceForm({
               id="targetDate"
               name="targetDate"
               type="datetime-local"
-              className="h-12 w-full rounded-lg border border-line-strong bg-ink px-3 text-sm text-paper focus:border-evidence"
+              className="h-12 w-full rounded border border-line-strong bg-ink px-3 text-sm text-paper focus:border-paper"
             />
           </div>
         </div>
@@ -161,12 +161,12 @@ export function CreateWorkspaceForm({
             }}
             maxLength={180}
             placeholder="No authentication changes"
-            className="h-11 min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper placeholder:text-muted focus:border-evidence"
+            className="h-11 min-w-0 flex-1 rounded border border-line-strong bg-ink px-3 text-sm text-paper placeholder:text-muted focus:border-paper"
           />
           <button
             type="button"
             onClick={addConstraint}
-            className="inline-flex size-11 items-center justify-center rounded-lg border border-line-strong text-muted-light transition hover:border-evidence/50 hover:bg-evidence/10 hover:text-evidence"
+            className="inline-flex size-11 items-center justify-center rounded border border-paper text-paper transition hover:border-evidence hover:text-evidence"
             aria-label="Add constraint"
           >
             <PlusIcon size={16} />
@@ -187,7 +187,7 @@ export function CreateWorkspaceForm({
                       current.filter((value) => value !== constraint),
                     )
                   }
-                  className="inline-flex size-6 items-center justify-center rounded text-muted transition hover:bg-white/5 hover:text-paper"
+                  className="inline-flex size-6 items-center justify-center rounded text-muted transition hover:bg-surface-hover hover:text-paper"
                   aria-label={`Remove ${constraint}`}
                 >
                   <XIcon size={12} />
@@ -202,7 +202,7 @@ export function CreateWorkspaceForm({
         <button
           type="submit"
           disabled={pending || repositories.length === 0}
-          className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-evidence px-5 text-sm font-bold text-ink transition hover:bg-evidence-soft disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex min-h-11 items-center gap-2 rounded bg-evidence px-6 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence-soft disabled:cursor-not-allowed disabled:opacity-50"
         >
           {pending ? "Mapping evidence…" : "Create evidence route"}
           {!pending && <ArrowRightIcon size={16} weight="bold" />}

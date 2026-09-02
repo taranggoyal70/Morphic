@@ -158,7 +158,7 @@ export function RetryGenerationButton({
       type="button"
       disabled={pending}
       onClick={retry}
-      className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-evidence px-4 text-sm font-bold text-ink transition hover:bg-evidence-soft disabled:opacity-50"
+      className="inline-flex min-h-11 items-center gap-2 rounded bg-evidence px-6 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence-soft disabled:opacity-50"
     >
       {pending ? (
         <CircleNotchIcon size={15} className="animate-spin" />

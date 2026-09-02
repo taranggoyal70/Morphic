@@ -73,7 +73,7 @@ export function GitHubConnectButton({
       onClick={connect}
       disabled={!isLoaded || pending}
       className={cn(
-        "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-evidence px-4 text-sm font-bold text-ink transition hover:bg-evidence-soft disabled:cursor-wait disabled:opacity-60",
+        "inline-flex h-11 items-center justify-center gap-2 rounded bg-evidence px-6 text-sm font-semibold uppercase tracking-[0.05em] text-ink transition hover:bg-evidence-soft disabled:cursor-wait disabled:opacity-60",
         className,
       )}
     >

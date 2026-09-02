@@ -50,7 +50,7 @@ export default async function IntegrationsPage({
         never stores provider tokens in browser storage.
       </p>
 
-      <section className="mt-9 rounded-[18px] border border-line-strong bg-surface px-5 py-5 shadow-[0_24px_70px_rgba(0,0,0,.16)]">
+      <section className="mt-9 rounded-2xl border border-line-strong bg-surface-raised px-5 py-5 shadow-[0_2px_8px_rgba(26,26,26,.08)]">
         <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <div className="flex items-start gap-3">
             <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-evidence/30 bg-evidence/10 text-evidence">
