@@ -165,6 +165,24 @@ export const workspacePlanSchema = z
     const dependencies = new Map(
       plan.criticalPath.map((item) => [item.id, item.dependencyIds]),
     );
+    const statuses = new Map(
+      plan.criticalPath.map((item) => [item.id, item.status]),
+    );
+    for (const [index, item] of plan.criticalPath.entries()) {
+      if (
+        item.status === "done" &&
+        item.dependencyIds.some(
+          (dependencyId) => statuses.get(dependencyId) !== "done",
+        )
+      ) {
+        context.addIssue({
+          code: "custom",
+          message:
+            "Completed Critical Path Items require completed dependencies.",
+          path: ["criticalPath", index, "status"],
+        });
+      }
+    }
     const visiting = new Set<string>();
     const visited = new Set<string>();
     function hasCycle(itemId: string): boolean {

@@ -140,6 +140,28 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects completed items with unfinished dependencies", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        criticalPath: [
+          {
+            ...validPlan.criticalPath[0],
+            id: "prerequisite",
+            sourceNumber: 41,
+            status: "todo",
+          },
+          {
+            ...validPlan.criticalPath[0],
+            id: "delivery",
+            status: "done",
+            dependencyIds: ["prerequisite"],
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires source numbers only for issue and pull request evidence", () => {
     expect(() =>
       workspacePlanSchema.parse({
