@@ -27,6 +27,18 @@ export function toErrorResponse(error: unknown) {
   }
 
   if (error instanceof AppError) {
+    const headers = new Headers({ "Cache-Control": "no-store" });
+    const resetAt = error.details?.resetAt;
+    if (
+      error.status === 429 &&
+      typeof resetAt === "number" &&
+      Number.isFinite(resetAt)
+    ) {
+      headers.set(
+        "Retry-After",
+        String(Math.max(1, Math.ceil((resetAt - Date.now()) / 1_000))),
+      );
+    }
     return Response.json(
       {
         error: {
@@ -37,7 +49,7 @@ export function toErrorResponse(error: unknown) {
       },
       {
         status: error.status,
-        headers: { "Cache-Control": "no-store" },
+        headers,
       },
     );
   }
