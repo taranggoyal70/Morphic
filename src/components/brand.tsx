@@ -14,18 +14,18 @@ export function Brand({
     <Link
       href="/"
       className={cn(
-        "inline-flex items-center gap-2 text-paper no-underline",
+        "group inline-flex min-h-10 items-center gap-2.5 text-paper no-underline",
         className,
       )}
       aria-label="Morphic home"
     >
       <Image
         src="/brand/morphic-mark.png"
-        width={30}
-        height={30}
+        width={32}
+        height={32}
         alt=""
         priority
-        className="size-7 object-contain"
+        className="size-8 object-contain transition-transform duration-200 group-hover:-rotate-6"
       />
       {!compact && (
         <span className="text-[15px] font-semibold tracking-[-0.02em]">
