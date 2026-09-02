@@ -106,8 +106,8 @@ export function WorkspaceCanvas({
         <div className="mx-auto max-w-[1500px] rounded-[18px] border border-line-strong bg-ink/70 px-5 py-5 shadow-[0_24px_70px_rgba(0,0,0,.16)]">
           <div className="flex flex-col justify-between gap-5 xl:flex-row xl:items-start">
             <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.13em] text-violet-light">
-                <span>Active objective</span>
+              <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] uppercase tracking-[0.13em] text-evidence">
+                <span>Active outcome route</span>
                 <span className="text-muted">/</span>
                 <a
                   href={`https://github.com/${repository.fullName}`}
