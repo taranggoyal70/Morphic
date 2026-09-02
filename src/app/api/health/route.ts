@@ -3,6 +3,7 @@ import { authenticationReadiness } from "@/lib/deployment-readiness";
 import { sql } from "drizzle-orm";
 
 export async function GET() {
+  const headers = { "Cache-Control": "no-store" };
   const timestamp = new Date().toISOString();
   const authentication = authenticationReadiness({
     publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
@@ -10,13 +11,16 @@ export async function GET() {
   });
   try {
     await getDb().execute(sql`SELECT 1`);
-    return Response.json({
-      status: "ok",
-      service: "morphic",
-      database: "connected",
-      authentication,
-      timestamp,
-    });
+    return Response.json(
+      {
+        status: "ok",
+        service: "morphic",
+        database: "connected",
+        authentication,
+        timestamp,
+      },
+      { headers },
+    );
   } catch {
     return Response.json(
       {
@@ -26,7 +30,7 @@ export async function GET() {
         authentication,
         timestamp,
       },
-      { status: 503 },
+      { status: 503, headers },
     );
   }
 }
