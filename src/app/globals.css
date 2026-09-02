@@ -145,9 +145,17 @@ select:focus-visible {
 }
 
 .morphic-auth-story {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  border-right: 1px solid var(--line-strong);
   border-right-color: var(--line-strong);
   background: var(--surface);
   padding: 32px clamp(34px, 5vw, 76px) 44px;
+}
+
+.morphic-auth-brand {
+  width: fit-content;
 }
 
 .morphic-auth-copy {
@@ -156,11 +164,15 @@ select:focus-visible {
 }
 
 .morphic-auth-copy > p {
+  margin: 0 0 24px;
   color: var(--violet);
-  font-size: 11px;
+  font: 750 11px var(--font-geist-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
 .morphic-auth-copy h1 {
+  margin: 0;
   font-family: var(--font-bricolage), var(--font-geist-sans), sans-serif;
   font-size: clamp(50px, 5.2vw, 78px);
   font-weight: 650;
@@ -173,6 +185,8 @@ select:focus-visible {
 }
 
 .morphic-auth-copy > small {
+  display: block;
+  margin-top: 25px;
   max-width: 620px;
   color: var(--muted-light);
   font-size: 16px;
@@ -254,22 +268,47 @@ select:focus-visible {
 }
 
 .morphic-auth-form {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background: var(--ink);
   padding: 52px clamp(28px, 5vw, 72px);
 }
 
+.morphic-auth-mobile-brand {
+  display: none;
+  width: min(100%, 420px);
+}
+
 .morphic-auth-form-kicker {
-  margin-bottom: 16px;
+  width: min(100%, 420px);
+  margin: 0 0 16px;
   color: var(--violet);
-  font-size: 10px;
+  font: 700 10px var(--font-geist-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
 }
 
 .morphic-auth-back {
+  width: min(100%, 420px);
+  margin-top: 22px;
   min-height: 40px;
   display: inline-flex;
   align-items: center;
   color: var(--muted-light);
   font-size: 12px;
+  text-decoration: none;
+}
+
+.morphic-auth-back:hover {
+  color: var(--violet);
+}
+
+.morphic-auth-clerk-root,
+.morphic-auth-clerk-box {
+  width: min(100%, 420px) !important;
 }
 
 .morphic-auth-clerk-card {
@@ -285,6 +324,18 @@ select:focus-visible {
 }
 
 @media (max-width: 900px) {
+  .morphic-auth-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .morphic-auth-story {
+    display: none;
+  }
+
+  .morphic-auth-mobile-brand {
+    display: block;
+  }
+
   .morphic-auth-form {
     min-height: 100vh;
     justify-content: flex-start;
