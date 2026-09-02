@@ -211,6 +211,47 @@ select:focus-visible {
   color: var(--mint);
   font-size: 12px;
 }
+
+.morphic-auth-route ol {
+  margin: 0;
+  padding: 8px 20px 12px;
+  list-style: none;
+}
+
+.morphic-auth-route li {
+  display: grid;
+  min-height: 62px;
+  grid-template-columns: 28px 24px 1fr;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  color: var(--violet);
+}
+
+.morphic-auth-route li:last-child {
+  border-bottom: 0;
+  color: var(--mint);
+}
+
+.morphic-auth-route-number {
+  color: var(--muted);
+  font: 10px var(--font-geist-mono);
+}
+
+.morphic-auth-route li div {
+  display: grid;
+  gap: 4px;
+}
+
+.morphic-auth-route li strong {
+  color: var(--paper);
+  font-size: 13px;
+}
+
+.morphic-auth-route li small {
+  color: var(--muted);
+  font: 10px var(--font-geist-mono);
+}
 .morphic-auth-story { display: flex; min-height: 100vh; flex-direction: column; border-right: 1px solid rgba(255,255,255,.1); padding: 34px clamp(38px,6vw,86px); background: linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),#090b10; background-size: 44px 44px; }
 .morphic-auth-brand { width: fit-content; }
 .morphic-auth-copy { max-width: 690px; margin: auto 0 36px; }
