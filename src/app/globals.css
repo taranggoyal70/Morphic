@@ -181,3 +181,10 @@ select:focus-visible {
 @media (max-width: 900px) { .morphic-auth-shell { grid-template-columns: 1fr; } .morphic-auth-story { display: none; } .morphic-auth-mobile-brand { display: block; } }
 @media (max-width: 560px) { .morphic-auth-form { justify-content: flex-start; min-height: 100vh; padding: 28px 18px 46px; } }
 @media (prefers-reduced-motion: reduce) { .morphic-auth-shell * { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* Evidence-led authentication refresh. */
+.morphic-auth-shell {
+  grid-template-columns: minmax(0, 1.04fr) minmax(460px, 0.96fr);
+  background: var(--ink);
+  color: var(--paper);
+}
