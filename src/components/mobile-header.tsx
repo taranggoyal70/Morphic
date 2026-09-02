@@ -8,12 +8,12 @@ import { GITHUB_OAUTH_SCOPES } from "@/lib/github-oauth";
 
 export function MobileHeader() {
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-line bg-ink/95 px-4 backdrop-blur lg:hidden">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-line-strong bg-surface/95 px-4 backdrop-blur-xl lg:hidden">
       <Brand />
       <div className="flex items-center gap-3">
         <Link
           href="/workspaces"
-          className="text-xs font-medium text-violet-light"
+          className="inline-flex min-h-10 items-center rounded-lg px-2 text-xs font-semibold text-evidence"
         >
           Workspaces
         </Link>
