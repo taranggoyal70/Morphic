@@ -89,12 +89,24 @@ export const workspacePlanSchema = z.object({
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;
 
-export const createWorkspaceSchema = z.object({
-  repositoryId: z.string().uuid(),
-  objective: z.string().trim().min(8).max(500),
-  targetDate: z.string().datetime().nullable().optional(),
-  constraints: z.array(z.string().trim().min(1).max(180)).max(12).default([]),
-});
+export const createWorkspaceSchema = z
+  .object({
+    repositoryId: z.string().uuid(),
+    objective: z.string().trim().min(8).max(500),
+    targetDate: z.string().datetime().nullable().optional(),
+    constraints: z
+      .array(z.string().trim().min(1).max(180))
+      .max(12)
+      .default([]),
+  })
+  .refine(
+    (input) =>
+      !input.targetDate || new Date(input.targetDate).getTime() > Date.now(),
+    {
+      message: "Review target must be in the future.",
+      path: ["targetDate"],
+    },
+  );
 
 export const adaptWorkspaceSchema = z.object({
   command: z.string().trim().min(3).max(800),

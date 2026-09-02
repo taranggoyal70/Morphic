@@ -69,6 +69,17 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects review targets that are already in the past", () => {
+    expect(() =>
+      createWorkspaceSchema.parse({
+        repositoryId: crypto.randomUUID(),
+        objective: "Ship a reviewable onboarding outcome",
+        targetDate: "2020-01-01T00:00:00.000Z",
+        constraints: [],
+      }),
+    ).toThrow();
+  });
+
   it("requires explicit approval for every Codex proposal", () => {
     const base = {
       workspaceId: crypto.randomUUID(),
