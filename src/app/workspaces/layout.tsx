@@ -22,7 +22,7 @@ export default async function WorkspacesLayout({
         }))}
       />
       <MobileHeader />
-      <div className="min-h-screen lg:pl-[238px]">{children}</div>
+      <div className="min-h-screen lg:pl-[264px]">{children}</div>
     </div>
   );
 }
