@@ -80,6 +80,19 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("deduplicates guardrails without case sensitivity", () => {
+    const parsed = createWorkspaceSchema.parse({
+      repositoryId: crypto.randomUUID(),
+      objective: "Ship a reviewable onboarding outcome",
+      constraints: ["No auth changes", "no auth changes", "Keep the API stable"],
+    });
+
+    expect(parsed.constraints).toEqual([
+      "No auth changes",
+      "Keep the API stable",
+    ]);
+  });
+
   it("requires explicit approval for every Codex proposal", () => {
     const base = {
       workspaceId: crypto.randomUUID(),

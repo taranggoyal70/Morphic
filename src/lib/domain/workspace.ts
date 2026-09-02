@@ -106,7 +106,17 @@ export const createWorkspaceSchema = z
       message: "Review target must be in the future.",
       path: ["targetDate"],
     },
-  );
+  )
+  .transform((input) => ({
+    ...input,
+    constraints: input.constraints.filter(
+      (constraint, index, all) =>
+        all.findIndex(
+          (candidate) =>
+            candidate.toLocaleLowerCase() === constraint.toLocaleLowerCase(),
+        ) === index,
+    ),
+  }));
 
 export const adaptWorkspaceSchema = z.object({
   command: z.string().trim().min(3).max(800),
