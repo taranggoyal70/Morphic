@@ -314,6 +314,12 @@ export function CodexPanel({
             ))}
           </div>
         )}
+        {runs.length === 0 && (
+          <p className="mt-3 rounded-lg border border-dashed border-line px-4 py-3 text-xs leading-5 text-muted">
+            No Codex proposals yet. Create one when the evidence route is ready;
+            Morphic will require your approval before execution begins.
+          </p>
+        )}
       </div>
     </section>
   );
