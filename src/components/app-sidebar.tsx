@@ -32,7 +32,7 @@ export function AppSidebar({
   );
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 hidden w-[238px] flex-col border-r border-line bg-[#090b10] lg:flex">
+    <aside className="fixed inset-y-0 left-0 z-20 hidden w-[264px] flex-col border-r border-line-strong bg-surface lg:flex">
       <div className="flex h-16 items-center px-5">
         <Brand />
       </div>
