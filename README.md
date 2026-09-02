@@ -72,12 +72,12 @@ In the Clerk development instance, enable GitHub under **SSO connections -> For 
 
 ## Zero-cost private alpha
 
-The current `*.vercel.app` deployment can be used as a private, non-commercial alpha without an OpenAI API key. Workspace planning and Codex runs use each signed-in user's GitHub Models allowance. Keep the Clerk development instance below its 100-user limit and expect testers to create new accounts when Morphic later moves to a Clerk production instance.
+The current `*.vercel.app` deployment can be used as a private, non-commercial alpha without an OpenAI API key. Workspace planning and Codex runs use each signed-in user's GitHub Models allowance. The Clerk development instance has its allowlist enabled, so every new tester must be added explicitly before signup. Keep the instance below its 100-user limit and expect testers to create new accounts when Morphic later moves to a Clerk production instance.
 
 Before inviting testers:
 
-1. Configure `/api/webhooks/clerk` for the `user.deleted` event in the Clerk development dashboard.
-2. Save that endpoint's signing secret as `CLERK_WEBHOOK_SIGNING_SECRET` in Vercel Development, Preview, and Production, then redeploy.
+1. Add each invited tester's email address to Clerk's development allowlist before sharing the signup link.
+2. Keep `/api/webhooks/clerk` subscribed only to `user.deleted`, with its signing secret stored as `CLERK_WEBHOOK_SIGNING_SECRET` in Vercel.
 3. Keep the deployment private and non-commercial while it remains on Vercel Hobby.
 4. Monitor the existing rate limits and GitHub Models free-tier responses; Morphic reports a retryable error when a user's allowance is exhausted.
 
@@ -107,4 +107,4 @@ The architecture test fails if browser storage is introduced as product state.
 
 ## Domain language
 
-See `CONTEXT.md`. The production-provider decision is recorded in `docs/adr/0001-production-foundation.md`.
+See `CONTEXT.md`. The foundation and current model-provider decisions are recorded in `docs/adr/0001-production-foundation.md` and `docs/adr/0002-zero-cost-model-provider.md`.

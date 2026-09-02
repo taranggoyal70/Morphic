@@ -1,6 +1,6 @@
 # ADR 0001: Production foundation for Morphic
 
-- Status: Accepted
+- Status: Superseded in part by [ADR 0002](./0002-zero-cost-model-provider.md)
 - Date: 2026-07-02
 
 ## Context

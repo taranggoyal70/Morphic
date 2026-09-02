@@ -8,11 +8,22 @@ const isProtectedRoute = createRouteMatcher([
   "/api/codex-runs(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, request) => {
-  if (isProtectedRoute(request)) {
-    await auth.protect();
-  }
-});
+export default clerkMiddleware(
+  async (auth, request) => {
+    if (isProtectedRoute(request)) {
+      await auth.protect();
+    }
+  },
+  {
+    contentSecurityPolicy: {
+      directives: {
+        "base-uri": ["'self'"],
+        "frame-ancestors": ["'none'"],
+        "object-src": ["'none'"],
+      },
+    },
+  },
+);
 
 export const config = {
   matcher: [
