@@ -28,7 +28,7 @@ export function Brand({
         className="size-8 object-contain transition-transform duration-200 group-hover:-rotate-6"
       />
       {!compact && (
-        <span className="text-[15px] font-semibold tracking-[-0.02em]">
+        <span className="font-display text-[16px] font-semibold tracking-[-0.035em]">
           Morphic
         </span>
       )}
