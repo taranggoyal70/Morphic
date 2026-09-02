@@ -112,3 +112,35 @@ Health: **Functional but duplicative**
 - The local environment used temporary Clerk development keys. The Clerk configuration notice overlays part of the page and is not a Morphic production component.
 - Authenticated workspace screens could not be reached without signing in and provisioning linked services, so their audit must be completed through local component review and post-redesign verification.
 - Screenshots alone cannot confirm screen-reader announcements, complete keyboard order, semantic relationships, or WCAG conformance.
+
+## Redesign verification
+
+### Public landing
+
+![Redesigned landing page](./05-redesigned-landing.png)
+
+Health: **Strong product hierarchy**
+
+- The outcome and repository-backed proof now share the first viewport.
+- The continuous evidence route makes objective, facts, decision, and governed execution understandable without reading a dense dashboard.
+- Navigation, actions, and body copy use larger targets and stronger contrast.
+
+### Mobile landing
+
+![Redesigned mobile landing page](./06-redesigned-mobile.png)
+
+Health: **Clear conversion path**
+
+- The promise, explanation, and primary action fit before the product proof.
+- Actions stack into full-width targets and the evidence route follows immediately after the trust line.
+- The Clerk development notice still obscures lower content; this is an environment artifact rather than production UI.
+
+### Authentication entry
+
+![Redesigned sign-in page](./07-redesigned-sign-in.png)
+
+Health: **Focused and trustworthy**
+
+- Supporting content now explains what happens after authentication instead of repeating a fake workspace.
+- The primary provider form adopts the evidence palette and a clearer 48px control size.
+- The local Clerk tenant still says “My Application”; production Clerk branding must be configured to display “Morphic.”
