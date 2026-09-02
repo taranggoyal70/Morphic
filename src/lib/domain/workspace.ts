@@ -208,6 +208,17 @@ export const workspacePlanSchema = z
         path: ["risks"],
       });
     }
+
+    if (
+      new Set(plan.interface.moduleOrder).size !==
+      plan.interface.moduleOrder.length
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "Adaptive Workspace modules must appear only once.",
+        path: ["interface", "moduleOrder"],
+      });
+    }
   });
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;

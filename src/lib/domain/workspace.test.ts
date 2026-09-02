@@ -256,6 +256,23 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects duplicate Adaptive Workspace modules", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        interface: {
+          ...validPlan.interface,
+          moduleOrder: [
+            "outcome",
+            "critical_path",
+            "critical_path",
+            "repository_impact",
+          ],
+        },
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({
