@@ -42,4 +42,17 @@ describe("parseJsonBody", () => {
       code: "unsupported_media_type",
     });
   });
+
+  it("rejects oversized JSON mutation payloads", async () => {
+    const request = new Request("https://morphic.test/api/workspaces", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ objective: "x".repeat(300_000) }),
+    });
+
+    await expect(parseJsonBody(request)).rejects.toMatchObject<AppError>({
+      status: 413,
+      code: "payload_too_large",
+    });
+  });
 });

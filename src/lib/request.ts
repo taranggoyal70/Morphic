@@ -1,5 +1,7 @@
 import { AppError } from "@/lib/errors";
 
+const MAX_JSON_BODY_BYTES = 256 * 1_024;
+
 export async function parseJsonBody(request: Request): Promise<unknown> {
   const mediaType = request.headers
     .get("content-type")
@@ -20,8 +22,17 @@ export async function parseJsonBody(request: Request): Promise<unknown> {
   }
 
   try {
-    return await request.json();
-  } catch {
+    const body = await request.text();
+    if (new TextEncoder().encode(body).byteLength > MAX_JSON_BODY_BYTES) {
+      throw new AppError(
+        "The request body is too large.",
+        413,
+        "payload_too_large",
+      );
+    }
+    return JSON.parse(body) as unknown;
+  } catch (error) {
+    if (error instanceof AppError) throw error;
     throw new AppError(
       "The request body must be valid JSON.",
       400,
