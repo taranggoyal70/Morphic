@@ -14,7 +14,8 @@ export function WorkspaceRefresh({
 
   useEffect(() => {
     if (!active) return;
-    const timer = window.setInterval(async () => {
+    const refreshWhenComplete = async () => {
+      if (document.visibilityState !== "visible") return;
       const response = await fetch(`/api/workspaces/${workspaceId}`, {
         cache: "no-store",
       });
@@ -25,8 +26,13 @@ export function WorkspaceRefresh({
       if (payload.data?.workspace?.status !== "generating") {
         router.refresh();
       }
-    }, 2_500);
-    return () => window.clearInterval(timer);
+    };
+    const timer = window.setInterval(refreshWhenComplete, 2_500);
+    document.addEventListener("visibilitychange", refreshWhenComplete);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", refreshWhenComplete);
+    };
   }, [active, router, workspaceId]);
 
   return null;
