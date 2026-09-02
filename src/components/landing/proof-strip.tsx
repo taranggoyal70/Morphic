@@ -6,7 +6,10 @@ const proofs = [
 
 export function ProofStrip() {
   return (
-    <section aria-label="Product guarantees" className="border-b border-line bg-surface/40">
+    <section
+      aria-label="Product guarantees"
+      className="border-b border-line bg-surface/40"
+    >
       <div className="mx-auto grid max-w-[1240px] sm:grid-cols-3">
         {proofs.map(([label, body]) => (
           <div

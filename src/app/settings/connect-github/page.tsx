@@ -38,7 +38,10 @@ export default async function ConnectGitHubPage({
   }
 
   return (
-    <main id="main-content" className="mx-auto max-w-[640px] px-5 py-10 sm:px-8 lg:py-16">
+    <main
+      id="main-content"
+      className="mx-auto max-w-[640px] px-5 py-10 sm:px-8 lg:py-16"
+    >
       <Link
         href={"/workspaces" as Route}
         className="mb-8 inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
@@ -53,7 +56,9 @@ export default async function ConnectGitHubPage({
             <GithubLogoIcon size={24} weight="fill" />
           </span>
           <div>
-            <h1 className="font-display text-2xl font-semibold tracking-[-0.035em] text-paper">Connect repository evidence</h1>
+            <h1 className="font-display text-2xl font-semibold tracking-[-0.035em] text-paper">
+              Connect repository evidence
+            </h1>
             <p className="mt-0.5 text-sm text-muted">
               Authorize the source Morphic will ground every route in
             </p>

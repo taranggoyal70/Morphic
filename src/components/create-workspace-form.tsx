@@ -161,7 +161,7 @@ export function CreateWorkspaceForm({
             }}
             maxLength={180}
             placeholder="No authentication changes"
-          className="h-11 min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper placeholder:text-muted focus:border-evidence"
+            className="h-11 min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper placeholder:text-muted focus:border-evidence"
           />
           <button
             type="button"

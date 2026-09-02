@@ -20,7 +20,9 @@ export function ProcessSection() {
                 key={principle.label}
                 className="grid gap-3 border-b border-ink/20 py-7 sm:grid-cols-[48px_130px_1fr] sm:gap-5"
               >
-                <span className="font-mono text-xs text-[#58707a]">0{index + 1}</span>
+                <span className="font-mono text-xs text-[#58707a]">
+                  0{index + 1}
+                </span>
                 <p className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-[#376775]">
                   {principle.label}
                 </p>

@@ -48,9 +48,12 @@ export function EvidenceRoute() {
                 className={cn(
                   "relative z-10 inline-flex size-9 items-center justify-center rounded-full border bg-surface",
                   step.tone === "paper" && "border-paper/40 text-paper",
-                  step.tone === "evidence" && "border-evidence/50 text-evidence",
-                  step.tone === "decision" && "border-decision/50 text-decision",
-                  step.tone === "resolved" && "border-resolved/50 text-resolved",
+                  step.tone === "evidence" &&
+                    "border-evidence/50 text-evidence",
+                  step.tone === "decision" &&
+                    "border-decision/50 text-decision",
+                  step.tone === "resolved" &&
+                    "border-resolved/50 text-resolved",
                 )}
               >
                 <Icon size={17} weight="duotone" />
@@ -60,7 +63,9 @@ export function EvidenceRoute() {
                   <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
                     {step.eyebrow}
                   </span>
-                  <span className="font-mono text-[10px] text-muted">0{index + 1}</span>
+                  <span className="font-mono text-[10px] text-muted">
+                    0{index + 1}
+                  </span>
                 </div>
                 <p className="mt-1 text-sm font-semibold text-paper sm:text-[15px]">
                   {step.title}

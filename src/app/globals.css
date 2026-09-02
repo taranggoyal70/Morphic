@@ -139,7 +139,7 @@ select:focus-visible {
 .morphic-auth-shell {
   display: grid;
   min-height: 100vh;
-  grid-template-columns: minmax(0, 1.08fr) minmax(480px, .92fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(480px, 0.92fr);
   background: #080a0f;
   color: #f5f3ef;
 }
