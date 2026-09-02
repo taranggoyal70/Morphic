@@ -52,6 +52,10 @@ html {
 
 body {
   min-height: 100vh;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-geist-sans), sans-serif;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
