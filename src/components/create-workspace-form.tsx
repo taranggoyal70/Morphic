@@ -219,7 +219,8 @@ export function CreateWorkspaceForm({
           <button
             type="button"
             onClick={addConstraint}
-            className="inline-flex size-11 items-center justify-center rounded border border-paper text-paper transition hover:border-evidence hover:text-evidence"
+            disabled={!constraintDraft.trim() || constraints.length >= 12}
+            className="inline-flex size-11 items-center justify-center rounded border border-paper text-paper transition hover:border-evidence hover:text-evidence disabled:cursor-not-allowed disabled:border-line disabled:text-muted"
             aria-label="Add constraint"
           >
             <PlusIcon size={16} />
