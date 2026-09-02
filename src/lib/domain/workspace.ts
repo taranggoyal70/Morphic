@@ -101,6 +101,16 @@ export const workspacePlanSchema = z
         path: ["criticalPath"],
       });
     }
+
+    for (const [index, item] of plan.criticalPath.entries()) {
+      if (item.dependencyIds.includes(item.id)) {
+        context.addIssue({
+          code: "custom",
+          message: "A Critical Path Item cannot depend on itself.",
+          path: ["criticalPath", index, "dependencyIds"],
+        });
+      }
+    }
   });
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;

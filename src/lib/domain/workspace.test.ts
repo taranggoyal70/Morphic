@@ -71,6 +71,20 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects Critical Path Items that depend on themselves", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        criticalPath: [
+          {
+            ...validPlan.criticalPath[0],
+            dependencyIds: [validPlan.criticalPath[0].id],
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({
