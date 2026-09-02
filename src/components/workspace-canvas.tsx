@@ -156,18 +156,18 @@ export function WorkspaceCanvas({
                 {statusLabel(workspace.status)}
               </span>
               {workspace.targetDate && (
-                <span className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line px-2.5 text-xs text-muted-light">
+                <span className="inline-flex h-9 items-center gap-1.5 rounded-full border border-line px-3 text-xs text-muted-light">
                   <CalendarBlankIcon size={13} />
                   {format(workspace.targetDate, "MMM d, yyyy")}
                 </span>
               )}
-              <span className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line px-2.5 font-mono text-[10px] text-muted">
+              <span className="inline-flex h-9 items-center gap-1.5 rounded-full border border-line px-3 font-mono text-[11px] text-muted-light">
                 <GitBranchIcon size={12} />
                 {repository.defaultBranch}
               </span>
               {repository.isPrivate && (
                 <span
-                  className="inline-flex size-8 items-center justify-center rounded-lg border border-line text-muted"
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-line text-muted-light"
                   aria-label="Private repository"
                 >
                   <LockSimpleIcon size={13} />
