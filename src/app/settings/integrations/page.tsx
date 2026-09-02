@@ -34,7 +34,7 @@ export default async function IntegrationsPage({
   const repositories = githubConnected ? await listRepositories(user.id) : [];
 
   return (
-    <main className="mx-auto max-w-[920px] px-5 py-10 sm:px-8 lg:px-12 lg:py-16">
+    <main id="main-content" className="mx-auto max-w-[920px] px-5 py-10 sm:px-8 lg:px-12 lg:py-16">
       <div className="flex items-center gap-2 text-xs font-medium text-violet-light">
         <SparkleIcon size={15} weight="fill" />
         Product connections
