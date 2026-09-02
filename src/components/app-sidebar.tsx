@@ -94,14 +94,14 @@ export function AppSidebar({
       <div className="mt-auto border-t border-line p-3">
         <Link
           href="/workspaces"
-          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
+          className="flex min-h-10 items-center gap-2.5 rounded-lg px-3 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
         >
           <SparkleIcon size={17} />
           New objective
         </Link>
         <Link
           href="/settings/integrations"
-          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
+          className="flex min-h-10 items-center gap-2.5 rounded-lg px-3 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
         >
           <GitBranchIcon size={17} />
           Integrations
