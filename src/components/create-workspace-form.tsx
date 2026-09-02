@@ -177,7 +177,7 @@ export function CreateWorkspaceForm({
             {constraints.map((constraint) => (
               <span
                 key={constraint}
-                className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-raised px-2.5 py-1.5 text-xs text-muted-light"
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-line bg-surface-raised px-2.5 py-1.5 text-xs text-muted-light"
               >
                 {constraint}
                 <button
@@ -187,7 +187,7 @@ export function CreateWorkspaceForm({
                       current.filter((value) => value !== constraint),
                     )
                   }
-                  className="text-muted transition hover:text-paper"
+                  className="inline-flex size-6 items-center justify-center rounded text-muted transition hover:bg-white/5 hover:text-paper"
                   aria-label={`Remove ${constraint}`}
                 >
                   <XIcon size={12} />
