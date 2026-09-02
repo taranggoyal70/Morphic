@@ -247,7 +247,7 @@ export function WorkspaceCanvas({
                   className="text-violet-light"
                 />
                 <h2 className="text-sm font-semibold text-paper">
-                  Morphic&apos;s plan
+                  Evidence route
                 </h2>
                 <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">
                   v{version}
