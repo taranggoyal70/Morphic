@@ -62,13 +62,13 @@ export function AdaptWorkspaceForm({
         minLength={3}
         maxLength={800}
         required
-        placeholder="What should this workspace optimize for?"
-        className="h-9 min-w-0 flex-1 bg-transparent text-sm text-paper placeholder:text-muted focus:outline-none disabled:cursor-not-allowed"
+        placeholder="Update the outcome, guardrails, or next decision…"
+        className="h-10 min-w-0 flex-1 bg-transparent text-sm text-paper placeholder:text-muted focus:outline-none disabled:cursor-not-allowed"
       />
       <button
         type="submit"
         disabled={disabled || pending}
-        className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-violet text-white transition hover:bg-violet-light hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg bg-evidence text-ink transition hover:bg-evidence-soft disabled:cursor-not-allowed disabled:opacity-40"
         aria-label="Adapt workspace"
       >
         <ArrowUpIcon size={15} weight="bold" />
