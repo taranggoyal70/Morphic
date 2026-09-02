@@ -5,6 +5,7 @@ import { recordAuditEvent } from "@/lib/audit";
 import { requireMorphicUser } from "@/lib/auth";
 import { toErrorResponse, AppError } from "@/lib/errors";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { parseJsonBody } from "@/lib/request";
 import {
   createWorkspaceCommand,
   getWorkspaceView,
@@ -31,7 +32,7 @@ export async function POST(
       window: "1 h",
     });
     const { workspaceId } = await context.params;
-    const input = decisionInput.parse(await request.json());
+    const input = decisionInput.parse(await parseJsonBody(request));
     const view = await getWorkspaceView(user.id, workspaceId);
     if (!view.version || view.version.version !== input.version) {
       throw new AppError(
