@@ -4,6 +4,7 @@ import { createCodexRun } from "@/lib/codex-runs";
 import { createCodexRunSchema } from "@/lib/domain/workspace";
 import { toErrorResponse } from "@/lib/errors";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { parseJsonBody } from "@/lib/request";
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
       limit: 10,
       window: "1 h",
     });
-    const input = createCodexRunSchema.parse(await request.json());
+    const input = createCodexRunSchema.parse(await parseJsonBody(request));
     const run = await createCodexRun({
       userId: user.id,
       workspaceId: input.workspaceId,
