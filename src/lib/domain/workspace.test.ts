@@ -167,6 +167,18 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects duplicate repository impact paths", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        repositoryImpact: [
+          validPlan.repositoryImpact[0],
+          { ...validPlan.repositoryImpact[0], reason: "Duplicate evidence." },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({

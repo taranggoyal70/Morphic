@@ -163,6 +163,15 @@ export const workspacePlanSchema = z
         path: ["criticalPath"],
       });
     }
+
+    const impactPaths = plan.repositoryImpact.map((impact) => impact.path);
+    if (new Set(impactPaths).size !== impactPaths.length) {
+      context.addIssue({
+        code: "custom",
+        message: "Repository Impact paths must be unique.",
+        path: ["repositoryImpact"],
+      });
+    }
   });
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;
