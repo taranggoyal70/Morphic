@@ -13,6 +13,12 @@ export class AppError extends Error {
 }
 
 export function toErrorResponse(error: unknown) {
+  const requestId = crypto.randomUUID();
+  const responseHeaders = {
+    "Cache-Control": "no-store",
+    "X-Request-Id": requestId,
+  };
+
   if (error instanceof ZodError) {
     return Response.json(
       {
@@ -22,12 +28,12 @@ export function toErrorResponse(error: unknown) {
           details: { fields: error.flatten().fieldErrors },
         },
       },
-      { status: 400, headers: { "Cache-Control": "no-store" } },
+      { status: 400, headers: responseHeaders },
     );
   }
 
   if (error instanceof AppError) {
-    const headers = new Headers({ "Cache-Control": "no-store" });
+    const headers = new Headers(responseHeaders);
     const resetAt = error.details?.resetAt;
     if (
       error.status === 429 &&
@@ -54,7 +60,7 @@ export function toErrorResponse(error: unknown) {
     );
   }
 
-  console.error("Unhandled request error", error);
+  console.error("Unhandled request error", { requestId, error });
   return Response.json(
     {
       error: {
@@ -62,6 +68,6 @@ export function toErrorResponse(error: unknown) {
         message: "Something went wrong. Please try again.",
       },
     },
-    { status: 500, headers: { "Cache-Control": "no-store" } },
+    { status: 500, headers: responseHeaders },
   );
 }

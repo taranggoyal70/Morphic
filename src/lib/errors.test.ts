@@ -42,4 +42,14 @@ describe("toErrorResponse", () => {
       4,
     );
   });
+
+  it("assigns a correlation identifier to every error response", () => {
+    const response = toErrorResponse(
+      new AppError("Workspace not found.", 404, "workspace_not_found"),
+    );
+
+    expect(response.headers.get("x-request-id")).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+    );
+  });
 });
