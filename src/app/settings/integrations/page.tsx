@@ -39,7 +39,7 @@ export default async function IntegrationsPage({
         <SparkleIcon size={15} weight="fill" />
         Evidence connections
       </div>
-      <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-paper">
+      <h1 className="font-display mt-4 text-4xl font-semibold tracking-[-0.05em] text-paper">
         Integrations
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-light">
