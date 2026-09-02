@@ -87,7 +87,7 @@ export function WorkspaceActions({
           type="button"
           disabled={busy || pending !== null}
           onClick={archive}
-          className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line px-2.5 text-xs text-muted-light transition hover:bg-white/5 hover:text-paper disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line px-3 text-xs text-muted-light transition hover:border-evidence/40 hover:bg-evidence/10 hover:text-evidence disabled:cursor-not-allowed disabled:opacity-40"
           title="Archive workspace"
         >
           {pending === "archive" ? (
@@ -102,7 +102,7 @@ export function WorkspaceActions({
         type="button"
         disabled={busy || pending !== null}
         onClick={remove}
-        className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-danger/25 px-2.5 text-xs text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-40"
+        className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-danger/25 px-3 text-xs text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-40"
         title="Delete workspace"
       >
         {pending === "delete" ? (
