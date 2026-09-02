@@ -217,13 +217,13 @@ export function WorkspaceCanvas({
             <h2 className="mt-5 text-lg font-semibold text-paper">
               {workspace.status === "failed"
                 ? "Workspace compilation stopped"
-                : "Compiling your workspace"}
+                : "Mapping the evidence route"}
             </h2>
             <p className="mt-2 text-sm leading-6 text-muted">
               {workspace.status === "failed"
                 ? (workspace.lastError ??
                   "Morphic could not compile this repository state.")
-                : "Morphic is capturing live GitHub evidence and shaping the interface around your objective."}
+                : "Morphic is storing the current GitHub snapshot, tracing dependencies, and identifying the first decision that can move the outcome forward."}
             </p>
             {workspace.status === "failed" && (
               <div className="mt-6 space-y-4">
