@@ -45,7 +45,7 @@ export function AppSidebar({
           <Link
             href="/workspaces"
             aria-label="Create objective"
-            className="rounded-md p-1 text-muted transition hover:bg-white/5 hover:text-paper"
+            className="inline-flex size-10 items-center justify-center rounded-lg text-muted-light transition hover:bg-evidence/10 hover:text-evidence"
           >
             <PlusIcon size={15} />
           </Link>
