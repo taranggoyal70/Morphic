@@ -50,7 +50,7 @@ export default async function IntegrationsPage({
       <section className="mt-9 rounded-[18px] border border-line-strong bg-surface px-5 py-5 shadow-[0_24px_70px_rgba(0,0,0,.16)]">
         <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <div className="flex items-start gap-3">
-            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg border border-line bg-ink">
+            <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-evidence/30 bg-evidence/10 text-evidence">
               <GithubLogoIcon size={21} weight="fill" />
             </span>
             <div>
