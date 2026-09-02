@@ -69,7 +69,10 @@ export function CreateWorkspaceForm({
   }
 
   return (
-    <form onSubmit={submit} className="mt-8">
+    <form
+      onSubmit={submit}
+      className="mt-10 rounded-[20px] border border-line-strong bg-surface p-5 shadow-[0_26px_80px_rgba(0,0,0,.18)] sm:p-7"
+    >
       <div className="grid gap-7 lg:grid-cols-[1fr_0.88fr]">
         <div>
           <label
