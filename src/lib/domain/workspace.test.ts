@@ -220,6 +220,26 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("requires an Open Decision recommendation to reference an option", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        decisions: [
+          {
+            id: "provider",
+            question: "Which provider should remain?",
+            context: "The choice affects the delivery path.",
+            options: [
+              { id: "a", label: "Option A", tradeoff: "Less migration." },
+              { id: "b", label: "Option B", tradeoff: "More control." },
+            ],
+            recommendedOptionId: "missing",
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({

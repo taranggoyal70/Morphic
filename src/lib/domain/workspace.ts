@@ -191,6 +191,13 @@ export const workspacePlanSchema = z
           path: ["decisions", index, "options"],
         });
       }
+      if (!optionIds.includes(decision.recommendedOptionId)) {
+        context.addIssue({
+          code: "custom",
+          message: "The recommended option must belong to its Open Decision.",
+          path: ["decisions", index, "recommendedOptionId"],
+        });
+      }
     }
   });
 
