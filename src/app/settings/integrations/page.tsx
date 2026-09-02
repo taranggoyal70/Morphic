@@ -82,7 +82,7 @@ export default async function IntegrationsPage({
               <>
                 <Link
                   href={"/user-profile" as Route}
-                  className="inline-flex items-center rounded-lg border border-line-strong px-3.5 py-2 text-sm font-medium text-muted-light transition hover:bg-white/5 hover:text-paper"
+                  className="inline-flex min-h-10 items-center rounded-lg border border-line-strong px-3.5 text-sm font-medium text-muted-light transition hover:border-evidence/40 hover:bg-evidence/10 hover:text-evidence"
                 >
                   Manage account
                 </Link>
