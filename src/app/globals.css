@@ -177,6 +177,40 @@ select:focus-visible {
   color: var(--muted-light);
   font-size: 16px;
 }
+
+.morphic-auth-route {
+  width: min(100%, 680px);
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 18px;
+  background: var(--ink);
+  box-shadow: 14px 14px 0 rgba(120, 220, 232, 0.09);
+}
+
+.morphic-auth-route-head {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--line);
+  padding: 0 20px;
+}
+
+.morphic-auth-route-head > span {
+  color: var(--violet);
+  font: 700 10px var(--font-geist-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+}
+
+.morphic-auth-route-head > strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mint);
+  font-size: 12px;
+}
 .morphic-auth-story { display: flex; min-height: 100vh; flex-direction: column; border-right: 1px solid rgba(255,255,255,.1); padding: 34px clamp(38px,6vw,86px); background: linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),#090b10; background-size: 44px 44px; }
 .morphic-auth-brand { width: fit-content; }
 .morphic-auth-copy { max-width: 690px; margin: auto 0 36px; }
