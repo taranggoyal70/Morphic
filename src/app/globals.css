@@ -149,6 +149,34 @@ select:focus-visible {
   background: var(--surface);
   padding: 32px clamp(34px, 5vw, 76px) 44px;
 }
+
+.morphic-auth-copy {
+  max-width: 720px;
+  margin: auto 0 42px;
+}
+
+.morphic-auth-copy > p {
+  color: var(--violet);
+  font-size: 11px;
+}
+
+.morphic-auth-copy h1 {
+  font-family: var(--font-bricolage), var(--font-geist-sans), sans-serif;
+  font-size: clamp(50px, 5.2vw, 78px);
+  font-weight: 650;
+  line-height: 0.93;
+  letter-spacing: -0.055em;
+}
+
+.morphic-auth-copy h1 span {
+  color: var(--muted-light);
+}
+
+.morphic-auth-copy > small {
+  max-width: 620px;
+  color: var(--muted-light);
+  font-size: 16px;
+}
 .morphic-auth-story { display: flex; min-height: 100vh; flex-direction: column; border-right: 1px solid rgba(255,255,255,.1); padding: 34px clamp(38px,6vw,86px); background: linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),#090b10; background-size: 44px 44px; }
 .morphic-auth-brand { width: fit-content; }
 .morphic-auth-copy { max-width: 690px; margin: auto 0 36px; }
