@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 
+import { CharacterCounter } from "@/components/character-counter";
+
 export function AdaptWorkspaceForm({
   workspaceId,
   disabled,
@@ -14,19 +16,19 @@ export function AdaptWorkspaceForm({
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
+  const [command, setCommand] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    const data = new FormData(form);
-    const command = String(data.get("command") ?? "").trim();
-    if (!command) return;
+    const normalizedCommand = command.trim();
+    if (!normalizedCommand) return;
     setPending(true);
     try {
       const response = await fetch(`/api/workspaces/${workspaceId}/adapt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ command }),
+        body: JSON.stringify({ command: normalizedCommand }),
       });
       const payload = (await response.json()) as {
         error?: { message?: string };
@@ -35,6 +37,7 @@ export function AdaptWorkspaceForm({
         throw new Error(payload.error?.message ?? "Workspace could not adapt.");
       }
       form.reset();
+      setCommand("");
       toast.success("Morphic is adapting the workspace.");
       router.refresh();
     } catch (error) {
@@ -54,6 +57,8 @@ export function AdaptWorkspaceForm({
       <SparkleIcon size={17} weight="fill" className="shrink-0 text-evidence" />
       <input
         name="command"
+        value={command}
+        onChange={(event) => setCommand(event.target.value)}
         disabled={disabled || pending}
         minLength={3}
         maxLength={800}
@@ -61,6 +66,13 @@ export function AdaptWorkspaceForm({
         placeholder="Update the outcome, guardrails, or next decision…"
         className="h-10 min-w-0 flex-1 bg-transparent text-sm text-paper placeholder:text-muted focus:outline-none disabled:cursor-not-allowed"
       />
+      <span className="hidden shrink-0 sm:inline-flex">
+        <CharacterCounter
+          current={command.length}
+          maximum={800}
+          label="Command"
+        />
+      </span>
       <button
         type="submit"
         disabled={disabled || pending}
