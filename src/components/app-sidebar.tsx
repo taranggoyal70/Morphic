@@ -40,7 +40,7 @@ export function AppSidebar({
       <div className="px-3 pb-2 pt-5">
         <div className="mb-2 flex items-center justify-between px-2">
           <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-            Objectives
+            Outcome routes
           </span>
           <Link
             href="/workspaces"
