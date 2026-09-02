@@ -99,7 +99,7 @@ export function WorkspaceCanvas({
   const adapting = workspace.status === "generating";
 
   return (
-    <main className="min-h-screen bg-ink">
+    <main id="main-content" className="min-h-screen bg-ink">
       <WorkspaceRefresh workspaceId={workspace.id} active={adapting} />
 
       <header className="bg-[#090b10] px-4 pt-5 sm:px-6 lg:px-7">
