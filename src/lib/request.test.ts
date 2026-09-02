@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 
-import { AppError } from "@/lib/errors";
 import { parseJsonBody } from "@/lib/request";
 
 describe("parseJsonBody", () => {
@@ -11,7 +10,7 @@ describe("parseJsonBody", () => {
       body: "{not-json",
     });
 
-    await expect(parseJsonBody(request)).rejects.toMatchObject<AppError>({
+    await expect(parseJsonBody(request)).rejects.toMatchObject({
       status: 400,
       code: "invalid_json",
       message: "The request body must be valid JSON.",
@@ -37,7 +36,7 @@ describe("parseJsonBody", () => {
       body: JSON.stringify({ objective: "Ship onboarding" }),
     });
 
-    await expect(parseJsonBody(request)).rejects.toMatchObject<AppError>({
+    await expect(parseJsonBody(request)).rejects.toMatchObject({
       status: 415,
       code: "unsupported_media_type",
     });
@@ -50,7 +49,7 @@ describe("parseJsonBody", () => {
       body: JSON.stringify({ objective: "x".repeat(300_000) }),
     });
 
-    await expect(parseJsonBody(request)).rejects.toMatchObject<AppError>({
+    await expect(parseJsonBody(request)).rejects.toMatchObject({
       status: 413,
       code: "payload_too_large",
     });
