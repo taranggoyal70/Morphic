@@ -5,6 +5,7 @@ import { requireMorphicUser } from "@/lib/auth";
 import { createWorkspaceSchema } from "@/lib/domain/workspace";
 import { toErrorResponse } from "@/lib/errors";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { parseJsonBody } from "@/lib/request";
 import {
   createWorkspaceRecord,
   listWorkspaces,
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
       limit: 6,
       window: "1 h",
     });
-    const input = createWorkspaceSchema.parse(await request.json());
+    const input = createWorkspaceSchema.parse(await parseJsonBody(request));
     const workspace = await createWorkspaceRecord({
       userId: user.id,
       ...input,
