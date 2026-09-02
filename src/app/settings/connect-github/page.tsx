@@ -41,7 +41,7 @@ export default async function ConnectGitHubPage({
     <main id="main-content" className="mx-auto max-w-[640px] px-5 py-10 sm:px-8 lg:py-16">
       <Link
         href={"/workspaces" as Route}
-        className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-light transition hover:text-paper"
+        className="mb-8 inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2 text-sm text-muted-light transition hover:bg-white/5 hover:text-paper"
       >
         <ArrowLeftIcon size={14} />
         Back to workspaces
