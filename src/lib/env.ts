@@ -4,7 +4,6 @@ import { z } from "zod";
 
 const serverSchema = z.object({
   DATABASE_URL: z.string().url(),
-  OPENAI_API_KEY: z.string().min(20),
   CLERK_SECRET_KEY: z.string().min(1),
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
   KV_REST_API_URL: z.string().url().optional(),
@@ -28,7 +27,6 @@ export function getServerEnv(): ServerEnv {
 
   const result = serverSchema.safeParse({
     DATABASE_URL: process.env.DATABASE_URL,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,

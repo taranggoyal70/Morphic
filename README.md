@@ -7,7 +7,7 @@ Morphic turns a software objective into a persistent adaptive workspace grounded
 - Clerk authentication and server-side GitHub OAuth token retrieval
 - Repository synchronization through the GitHub API
 - Immutable repository snapshots and workspace versions in Neon Postgres
-- OpenAI structured-output workspace compilation
+- GitHub Models structured-output workspace compilation using the signed-in user's GitHub authorization
 - Distributed Upstash rate limiting
 - Durable Vercel Workflow orchestration
 - Isolated Codex execution in Vercel Sandbox
@@ -25,7 +25,7 @@ Browser
   v
 Next.js App Router
   |-- GitHub API (OAuth token retrieved from Clerk)
-  |-- OpenAI Responses API (structured workspace plan)
+  |-- GitHub Models API (structured workspace plan)
   |-- Neon Postgres (all durable product state)
   |-- Upstash Redis (distributed rate limiting)
   +-- Vercel Workflow
@@ -52,11 +52,11 @@ Large repositories are bounded before workspace generation:
 - Pull requests: up to 80 (from 100 fetched)
 - File tree entries: up to 6,000 (from 8,000 fetched)
 
-These limits keep OpenAI input within context bounds. Repositories exceeding these limits will have older or less-relevant evidence omitted.
+These limits keep GitHub Models input within its free-tier context bounds. Repositories exceeding these limits will have older or less-relevant evidence omitted.
 
 ## Local setup
 
-The Vercel project is linked to managed Clerk, Neon, and Upstash resources. Pull the development environment and add an OpenAI key:
+The Vercel project is linked to managed Clerk, Neon, and Upstash resources. Pull the development environment:
 
 ```bash
 vercel link
@@ -70,6 +70,17 @@ Required variables are documented in `.env.example`. Never commit `.env.local`.
 
 In the Clerk development instance, enable GitHub under **SSO connections -> For all users**. Morphic requests `repo` and `read:org`; a user must approve both before private and organization repository sync can succeed.
 
+## Zero-cost private alpha
+
+The current `*.vercel.app` deployment can be used as a private, non-commercial alpha without an OpenAI API key. Workspace planning and Codex runs use each signed-in user's GitHub Models allowance. Keep the Clerk development instance below its 100-user limit and expect testers to create new accounts when Morphic later moves to a Clerk production instance.
+
+Before inviting testers:
+
+1. Configure `/api/webhooks/clerk` for the `user.deleted` event in the Clerk development dashboard.
+2. Save that endpoint's signing secret as `CLERK_WEBHOOK_SIGNING_SECRET` in Vercel Development, Preview, and Production, then redeploy.
+3. Keep the deployment private and non-commercial while it remains on Vercel Hobby.
+4. Monitor the existing rate limits and GitHub Models free-tier responses; Morphic reports a retryable error when a user's allowance is exhausted.
+
 ## Go-live requirements
 
 Before accepting production traffic:
@@ -78,8 +89,8 @@ Before accepting production traffic:
 2. Create a GitHub OAuth app, enable the GitHub connection in Clerk production, and grant `repo` plus `read:org`.
 3. Set the production application domain in Clerk and `NEXT_PUBLIC_APP_URL`.
 4. Add Vercel Sandbox credentials: `VERCEL_TOKEN`, `VERCEL_TEAM_ID`, and `VERCEL_PROJECT_ID` as environment variables.
-5. Configure the Clerk webhook endpoint at `/api/webhooks/clerk` subscribed to the `user.deleted` event.
-6. Confirm Neon backups, Upstash limits, OpenAI project spend limits, and Vercel Sandbox/Workflow quotas. Codex sandbox uses 2 vCPUs with a 20-minute timeout per run.
+5. Configure the Clerk webhook endpoint at `/api/webhooks/clerk` subscribed to the `user.deleted` event and set its signing secret.
+6. Confirm Neon backups, Upstash limits, GitHub Models limits, and Vercel Sandbox/Workflow quotas. Codex sandbox uses 2 vCPUs with a 20-minute timeout per run.
 7. Run the verification suite against preview, then complete one approved Codex run on a disposable repository before enabling it for customers.
 
 ## Verification
