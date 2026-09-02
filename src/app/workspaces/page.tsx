@@ -26,9 +26,9 @@ export default async function WorkspacesPage() {
     <main id="main-content" className="mx-auto max-w-[1050px] px-5 py-10 sm:px-8 lg:px-12 lg:py-16">
       <div className="flex flex-wrap items-start justify-between gap-5">
         <div>
-          <div className="mb-4 flex items-center gap-2 text-xs font-medium text-violet-light">
+          <div className="mb-4 flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-evidence">
             <SparkleIcon size={15} weight="fill" />
-            New adaptive workspace
+            New outcome route
           </div>
           <h1 className="text-3xl font-semibold tracking-[-0.04em] text-paper sm:text-4xl">
             Begin with the outcome.
