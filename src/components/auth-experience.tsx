@@ -1,6 +1,7 @@
 import { SignIn, SignUp } from "@clerk/nextjs";
 import Link from "next/link";
 
+import { AuthRoutePreview } from "@/components/auth-route-preview";
 import { Brand } from "@/components/brand";
 
 const appearance = {
@@ -25,17 +26,10 @@ const appearance = {
   },
 } as const;
 
-const path = [
-  ["01", "Map repository", "Ready"],
-  ["02", "Resolve dependencies", "Ready"],
-  ["03", "Choose implementation path", "Decision"],
-  ["04", "Open isolated run", "Queued"],
-];
-
 export function AuthExperience({ mode }: { mode: "sign-in" | "sign-up" }) {
   const isSignUp = mode === "sign-up";
   return (
-    <main className="morphic-auth-shell">
+    <main id="main-content" className="morphic-auth-shell">
       <section className="morphic-auth-story" aria-labelledby="morphic-auth-title">
         <Brand className="morphic-auth-brand" />
         <div className="morphic-auth-copy">
@@ -43,13 +37,7 @@ export function AuthExperience({ mode }: { mode: "sign-in" | "sign-up" }) {
           <h1 id="morphic-auth-title">Start with the outcome.<br /><span>Keep the path visible.</span></h1>
           <small>Morphic grounds an objective in your repository, surfaces the decisions, and keeps approved Codex work moving toward a pull request.</small>
         </div>
-        <div className="morphic-auth-objective">
-          <div className="morphic-auth-objective-head"><span>Active objective</span><strong>Ship onboarding by Friday</strong><i>On track</i></div>
-          <div className="morphic-auth-path">
-            {path.map(([number, label, status]) => <div key={number}><code>{number}</code><span>{label}</span><b className={status === "Decision" ? "is-decision" : ""}>{status}</b></div>)}
-          </div>
-          <div className="morphic-auth-run"><span>◇</span><div><strong>Codex run awaiting approval</strong><small>isolated sandbox · branch + draft PR</small></div><button type="button">Review</button></div>
-        </div>
+        <AuthRoutePreview />
       </section>
       <section className="morphic-auth-form" aria-label={isSignUp ? "Create Morphic account" : "Sign in to Morphic"}>
         <div className="morphic-auth-mobile-brand"><Brand /></div>
