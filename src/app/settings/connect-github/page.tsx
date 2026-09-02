@@ -47,7 +47,7 @@ export default async function ConnectGitHubPage({
         Back to workspaces
       </Link>
 
-      <div className="rounded-xl border border-line-strong bg-surface px-6 py-8">
+      <div className="rounded-[20px] border border-line-strong bg-surface px-6 py-8 shadow-[0_28px_80px_rgba(0,0,0,.18)] sm:px-8">
         <div className="flex items-center gap-3">
           <span className="inline-flex size-12 items-center justify-center rounded-xl border border-line bg-ink">
             <GithubLogoIcon size={24} weight="fill" />
