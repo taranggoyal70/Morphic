@@ -271,6 +271,24 @@ select:focus-visible {
   color: var(--muted-light);
   font-size: 12px;
 }
+
+.morphic-auth-clerk-card {
+  border-color: var(--line-strong) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.32) !important;
+}
+
+.morphic-auth-social,
+.morphic-auth-input,
+.morphic-auth-submit {
+  min-height: 48px !important;
+}
+
+.morphic-auth-submit {
+  background: var(--violet) !important;
+  color: var(--ink) !important;
+  font-weight: 750 !important;
+}
 .morphic-auth-story { display: flex; min-height: 100vh; flex-direction: column; border-right: 1px solid rgba(255,255,255,.1); padding: 34px clamp(38px,6vw,86px); background: linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),#090b10; background-size: 44px 44px; }
 .morphic-auth-brand { width: fit-content; }
 .morphic-auth-copy { max-width: 690px; margin: auto 0 36px; }
