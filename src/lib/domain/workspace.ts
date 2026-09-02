@@ -110,6 +110,17 @@ export const workspacePlanSchema = z
           path: ["criticalPath", index, "dependencyIds"],
         });
       }
+
+      const missingDependency = item.dependencyIds.find(
+        (dependencyId) => !criticalPathIds.includes(dependencyId),
+      );
+      if (missingDependency) {
+        context.addIssue({
+          code: "custom",
+          message: `Unknown Critical Path dependency: ${missingDependency}.`,
+          path: ["criticalPath", index, "dependencyIds"],
+        });
+      }
     }
   });
 

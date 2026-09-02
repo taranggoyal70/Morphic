@@ -85,6 +85,20 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects dependencies that do not reference a Critical Path Item", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        criticalPath: [
+          {
+            ...validPlan.criticalPath[0],
+            dependencyIds: ["missing-item"],
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({
