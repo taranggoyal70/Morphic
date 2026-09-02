@@ -10,6 +10,7 @@ import {
   updateCodexRun,
 } from "@/lib/codex-runs";
 import { toErrorResponse } from "@/lib/errors";
+import { parseJsonBody } from "@/lib/request";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { codexRunWorkflow } from "@/workflows/codex-run";
 
@@ -34,7 +35,7 @@ export async function POST(
       window: "1 h",
     });
     const { runId } = await context.params;
-    const input = approvalInput.parse(await request.json());
+    const input = approvalInput.parse(await parseJsonBody(request));
     if (input.decision === "reject") {
       await rejectCodexRun(user.id, runId, input.note);
       await recordAuditEvent({
