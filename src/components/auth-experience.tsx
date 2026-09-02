@@ -41,9 +41,9 @@ export function AuthExperience({ mode }: { mode: "sign-in" | "sign-up" }) {
       </section>
       <section className="morphic-auth-form" aria-label={isSignUp ? "Create Morphic account" : "Sign in to Morphic"}>
         <div className="morphic-auth-mobile-brand"><Brand /></div>
-        <p className="morphic-auth-form-kicker">{isSignUp ? "Create workspace access" : "Resume your workspace"}</p>
+        <p className="morphic-auth-form-kicker">{isSignUp ? "Connect your first repository" : "Return to your objectives"}</p>
         {isSignUp ? <SignUp appearance={appearance} /> : <SignIn appearance={appearance} />}
-        <Link href="/" className="morphic-auth-back">← Return to product overview</Link>
+        <Link href="/" className="morphic-auth-back">← Back to Morphic overview</Link>
       </section>
     </main>
   );
