@@ -9,11 +9,12 @@ import {
   XCircleIcon,
 } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { toast } from "sonner";
 
 import { CharacterCounter } from "@/components/character-counter";
 import { RunTimeline } from "@/components/run-timeline";
+import { useVisiblePolling } from "@/hooks/use-visible-polling";
 
 type CodexRun = {
   id: string;
@@ -49,18 +50,8 @@ export function CodexPanel({
   const [instruction, setInstruction] = useState("");
   const hasActiveRun = runs.some((run) => activeStatuses.has(run.status));
 
-  useEffect(() => {
-    if (!hasActiveRun) return;
-    const refreshVisibleRun = () => {
-      if (document.visibilityState === "visible") router.refresh();
-    };
-    const timer = window.setInterval(refreshVisibleRun, 4_000);
-    document.addEventListener("visibilitychange", refreshVisibleRun);
-    return () => {
-      window.clearInterval(timer);
-      document.removeEventListener("visibilitychange", refreshVisibleRun);
-    };
-  }, [hasActiveRun, router]);
+  const refreshRuns = useCallback(() => router.refresh(), [router]);
+  useVisiblePolling(refreshRuns, 4_000, hasActiveRun);
 
   async function createRun(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
