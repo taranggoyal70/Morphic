@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { CharacterCounter } from "@/components/character-counter";
 import { RunTimeline } from "@/components/run-timeline";
 
 type CodexRun = {
@@ -45,6 +46,7 @@ export function CodexPanel({
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
+  const [instruction, setInstruction] = useState("");
   const hasActiveRun = runs.some((run) => activeStatuses.has(run.status));
 
   useEffect(() => {
@@ -56,10 +58,8 @@ export function CodexPanel({
   async function createRun(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    const instruction = String(
-      new FormData(form).get("instruction") ?? "",
-    ).trim();
-    if (!instruction) return;
+    const normalizedInstruction = instruction.trim();
+    if (!normalizedInstruction) return;
     setPending(true);
     try {
       const response = await fetch("/api/codex-runs", {
@@ -67,7 +67,7 @@ export function CodexPanel({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workspaceId,
-          instruction,
+          instruction: normalizedInstruction,
           approvalRequired: true,
         }),
       });
@@ -78,6 +78,7 @@ export function CodexPanel({
         throw new Error(payload.error?.message ?? "Run could not be created.");
       }
       form.reset();
+      setInstruction("");
       toast.success("Codex proposal created. Review it before approval.");
       router.refresh();
     } catch (error) {
@@ -168,15 +169,26 @@ export function CodexPanel({
           onSubmit={createRun}
           className="mt-3 flex flex-col gap-2 sm:flex-row"
         >
-          <input
-            name="instruction"
-            required
-            minLength={8}
-            maxLength={4_000}
-            disabled={!workspaceReady || pending}
-            placeholder="Propose a scoped Codex task from this objective…"
-            className="h-9 min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper placeholder:text-muted"
-          />
+          <div className="min-w-0 flex-1">
+            <input
+              name="instruction"
+              value={instruction}
+              onChange={(event) => setInstruction(event.target.value)}
+              required
+              minLength={8}
+              maxLength={4_000}
+              disabled={!workspaceReady || pending}
+              placeholder="Propose a scoped Codex task from this objective…"
+              className="h-9 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper placeholder:text-muted"
+            />
+            <div className="mt-1 text-right">
+              <CharacterCounter
+                current={instruction.length}
+                maximum={4_000}
+                label="Codex instruction"
+              />
+            </div>
+          </div>
           <button
             type="submit"
             disabled={!workspaceReady || pending}
