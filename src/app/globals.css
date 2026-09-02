@@ -59,7 +59,8 @@ body {
 }
 
 ::selection {
-  background: rgba(139, 92, 246, 0.4);
+  background: rgba(120, 220, 232, 0.28);
+  color: #ffffff;
 }
 
 button,
