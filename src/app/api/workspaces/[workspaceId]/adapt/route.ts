@@ -4,6 +4,7 @@ import { requireMorphicUser } from "@/lib/auth";
 import { adaptWorkspaceSchema } from "@/lib/domain/workspace";
 import { toErrorResponse } from "@/lib/errors";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { parseJsonBody } from "@/lib/request";
 import {
   createWorkspaceCommand,
   setWorkspaceGenerationRun,
@@ -23,7 +24,7 @@ export async function POST(
       window: "1 h",
     });
     const { workspaceId } = await context.params;
-    const input = adaptWorkspaceSchema.parse(await request.json());
+    const input = adaptWorkspaceSchema.parse(await parseJsonBody(request));
     const command = await createWorkspaceCommand({
       userId: user.id,
       workspaceId,
