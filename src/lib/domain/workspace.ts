@@ -1,91 +1,107 @@
 import { z } from "zod";
 
-export const workspacePlanSchema = z.object({
-  summary: z.string().min(1).max(600),
-  outcome: z.object({
-    statement: z.string().min(1).max(500),
-    definitionOfDone: z.array(z.string().min(1).max(240)).min(1).max(8),
-    successSignal: z.string().min(1).max(300),
-  }),
-  criticalPath: z
-    .array(
-      z.object({
-        id: z.string().min(1).max(80),
-        title: z.string().min(1).max(180),
-        detail: z.string().min(1).max(400),
-        status: z.enum(["todo", "in_progress", "blocked", "done"]),
-        sourceType: z.enum(["issue", "pull_request", "repository", "inferred"]),
-        sourceNumber: z.number().int().positive().nullable(),
-        dependencyIds: z.array(z.string().min(1).max(80)).max(8),
-        estimatedMinutes: z.number().int().positive().max(10_080).nullable(),
-      }),
-    )
-    .min(1)
-    .max(20),
-  repositoryImpact: z
-    .array(
-      z.object({
-        path: z.string().min(1).max(500),
-        reason: z.string().min(1).max(400),
-        changeKind: z.enum(["create", "modify", "delete", "inspect"]),
-        confidence: z.number().min(0).max(1),
-      }),
-    )
-    .max(30),
-  decisions: z
-    .array(
-      z.object({
-        id: z.string().min(1).max(80),
-        question: z.string().min(1).max(320),
-        context: z.string().min(1).max(500),
-        options: z
-          .array(
-            z.object({
-              id: z.string().min(1).max(80),
-              label: z.string().min(1).max(180),
-              tradeoff: z.string().min(1).max(360),
-            }),
-          )
-          .min(2)
-          .max(4),
-        recommendedOptionId: z.string().min(1).max(80),
-      }),
-    )
-    .max(8),
-  risks: z
-    .array(
-      z.object({
-        id: z.string().min(1).max(80),
-        title: z.string().min(1).max(180),
-        detail: z.string().min(1).max(400),
-        severity: z.enum(["low", "medium", "high", "critical"]),
-        mitigation: z.string().min(1).max(400),
-      }),
-    )
-    .max(12),
-  interface: z.object({
-    primaryModule: z.enum([
-      "critical_path",
-      "repository_impact",
-      "decisions",
-      "risks",
-    ]),
-    moduleOrder: z
+export const workspacePlanSchema = z
+  .object({
+    summary: z.string().min(1).max(600),
+    outcome: z.object({
+      statement: z.string().min(1).max(500),
+      definitionOfDone: z.array(z.string().min(1).max(240)).min(1).max(8),
+      successSignal: z.string().min(1).max(300),
+    }),
+    criticalPath: z
       .array(
-        z.enum([
-          "outcome",
-          "critical_path",
-          "repository_impact",
-          "decisions",
-          "risks",
-          "codex_proposal",
-        ]),
+        z.object({
+          id: z.string().min(1).max(80),
+          title: z.string().min(1).max(180),
+          detail: z.string().min(1).max(400),
+          status: z.enum(["todo", "in_progress", "blocked", "done"]),
+          sourceType: z.enum([
+            "issue",
+            "pull_request",
+            "repository",
+            "inferred",
+          ]),
+          sourceNumber: z.number().int().positive().nullable(),
+          dependencyIds: z.array(z.string().min(1).max(80)).max(8),
+          estimatedMinutes: z.number().int().positive().max(10_080).nullable(),
+        }),
       )
-      .min(4)
-      .max(6),
-    density: z.enum(["comfortable", "compact"]),
-  }),
-});
+      .min(1)
+      .max(20),
+    repositoryImpact: z
+      .array(
+        z.object({
+          path: z.string().min(1).max(500),
+          reason: z.string().min(1).max(400),
+          changeKind: z.enum(["create", "modify", "delete", "inspect"]),
+          confidence: z.number().min(0).max(1),
+        }),
+      )
+      .max(30),
+    decisions: z
+      .array(
+        z.object({
+          id: z.string().min(1).max(80),
+          question: z.string().min(1).max(320),
+          context: z.string().min(1).max(500),
+          options: z
+            .array(
+              z.object({
+                id: z.string().min(1).max(80),
+                label: z.string().min(1).max(180),
+                tradeoff: z.string().min(1).max(360),
+              }),
+            )
+            .min(2)
+            .max(4),
+          recommendedOptionId: z.string().min(1).max(80),
+        }),
+      )
+      .max(8),
+    risks: z
+      .array(
+        z.object({
+          id: z.string().min(1).max(80),
+          title: z.string().min(1).max(180),
+          detail: z.string().min(1).max(400),
+          severity: z.enum(["low", "medium", "high", "critical"]),
+          mitigation: z.string().min(1).max(400),
+        }),
+      )
+      .max(12),
+    interface: z.object({
+      primaryModule: z.enum([
+        "critical_path",
+        "repository_impact",
+        "decisions",
+        "risks",
+      ]),
+      moduleOrder: z
+        .array(
+          z.enum([
+            "outcome",
+            "critical_path",
+            "repository_impact",
+            "decisions",
+            "risks",
+            "codex_proposal",
+          ]),
+        )
+        .min(4)
+        .max(6),
+      density: z.enum(["comfortable", "compact"]),
+    }),
+  })
+  .superRefine((plan, context) => {
+    const criticalPathIds = plan.criticalPath.map((item) => item.id);
+    if (new Set(criticalPathIds).size !== criticalPathIds.length) {
+      context.addIssue({
+        code: "custom",
+        message: "Critical Path Item identifiers must be unique.",
+        path: ["criticalPath"],
+      });
+    }
+  });
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;
 

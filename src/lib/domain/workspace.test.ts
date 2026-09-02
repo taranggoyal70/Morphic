@@ -59,6 +59,18 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects duplicate Critical Path Item identifiers", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        criticalPath: [
+          validPlan.criticalPath[0],
+          { ...validPlan.criticalPath[0], title: "Duplicate route" },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({
@@ -84,7 +96,11 @@ describe("workspace domain contracts", () => {
     const parsed = createWorkspaceSchema.parse({
       repositoryId: crypto.randomUUID(),
       objective: "Ship a reviewable onboarding outcome",
-      constraints: ["No auth changes", "no auth changes", "Keep the API stable"],
+      constraints: [
+        "No auth changes",
+        "no auth changes",
+        "Keep the API stable",
+      ],
     });
 
     expect(parsed.constraints).toEqual([
