@@ -26,7 +26,7 @@ export default function WorkspacesError({
         <button
           type="button"
           onClick={reset}
-          className="mt-5 rounded-lg border border-line-strong px-4 py-2 text-sm font-medium text-paper transition hover:bg-white/5"
+          className="mt-5 min-h-11 rounded-lg bg-evidence px-4 text-sm font-bold text-ink transition hover:bg-evidence-soft"
         >
           Try again
         </button>
