@@ -9,13 +9,13 @@ Morphic must generate interfaces from live GitHub evidence, persist every durabl
 
 ## Decision
 
-Use Next.js App Router for the product surface, Clerk for managed identity, Neon Postgres with Drizzle for durable product state, Upstash Redis for distributed rate limits, OpenAI structured outputs for workspace generation, Vercel Workflow for crash-safe orchestration, and Vercel Sandbox for disposable Codex execution environments.
+Use Next.js App Router for the product surface, Clerk for managed identity, Neon Postgres with Drizzle for durable product state, Upstash Redis for distributed rate limits, the current model-provider ADR for workspace generation, Vercel Workflow for crash-safe orchestration, and Vercel Sandbox for disposable Codex execution environments.
 
 All user-owned queries are scoped by the authenticated Clerk user identifier. Repository access tokens are obtained server-side from Clerk and are not persisted by Morphic. Browser storage is not a source of truth.
 
 ## Consequences
 
 - The product can resume after page reloads, process restarts, and workflow retries.
-- Local development and deployment require provisioned Clerk, Neon, OpenAI, and Vercel credentials.
+- Local development and deployment require provisioned Clerk, Neon, and Vercel credentials; ADR 0002 owns the current model-provider requirement.
 - Codex runs incur sandbox and model costs and require explicit approval.
 - The initial implementation is Vercel-oriented; replacing orchestration or sandbox providers will require adapter work.

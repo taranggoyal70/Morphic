@@ -6,25 +6,26 @@ This file is the implementation-facing source of truth for Morphic's visual lang
 
 The system adapts the HP reference in [VoltAgent's awesome-design-md](https://github.com/VoltAgent/awesome-design-md/tree/main/design-md/hp): bright editorial space, near-black typography, compact controls, restrained blue, and soft 16px cards. Morphic keeps its own brand, product concepts, content, and evidence-route signature.
 
-## Tokens
+## Implementation Tokens
 
 ```css
---canvas: #ffffff;
---cloud: #f7f7f7;
---fog: #e8e8e8;
---steel: #c2c2c2;
---graphite: #636363;
---charcoal: #3d3d3d;
---ink: #1a1a1a;
---primary: #024ad8;
---primary-bright: #296ef9;
---primary-soft: #c9e0fc;
---status-neutral: #356373;
---status-decision: #b3262b;
---status-danger: #5a1313;
+--ink: #ffffff;
+--surface: #f7f7f7;
+--surface-raised: #ffffff;
+--surface-hover: #e8e8e8;
+--line: #e8e8e8;
+--line-strong: #c2c2c2;
+--muted: #636363;
+--muted-light: #3d3d3d;
+--paper: #1a1a1a;
+--violet: #024ad8;
+--violet-light: #296ef9;
+--mint: #356373;
+--amber: #b3262b;
+--danger: #5a1313;
 ```
 
-No value from the retired navy/cyan/orange Morphic palette may be reintroduced.
+The older token names are kept for Tailwind compatibility, but their values now map to the bright Morphic system. `--ink` is the white canvas, `--paper` is near-black text, `--violet` is the primary evidence blue, `--mint` is resolved/neutral status, `--amber` is decision status, and `--danger` is destructive status. No value from the retired navy/cyan/orange Morphic palette may be reintroduced.
 
 ## Type
 

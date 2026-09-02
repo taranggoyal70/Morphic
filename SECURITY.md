@@ -13,6 +13,7 @@ Do not open public issues for vulnerabilities or leaked credentials. Contact the
 - GitHub Models receives the objective and bounded repository evidence required to compile a workspace using the signed-in user's GitHub authorization.
 - Codex executes only after explicit approval, inside a disposable Vercel Sandbox.
 - A Codex run may push only its generated branch and open a pull request. It does not merge.
+- Clerk webhooks are accepted only after Clerk signature verification.
 
 ## Secret handling
 
@@ -22,5 +23,6 @@ Secrets live in Vercel-managed environment variables and an ignored local `.env.
 
 - Rotate credentials after suspected exposure.
 - Review Clerk OAuth scopes before production launch.
+- Keep security headers enabled for transport hardening, MIME sniffing prevention, referrer reduction, and frame/object embedding restrictions.
 - Keep branch protection and required CI checks enabled on repositories used with Morphic.
 - Monitor Vercel Workflow, Sandbox, Clerk, Neon, Upstash, and GitHub Models usage for anomalous activity.

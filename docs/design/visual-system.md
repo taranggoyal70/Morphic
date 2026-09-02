@@ -12,33 +12,16 @@ The previous dark navy, cyan, orange, moss, and cream palette is retired. New UI
 
 ## Palette
 
-- **Canvas** `#FFFFFF` — page background and primary surfaces
-- **Cloud** `#F7F7F7` — quiet section bands and secondary surfaces
-- **Fog** `#E8E8E8` — dividers and hover fills
-- **Steel** `#C2C2C2` — strong boundaries and disabled structure
-- **Graphite** `#636363` — secondary copy and metadata
-- **Charcoal** `#3D3D3D` — supporting copy on light surfaces
-- **Ink** `#1A1A1A` — primary type and closing slabs
-- **Electric blue** `#024AD8` — primary actions, evidence, and focus
-- **Bright blue** `#296EF9` — hover and emphasis
-- **Soft blue** `#C9E0FC` — selection and low-emphasis evidence states
-- **Storm** `#356373` — resolved and neutral status
-- **Bloom** `#B3262B` — decisions and recoverable warnings
-- **Wine** `#5A1313` — destructive errors
-
-Electric blue is the only expressive brand accent. Status colors always appear with text, icons, or shape.
+The implementation tokens and exact color values are owned by [`DESIGN.md`](../../DESIGN.md). Electric blue is the only expressive brand accent. Status colors always appear with text, icons, or shape.
 
 ## Typography
 
-- **Display and body:** Manrope, the open-source substitute recommended by the reference system.
-- **Evidence:** Geist Mono for repository paths, identifiers, timestamps, and compact state metadata.
 - **Headlines:** tight tracking, high contrast, short line lengths, and no decorative gradients.
 - **Controls:** sentence case by default; primary calls to action may use tracked uppercase.
 
 ## Geometry and surfaces
 
-- Primary buttons use a 4px radius and a 44px minimum height.
-- Product cards use a 16px radius and `0 2px 8px rgba(26, 26, 26, 0.08)` lift.
+- Implementation-level type, radius, target-size, and elevation values are owned by [`DESIGN.md`](../../DESIGN.md).
 - Most grouping comes from spacing, rules, and alternating white/cloud bands.
 - Avoid nested cards, glass effects, neon glows, gradients, and pill-shaped controls unless the shape communicates status.
 
