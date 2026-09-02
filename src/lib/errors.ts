@@ -22,7 +22,7 @@ export function toErrorResponse(error: unknown) {
           details: { fields: error.flatten().fieldErrors },
         },
       },
-      { status: 400 },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
 
@@ -35,7 +35,10 @@ export function toErrorResponse(error: unknown) {
           details: error.details,
         },
       },
-      { status: error.status },
+      {
+        status: error.status,
+        headers: { "Cache-Control": "no-store" },
+      },
     );
   }
 
@@ -47,6 +50,6 @@ export function toErrorResponse(error: unknown) {
         message: "Something went wrong. Please try again.",
       },
     },
-    { status: 500 },
+    { status: 500, headers: { "Cache-Control": "no-store" } },
   );
 }

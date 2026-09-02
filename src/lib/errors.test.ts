@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
-import { toErrorResponse } from "@/lib/errors";
+import { AppError, toErrorResponse } from "@/lib/errors";
 
 describe("toErrorResponse", () => {
   it("returns a client error for invalid request data", async () => {
@@ -19,5 +19,13 @@ describe("toErrorResponse", () => {
         message: "The request contains invalid data.",
       },
     });
+  });
+
+  it("prevents error payloads from being cached", () => {
+    const response = toErrorResponse(
+      new AppError("Workspace not found.", 404, "workspace_not_found"),
+    );
+
+    expect(response.headers.get("cache-control")).toBe("no-store");
   });
 });
