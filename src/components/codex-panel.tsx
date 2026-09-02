@@ -51,8 +51,15 @@ export function CodexPanel({
 
   useEffect(() => {
     if (!hasActiveRun) return;
-    const timer = window.setInterval(() => router.refresh(), 4_000);
-    return () => window.clearInterval(timer);
+    const refreshVisibleRun = () => {
+      if (document.visibilityState === "visible") router.refresh();
+    };
+    const timer = window.setInterval(refreshVisibleRun, 4_000);
+    document.addEventListener("visibilitychange", refreshVisibleRun);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", refreshVisibleRun);
+    };
   }, [hasActiveRun, router]);
 
   async function createRun(event: FormEvent<HTMLFormElement>) {
