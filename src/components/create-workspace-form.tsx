@@ -183,6 +183,13 @@ export function CreateWorkspaceForm({
             <PlusIcon size={16} />
           </button>
         </div>
+        <div className="mt-2 max-w-2xl text-right">
+          <CharacterCounter
+            current={constraintDraft.length}
+            maximum={180}
+            label="Guardrail"
+          />
+        </div>
         {constraints.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
             {constraints.map((constraint) => (
