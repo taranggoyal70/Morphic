@@ -144,3 +144,32 @@ Health: **Focused and trustworthy**
 - Supporting content now explains what happens after authentication instead of repeating a fake workspace.
 - The primary provider form adopts the evidence palette and a clearer 48px control size.
 - The local Clerk tenant still says “My Application”; production Clerk branding must be configured to display “Morphic.”
+
+## Palette revision — VoltAgent HP system
+
+The first redesign solved the product hierarchy, but its dark navy, cyan, and orange direction still felt too close to the project's previous visual identity. The implementation was revised again using the HP system in [VoltAgent's awesome-design-md](https://github.com/VoltAgent/awesome-design-md/tree/main/design-md/hp) as a design reference.
+
+### Revised public landing
+
+![HP-derived Morphic landing page](./08-hp-redesign-landing.png)
+
+- The default canvas is now pure white with near-black editorial typography.
+- Electric blue is reserved for primary actions, evidence labels, and focus.
+- Product proof uses a white 16px card with a quiet lift instead of dark dashboard chrome.
+- Buttons use compact 4px geometry and tracked labels rather than soft, generic pills.
+
+### Revised mobile landing
+
+![HP-derived Morphic mobile landing page](./09-hp-redesign-mobile.png)
+
+- The headline remains the dominant idea without forcing horizontal overflow.
+- Both actions stack into 44px full-width controls.
+- The live evidence route begins immediately after the trust line.
+
+### Revised authentication entry
+
+![HP-derived Morphic sign-in page](./10-hp-redesign-sign-in.png)
+
+- The supporting story uses a cloud-gray band; the Clerk form stays on white.
+- The primary form action uses the same electric blue as the public conversion path.
+- Development overlays were hidden only for clean audit captures. The local Clerk tenant's “My Application” label remains a configuration issue, not a frontend component.
