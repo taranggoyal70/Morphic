@@ -29,4 +29,17 @@ describe("parseJsonBody", () => {
       objective: "Ship onboarding",
     });
   });
+
+  it("rejects mutation payloads without a JSON media type", async () => {
+    const request = new Request("https://morphic.test/api/workspaces", {
+      method: "POST",
+      headers: { "content-type": "text/plain" },
+      body: JSON.stringify({ objective: "Ship onboarding" }),
+    });
+
+    await expect(parseJsonBody(request)).rejects.toMatchObject<AppError>({
+      status: 415,
+      code: "unsupported_media_type",
+    });
+  });
 });
