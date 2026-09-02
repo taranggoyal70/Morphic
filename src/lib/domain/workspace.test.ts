@@ -99,6 +99,26 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects duplicate dependency references", () => {
+    const prerequisite = {
+      ...validPlan.criticalPath[0],
+      id: "prerequisite",
+      sourceNumber: 41,
+    };
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        criticalPath: [
+          prerequisite,
+          {
+            ...validPlan.criticalPath[0],
+            dependencyIds: [prerequisite.id, prerequisite.id],
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({

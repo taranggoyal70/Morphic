@@ -103,6 +103,14 @@ export const workspacePlanSchema = z
     }
 
     for (const [index, item] of plan.criticalPath.entries()) {
+      if (new Set(item.dependencyIds).size !== item.dependencyIds.length) {
+        context.addIssue({
+          code: "custom",
+          message: "Critical Path dependencies must be unique.",
+          path: ["criticalPath", index, "dependencyIds"],
+        });
+      }
+
       if (item.dependencyIds.includes(item.id)) {
         context.addIssue({
           code: "custom",
