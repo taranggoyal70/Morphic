@@ -84,8 +84,8 @@ export function AppSidebar({
           ))}
           {workspaces.length === 0 && (
             <p className="px-2.5 py-3 text-xs leading-5 text-muted">
-              Your objectives will appear here after you create the first
-              workspace.
+              Create an objective to pin its repository evidence and next
+              decision here.
             </p>
           )}
         </nav>
