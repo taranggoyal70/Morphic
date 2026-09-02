@@ -71,6 +71,11 @@ select {
   outline-color: var(--violet);
 }
 
+button,
+[role="button"] {
+  touch-action: manipulation;
+}
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
