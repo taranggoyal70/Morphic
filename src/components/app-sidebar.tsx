@@ -56,10 +56,10 @@ export function AppSidebar({
               key={workspace.id}
               href={`/workspaces/${workspace.id}`}
               className={cn(
-                "group flex gap-2.5 rounded-lg px-2.5 py-2.5 text-sm transition",
+                "group flex min-h-14 gap-3 rounded-xl border px-3 py-3 text-sm transition",
                 activeWorkspaceId === workspace.id
-                  ? "bg-violet/10 text-paper ring-1 ring-inset ring-violet/20"
-                  : "text-muted-light hover:bg-white/[0.035] hover:text-paper",
+                  ? "border-evidence/30 bg-evidence/10 text-paper"
+                  : "border-transparent text-muted-light hover:border-line hover:bg-white/[0.035] hover:text-paper",
               )}
             >
               <span
