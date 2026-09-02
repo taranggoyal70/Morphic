@@ -127,14 +127,14 @@ export function CreateWorkspaceForm({
               htmlFor="targetDate"
               className="mb-2 block text-sm font-medium text-paper"
             >
-              Target date
+              Review target
               <span className="ml-1 font-normal text-muted">optional</span>
             </label>
             <input
               id="targetDate"
               name="targetDate"
               type="datetime-local"
-              className="h-11 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper"
+              className="h-12 w-full rounded-lg border border-line-strong bg-ink px-3 text-sm text-paper focus:border-evidence"
             />
           </div>
         </div>
