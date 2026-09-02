@@ -219,6 +219,13 @@ export const workspacePlanSchema = z
         path: ["interface", "moduleOrder"],
       });
     }
+    if (!plan.interface.moduleOrder.includes(plan.interface.primaryModule)) {
+      context.addIssue({
+        code: "custom",
+        message: "The primary module must appear in the Adaptive Workspace.",
+        path: ["interface", "primaryModule"],
+      });
+    }
   });
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;

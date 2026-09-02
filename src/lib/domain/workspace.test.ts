@@ -273,6 +273,24 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("requires the primary module to appear in the Adaptive Workspace", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        interface: {
+          ...validPlan.interface,
+          primaryModule: "risks",
+          moduleOrder: [
+            "outcome",
+            "critical_path",
+            "repository_impact",
+            "decisions",
+          ],
+        },
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({
