@@ -173,3 +173,31 @@ The first redesign solved the product hierarchy, but its dark navy, cyan, and or
 - The supporting story uses a cloud-gray band; the Clerk form stays on white.
 - The primary form action uses the same electric blue as the public conversion path.
 - Development overlays were hidden only for clean audit captures. The local Clerk tenant's “My Application” label remains a configuration issue, not a frontend component.
+
+## Distinct composition revision
+
+The light palette was an improvement, but the original composition still shared too much with Locus and Agent Access: oversized copy beside a floating product card, followed by a three-part proof strip and split process section. This pass changes the page architecture rather than reskinning that pattern.
+
+### Execution brief landing
+
+![Morphic execution brief landing](./11-distinct-execution-brief.png)
+
+- The hero is now one bounded operating document with a vertical policy margin.
+- The objective owns the full width instead of sharing a split hero with a dashboard preview.
+- Repository evidence is an edge-to-edge trace with four real states, not a floating card.
+- The proof strip and rounded CTA panel were removed.
+
+### Execution brief on mobile
+
+![Morphic execution brief mobile](./12-distinct-execution-brief-mobile.png)
+
+- The typographic thesis, explanation, and actions remain readable without horizontal overflow.
+- The repository trace follows as part of the same document rather than a separate preview.
+
+### Authentication as a brief
+
+![Morphic execution brief authentication](./13-distinct-auth-brief.png)
+
+- Authentication no longer uses the full-height story-left/form-right SaaS split.
+- Product context becomes a compact horizontal brief above a centered authentication action.
+- Clerk's local “My Application” label remains an external tenant configuration issue.
