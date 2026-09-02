@@ -140,6 +140,33 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("requires source numbers only for issue and pull request evidence", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        criticalPath: [
+          {
+            ...validPlan.criticalPath[0],
+            sourceType: "issue",
+            sourceNumber: null,
+          },
+        ],
+      }),
+    ).toThrow();
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        criticalPath: [
+          {
+            ...validPlan.criticalPath[0],
+            sourceType: "repository",
+            sourceNumber: 42,
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({

@@ -103,6 +103,17 @@ export const workspacePlanSchema = z
     }
 
     for (const [index, item] of plan.criticalPath.entries()) {
+      const numberedSource =
+        item.sourceType === "issue" || item.sourceType === "pull_request";
+      if (numberedSource !== (item.sourceNumber !== null)) {
+        context.addIssue({
+          code: "custom",
+          message:
+            "Issue and pull request evidence requires a source number; repository and inferred evidence must omit it.",
+          path: ["criticalPath", index, "sourceNumber"],
+        });
+      }
+
       if (new Set(item.dependencyIds).size !== item.dependencyIds.length) {
         context.addIssue({
           code: "custom",
