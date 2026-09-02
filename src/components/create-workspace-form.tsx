@@ -183,13 +183,21 @@ export function CreateWorkspaceForm({
       </div>
 
       <div className="mt-7 rounded-xl border border-line bg-ink/55 p-4 sm:p-5">
-        <label
-          htmlFor="constraint"
-          className="mb-2 block text-sm font-medium text-paper"
-        >
-          Guardrails
-          <span className="ml-1 font-normal text-muted">optional</span>
-        </label>
+        <div className="mb-2 flex items-center justify-between gap-4">
+          <label
+            htmlFor="constraint"
+            className="text-sm font-medium text-paper"
+          >
+            Guardrails
+            <span className="ml-1 font-normal text-muted">optional</span>
+          </label>
+          <output
+            className="font-mono text-[10px] text-muted"
+            aria-live="polite"
+          >
+            {constraints.length} of 12 guardrails
+          </output>
+        </div>
         <div className="flex max-w-2xl gap-2">
           <input
             id="constraint"
