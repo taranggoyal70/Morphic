@@ -61,7 +61,7 @@ export default async function ConnectGitHubPage({
         </div>
 
         <div className="mt-8 space-y-4">
-          <div className="flex items-start gap-3 rounded-lg border border-line bg-ink/50 px-4 py-3.5">
+          <div className="flex items-start gap-3 rounded-xl border border-line bg-ink/65 px-4 py-4">
             {githubConnected ? (
               <CheckCircleIcon
                 size={18}
@@ -96,7 +96,7 @@ export default async function ConnectGitHubPage({
             </div>
           </div>
 
-          <div className="flex items-start gap-3 rounded-lg border border-line bg-ink/50 px-4 py-3.5">
+          <div className="flex items-start gap-3 rounded-xl border border-line bg-ink/65 px-4 py-4">
             {repositories.length > 0 ? (
               <CheckCircleIcon
                 size={18}
