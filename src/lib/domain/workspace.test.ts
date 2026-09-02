@@ -179,6 +179,25 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects duplicate Open Decision identifiers", () => {
+    const decision = {
+      id: "hosting",
+      question: "Where should the service run?",
+      context: "The runtime affects operations.",
+      options: [
+        { id: "a", label: "Option A", tradeoff: "Simpler operations." },
+        { id: "b", label: "Option B", tradeoff: "More control." },
+      ],
+      recommendedOptionId: "a",
+    };
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        decisions: [decision, { ...decision, question: "Duplicate decision" }],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({

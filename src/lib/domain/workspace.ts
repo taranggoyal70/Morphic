@@ -172,6 +172,15 @@ export const workspacePlanSchema = z
         path: ["repositoryImpact"],
       });
     }
+
+    const decisionIds = plan.decisions.map((decision) => decision.id);
+    if (new Set(decisionIds).size !== decisionIds.length) {
+      context.addIssue({
+        code: "custom",
+        message: "Open Decision identifiers must be unique.",
+        path: ["decisions"],
+      });
+    }
   });
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;
