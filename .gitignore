@@ -48,3 +48,6 @@ artifacts/
 .env*.local
 /tmp/
 /.swc
+
+# clerk configuration (can include secrets)
+/.clerk/
