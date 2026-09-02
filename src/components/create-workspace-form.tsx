@@ -102,17 +102,17 @@ export function CreateWorkspaceForm({
               htmlFor="repositoryId"
               className="mb-2 block text-sm font-medium text-paper"
             >
-              Repository evidence
+              Evidence source
             </label>
             <select
               id="repositoryId"
               name="repositoryId"
               required
               defaultValue=""
-              className="h-11 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper"
+              className="h-12 w-full rounded-lg border border-line-strong bg-ink px-3 text-sm text-paper focus:border-evidence"
             >
               <option value="" disabled>
-                Select a GitHub repository
+                Choose a GitHub repository
               </option>
               {repositories.map((repository) => (
                 <option key={repository.id} value={repository.id}>
