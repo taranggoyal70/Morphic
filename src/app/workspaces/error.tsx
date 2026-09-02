@@ -10,7 +10,7 @@ export default function WorkspacesError({
   reset: () => void;
 }) {
   return (
-    <main className="grid min-h-screen place-items-center bg-ink px-5">
+    <main id="main-content" className="grid min-h-screen place-items-center bg-ink px-5">
       <div className="max-w-md text-center">
         <WarningIcon
           size={34}
