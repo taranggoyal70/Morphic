@@ -16,9 +16,12 @@ import { generateWorkspaceWorkflow } from "@/workflows/generate-workspace";
 export async function GET() {
   try {
     const user = await requireMorphicUser();
-    return Response.json({
-      workspaces: await listWorkspaces(user.id),
-    });
+    return Response.json(
+      {
+        workspaces: await listWorkspaces(user.id),
+      },
+      { headers: { "Cache-Control": "private, no-store" } },
+    );
   } catch (error) {
     return toErrorResponse(error);
   }
