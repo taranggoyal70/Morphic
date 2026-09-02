@@ -135,7 +135,7 @@ export default async function ConnectGitHubPage({
           <div className="mt-6 text-center">
             <Link
               href={"/workspaces" as Route}
-              className="inline-flex h-10 items-center rounded-lg bg-violet px-5 text-sm font-semibold text-white transition hover:bg-violet-light hover:text-ink"
+              className="inline-flex h-11 items-center rounded-lg bg-evidence px-5 text-sm font-bold text-ink transition hover:bg-evidence-soft"
             >
               Create your first workspace
             </Link>
