@@ -238,7 +238,11 @@ export function CodexPanel({
                         {run.instruction}
                       </p>
                     </div>
-                    <p className="mt-1 pl-[22px] font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
+                    <p
+                      aria-live="polite"
+                      aria-label={`Codex run status: ${run.status.replaceAll("_", " ")}`}
+                      className="mt-1 pl-[22px] font-mono text-[10px] uppercase tracking-[0.08em] text-muted"
+                    >
                       {run.status.replaceAll("_", " ")}
                     </p>
                     {(run.resultSummary || run.error) && (
