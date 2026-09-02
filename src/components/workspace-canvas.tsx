@@ -120,7 +120,7 @@ export function WorkspaceCanvas({
                   <ArrowSquareOutIcon size={10} />
                 </a>
               </div>
-              <h1 className="mt-3 max-w-4xl text-2xl font-semibold tracking-[-0.035em] text-paper sm:text-3xl">
+              <h1 className="font-display mt-3 max-w-4xl text-3xl font-semibold tracking-[-0.045em] text-paper sm:text-4xl">
                 {workspace.objective}
               </h1>
               {plan && (
