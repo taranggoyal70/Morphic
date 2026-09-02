@@ -202,9 +202,9 @@ export function CreateWorkspaceForm({
         <button
           type="submit"
           disabled={pending || repositories.length === 0}
-          className="inline-flex items-center gap-2 rounded-lg bg-violet px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-light hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-evidence px-5 text-sm font-bold text-ink transition hover:bg-evidence-soft disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {pending ? "Compiling…" : "Shape workspace"}
+          {pending ? "Mapping evidence…" : "Create evidence route"}
           {!pending && <ArrowRightIcon size={16} weight="bold" />}
         </button>
       </div>
