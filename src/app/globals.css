@@ -284,6 +284,18 @@ select:focus-visible {
   min-height: 48px !important;
 }
 
+@media (max-width: 900px) {
+  .morphic-auth-form {
+    min-height: 100vh;
+    justify-content: flex-start;
+    padding-top: 32px;
+  }
+
+  .morphic-auth-mobile-brand {
+    margin-bottom: clamp(34px, 9vh, 84px);
+  }
+}
+
 .morphic-auth-submit {
   background: var(--violet) !important;
   color: var(--ink) !important;
