@@ -181,11 +181,14 @@ export function WorkspaceCanvas({
           </div>
 
           {workspace.constraints.length > 0 && (
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-line pt-4">
+              <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
+                Guardrails
+              </span>
               {workspace.constraints.map((constraint) => (
                 <span
                   key={constraint}
-                  className="rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs text-muted-light"
+                  className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs text-muted-light"
                 >
                   {constraint}
                 </span>
