@@ -199,6 +199,15 @@ export const workspacePlanSchema = z
         });
       }
     }
+
+    const riskIds = plan.risks.map((risk) => risk.id);
+    if (new Set(riskIds).size !== riskIds.length) {
+      context.addIssue({
+        code: "custom",
+        message: "Risk identifiers must be unique.",
+        path: ["risks"],
+      });
+    }
   });
 
 export type WorkspacePlan = z.infer<typeof workspacePlanSchema>;

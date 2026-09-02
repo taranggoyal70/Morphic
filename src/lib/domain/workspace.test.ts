@@ -240,6 +240,22 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects duplicate Risk identifiers", () => {
+    const risk = {
+      id: "schedule",
+      title: "Schedule pressure",
+      detail: "The review target is close.",
+      severity: "high",
+      mitigation: "Reduce the initial scope.",
+    } as const;
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        risks: [risk, { ...risk, title: "Duplicate risk" }],
+      }),
+    ).toThrow();
+  });
+
   it("requires a concrete objective", () => {
     expect(() =>
       createWorkspaceSchema.parse({
