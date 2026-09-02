@@ -165,7 +165,12 @@ export function CodexPanel({
     <section className="border-t border-line bg-surface">
       <div className="mx-auto max-w-[1400px] px-4 py-4 sm:px-6">
         <div className="flex items-center gap-2">
-          <CodeIcon size={18} weight="duotone" className="text-violet-light" />
+          <CodeIcon
+            size={18}
+            weight="duotone"
+            className="text-violet-light"
+            aria-hidden="true"
+          />
           <h2 className="text-sm font-semibold text-paper">Codex proposals</h2>
           <span className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[9px] uppercase text-muted">
             Approval required
@@ -201,7 +206,7 @@ export function CodexPanel({
             disabled={!workspaceReady || pending}
             className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-violet/40 bg-violet/10 px-4 text-sm font-medium text-violet-light transition hover:bg-violet/20 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <PlayIcon size={15} weight="fill" />
+            <PlayIcon size={15} weight="fill" aria-hidden="true" />
             Create proposal
           </button>
         </form>
@@ -217,12 +222,14 @@ export function CodexPanel({
                         <CircleNotchIcon
                           size={14}
                           className="animate-spin text-violet-light"
+                          aria-hidden="true"
                         />
                       ) : run.status === "completed" ? (
                         <CheckCircleIcon
                           size={14}
                           weight="fill"
                           className="text-mint"
+                          aria-hidden="true"
                         />
                       ) : run.status === "failed" ||
                         run.status === "cancelled" ? (
@@ -230,9 +237,13 @@ export function CodexPanel({
                           size={14}
                           weight="fill"
                           className="text-danger"
+                          aria-hidden="true"
                         />
                       ) : (
-                        <span className="size-3.5 rounded-full border border-amber bg-amber/10" />
+                        <span
+                          className="size-3.5 rounded-full border border-amber bg-amber/10"
+                          aria-hidden="true"
+                        />
                       )}
                       <p className="truncate text-sm font-medium text-paper">
                         {run.instruction}
@@ -292,7 +303,7 @@ export function CodexPanel({
                       className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-mint/30 bg-mint/10 px-3 py-1.5 text-xs font-medium text-mint transition hover:bg-mint/15"
                     >
                       Pull request #{run.pullRequestNumber}
-                      <ArrowSquareOutIcon size={13} />
+                      <ArrowSquareOutIcon size={13} aria-hidden="true" />
                     </a>
                   )}
                 </div>
