@@ -53,9 +53,9 @@ export default async function ConnectGitHubPage({
             <GithubLogoIcon size={24} weight="fill" />
           </span>
           <div>
-            <h1 className="text-xl font-semibold text-paper">Connect GitHub</h1>
+            <h1 className="font-display text-2xl font-semibold tracking-[-0.035em] text-paper">Connect repository evidence</h1>
             <p className="mt-0.5 text-sm text-muted">
-              Morphic needs access to your repositories
+              Authorize the source Morphic will ground every route in
             </p>
           </div>
         </div>
