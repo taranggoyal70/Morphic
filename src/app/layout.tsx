@@ -52,13 +52,13 @@ export default function RootLayout({
         <ClerkProvider
           appearance={{
             variables: {
-              colorPrimary: "#8b5cf6",
-              colorBackground: "#0d1017",
-              colorForeground: "#f4f1ed",
-              colorMutedForeground: "#969aa6",
-              colorInput: "#11141c",
-              colorInputForeground: "#f4f1ed",
-              borderRadius: "0.625rem",
+              colorPrimary: "#78dce8",
+              colorBackground: "#0b1826",
+              colorForeground: "#f3f0e8",
+              colorMutedForeground: "#9eb0bf",
+              colorInput: "#102235",
+              colorInputForeground: "#f3f0e8",
+              borderRadius: "0.75rem",
             },
             elements: {
               cardBox: "shadow-2xl shadow-black/40",
