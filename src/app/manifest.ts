@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
       "Adaptive workspaces grounded in GitHub evidence and explicit approval.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f7f6f2",
+    background_color: "#f7f7f7",
     theme_color: "#ffffff",
     icons: [
       {
