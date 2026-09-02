@@ -23,6 +23,7 @@ export function CreateWorkspaceForm({
   const [pending, setPending] = useState(false);
   const [constraints, setConstraints] = useState<string[]>([]);
   const [constraintDraft, setConstraintDraft] = useState("");
+  const [constraintMessage, setConstraintMessage] = useState("");
   const [objectiveLength, setObjectiveLength] = useState(0);
   const targetDateRef = useRef<HTMLInputElement>(null);
 
@@ -39,9 +40,23 @@ export function CreateWorkspaceForm({
 
   function addConstraint() {
     const next = constraintDraft.trim();
-    if (!next || constraints.includes(next) || constraints.length >= 12) return;
+    if (!next) return;
+    if (
+      constraints.some(
+        (constraint) =>
+          constraint.toLocaleLowerCase() === next.toLocaleLowerCase(),
+      )
+    ) {
+      setConstraintMessage("That guardrail is already included.");
+      return;
+    }
+    if (constraints.length >= 12) {
+      setConstraintMessage("A workspace can include up to 12 guardrails.");
+      return;
+    }
     setConstraints((current) => [...current, next]);
     setConstraintDraft("");
+    setConstraintMessage("");
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -179,7 +194,10 @@ export function CreateWorkspaceForm({
           <input
             id="constraint"
             value={constraintDraft}
-            onChange={(event) => setConstraintDraft(event.target.value)}
+            onChange={(event) => {
+              setConstraintDraft(event.target.value);
+              setConstraintMessage("");
+            }}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
                 event.preventDefault();
@@ -206,6 +224,9 @@ export function CreateWorkspaceForm({
             label="Guardrail"
           />
         </div>
+        <p aria-live="polite" className="mt-1 min-h-4 text-xs text-amber">
+          {constraintMessage}
+        </p>
         {constraints.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
             {constraints.map((constraint) => (
