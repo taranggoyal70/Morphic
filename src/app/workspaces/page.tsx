@@ -34,8 +34,9 @@ export default async function WorkspacesPage() {
             Name the outcome. Attach the evidence.
           </h1>
           <p className="mt-3 max-w-2xl text-[15px] leading-7 text-muted-light">
-            Morphic will inspect live GitHub evidence, compile the critical
-            path, and shape the interface around what must happen next.
+            Choose a repository and define a result someone can verify. Morphic
+            will map the facts, blockers, and approvals that connect today to
+            that result.
           </p>
         </div>
         {githubConnected ? (
