@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 
+import { CharacterCounter } from "@/components/character-counter";
+
 type RepositoryOption = {
   id: string;
   fullName: string;
@@ -21,6 +23,7 @@ export function CreateWorkspaceForm({
   const [pending, setPending] = useState(false);
   const [constraints, setConstraints] = useState<string[]>([]);
   const [constraintDraft, setConstraintDraft] = useState("");
+  const [objectiveLength, setObjectiveLength] = useState(0);
 
   function addConstraint() {
     const next = constraintDraft.trim();
@@ -88,12 +91,20 @@ export function CreateWorkspaceForm({
             minLength={8}
             maxLength={500}
             autoFocus
+            onChange={(event) => setObjectiveLength(event.target.value.length)}
             placeholder="Ship organization onboarding with invitation and recovery paths"
             className="min-h-40 w-full resize-none rounded-xl border border-line-strong bg-ink px-4 py-4 text-lg leading-7 text-paper placeholder:text-muted focus:border-evidence"
           />
-          <p className="mt-2 text-xs text-muted">
-            Describe the result a reviewer could confirm, not a project label.
-          </p>
+          <div className="mt-2 flex items-start justify-between gap-4">
+            <p className="text-xs text-muted">
+              Describe the result a reviewer could confirm, not a project label.
+            </p>
+            <CharacterCounter
+              current={objectiveLength}
+              maximum={500}
+              label="Objective"
+            />
+          </div>
         </div>
 
         <div className="space-y-5">
