@@ -2,7 +2,7 @@
 
 import { ArrowRightIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { CharacterCounter } from "@/components/character-counter";
@@ -24,6 +24,18 @@ export function CreateWorkspaceForm({
   const [constraints, setConstraints] = useState<string[]>([]);
   const [constraintDraft, setConstraintDraft] = useState("");
   const [objectiveLength, setObjectiveLength] = useState(0);
+  const targetDateRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const now = new Date();
+    now.setSeconds(0, 0);
+    const timezoneOffset = now.getTimezoneOffset() * 60_000;
+    if (targetDateRef.current) {
+      targetDateRef.current.min = new Date(now.getTime() - timezoneOffset)
+        .toISOString()
+        .slice(0, 16);
+    }
+  }, []);
 
   function addConstraint() {
     const next = constraintDraft.trim();
@@ -143,10 +155,14 @@ export function CreateWorkspaceForm({
             </label>
             <input
               id="targetDate"
+              ref={targetDateRef}
               name="targetDate"
               type="datetime-local"
               className="h-12 w-full rounded border border-line-strong bg-ink px-3 text-sm text-paper focus:border-paper"
             />
+            <p className="mt-2 text-xs text-muted">
+              Past review targets are not accepted.
+            </p>
           </div>
         </div>
       </div>
