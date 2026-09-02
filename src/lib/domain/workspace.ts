@@ -31,7 +31,16 @@ export const workspacePlanSchema = z
     repositoryImpact: z
       .array(
         z.object({
-          path: z.string().min(1).max(500),
+          path: z
+            .string()
+            .min(1)
+            .max(500)
+            .refine(
+              (path) =>
+                !path.startsWith("/") &&
+                !path.split(/[\\/]/).some((segment) => segment === ".."),
+              "Repository Impact paths must stay inside the repository.",
+            ),
           reason: z.string().min(1).max(400),
           changeKind: z.enum(["create", "modify", "delete", "inspect"]),
           confidence: z.number().min(0).max(1),

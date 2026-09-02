@@ -179,6 +179,25 @@ describe("workspace domain contracts", () => {
     ).toThrow();
   });
 
+  it("rejects Repository Impact paths outside the repository", () => {
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        repositoryImpact: [
+          { ...validPlan.repositoryImpact[0], path: "../outside.txt" },
+        ],
+      }),
+    ).toThrow();
+    expect(() =>
+      workspacePlanSchema.parse({
+        ...validPlan,
+        repositoryImpact: [
+          { ...validPlan.repositoryImpact[0], path: "/etc/passwd" },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it("rejects duplicate Open Decision identifiers", () => {
     const decision = {
       id: "hosting",
