@@ -140,12 +140,12 @@ export function CreateWorkspaceForm({
         </div>
       </div>
 
-      <div className="mt-7 border-t border-line pt-6">
+      <div className="mt-7 rounded-xl border border-line bg-ink/55 p-4 sm:p-5">
         <label
           htmlFor="constraint"
           className="mb-2 block text-sm font-medium text-paper"
         >
-          Constraints
+          Guardrails
           <span className="ml-1 font-normal text-muted">optional</span>
         </label>
         <div className="flex max-w-2xl gap-2">
@@ -161,7 +161,7 @@ export function CreateWorkspaceForm({
             }}
             maxLength={180}
             placeholder="No authentication changes"
-            className="h-10 min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper placeholder:text-muted"
+          className="h-11 min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 text-sm text-paper placeholder:text-muted focus:border-evidence"
           />
           <button
             type="button"
