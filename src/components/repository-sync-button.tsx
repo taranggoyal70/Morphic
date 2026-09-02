@@ -51,7 +51,7 @@ export function RepositorySyncButton({
       type="button"
       onClick={sync}
       disabled={pending}
-      className="inline-flex items-center gap-2 rounded-lg border border-line-strong bg-surface-raised px-3.5 py-2 text-sm font-medium text-paper transition hover:bg-surface-hover disabled:cursor-wait disabled:opacity-60"
+      className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-line-strong bg-surface-raised px-3.5 text-sm font-semibold text-paper transition hover:border-evidence/40 hover:bg-evidence/10 hover:text-evidence disabled:cursor-wait disabled:opacity-60"
     >
       {pending ? (
         <ArrowsClockwiseIcon size={16} className="animate-spin" />
