@@ -76,8 +76,8 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--violet);
-  outline-offset: 2px;
+  outline: 3px solid var(--violet);
+  outline-offset: 3px;
 }
 
 ::-webkit-scrollbar {
