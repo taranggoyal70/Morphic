@@ -200,7 +200,7 @@ export function WorkspaceCanvas({
 
       {!plan ? (
         <section className="mx-auto grid min-h-[640px] max-w-[1500px] place-items-center px-5">
-          <div className="max-w-md text-center">
+          <div className="max-w-lg rounded-[20px] border border-line-strong bg-surface px-7 py-9 text-center shadow-[0_28px_80px_rgba(0,0,0,.18)]">
             {workspace.status === "failed" ? (
               <WarningIcon
                 size={34}
