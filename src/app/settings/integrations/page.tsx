@@ -35,9 +35,9 @@ export default async function IntegrationsPage({
 
   return (
     <main id="main-content" className="mx-auto max-w-[920px] px-5 py-10 sm:px-8 lg:px-12 lg:py-16">
-      <div className="flex items-center gap-2 text-xs font-medium text-violet-light">
+      <div className="flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-evidence">
         <SparkleIcon size={15} weight="fill" />
-        Product connections
+        Evidence connections
       </div>
       <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-paper">
         Integrations
