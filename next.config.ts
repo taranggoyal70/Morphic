@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: [
           { key: "X-DNS-Prefetch-Control", value: "off" },
+          { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
           {
